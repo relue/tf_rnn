@@ -31,7 +31,7 @@ input_vector_size = 2
 n_nodes = 10
 n_classes = 1
 batches = 10
-hm_epochs = 50000
+hm_epochs = 70
 hiddenLayerCount = 2
 
 x = tf.placeholder('float', [None, input_vector_size])
@@ -89,7 +89,6 @@ def train_neural_network(dataX, dataY):
         print('Test:',numpy.exp(t))
         print('TestScaled:',c)
     return p
-
 
 scaledX = numpy.exp(testDataX)
 scaledY = numpy.exp(testDataY)
