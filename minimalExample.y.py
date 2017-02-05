@@ -10,12 +10,14 @@ from bokeh.models import Legend
 from bokeh.io import output_file, show, vplot
 from datetime import datetime as dt
 from bokeh.models import DatetimeTickFormatter
+from bokeh.charts import HeatMap, output_file, show
+
 
 #df = pd.read_csv('all.csv')
 #pd.set_option('display.max_rows', 1000)
 pd.set_option('display.height', 1000)
 pd.set_option('display.max_rows', 100)
-pd.set_option('display.max_columns', 500)
+pd.set_option('display.max_columns', 23)
 pd.set_option('display.width', 1000)
 
 def convert_temp(source_temp=None):
@@ -55,15 +57,37 @@ def initDataFrame():
     dfNewM = pd.merge(dfNew, dfNewTP, on=['date','hour'])
 
     c_names = {}
-    for i in range(1,25):
+    for i in range(1,12):
         c_names[i] = 'station_'+str(i)
+
+    c_names2 = {}
+    for i in range(1, 21):
+        c_names2[i] = 'zone_' + str(i)
 
     dfNewM.rename(columns=c_names, inplace=True)
     dfNewM.drop(['year_y','month_y','day_y','day_y'],inplace=True,axis=1,errors='ignore')
     dfNewM2 = dfNewM.pivot_table(values='hourLoad', index=['year_x', 'month_x', 'day_x', 'date', 'hour', 'station_1',
                                                              'station_2','station_3','station_4','station_5','station_6','station_7',
-                                                             'station_8','station_9', 'station_10', 'station_11'], columns="zone_id")
-    print dfNewM2.corr()
+                                                             'station_8','station_9', 'station_10', 'station_11'], columns="zone_id").reset_index(['station_1',
+                                                             'station_2','station_3','station_4','station_5','station_6','station_7',
+                                                             'station_8','station_9', 'station_10', 'station_11'])
+    dfNewM2.rename(columns=c_names2, inplace=True)
+    corrs = dfNewM2.corr()
+    output_file('vbar1.html')
+
+    # this shows the right 4x4 matrix, but values are still wrong
+    df1 = pd.DataFrame(
+        dict(
+            apples=[4, 5, 8],
+            bananas=[1, 2, 4],
+            pears=[6, 5, 4],
+        ),
+        index=['2012', '2013', '2014']
+    )
+
+    p = HeatMap(df1, title='Fruits')
+
+    show(p)
     #dfNew.to_csv("allN.csv")
     return dfNew
 
