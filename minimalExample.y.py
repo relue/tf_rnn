@@ -1,4 +1,5 @@
 import pandas as pd
+import pdb
 import numpy as np
 from numpy import pi, arange, sin, linspace
 from bokeh.charts import Bar, output_file, show
@@ -12,6 +13,10 @@ from bokeh.models import DatetimeTickFormatter
 
 #df = pd.read_csv('all.csv')
 #pd.set_option('display.max_rows', 1000)
+pd.set_option('display.height', 1000)
+pd.set_option('display.max_rows', 100)
+pd.set_option('display.max_columns', 500)
+pd.set_option('display.width', 1000)
 
 def convert_temp(source_temp=None):
    return (source_temp - 32.0) * (5.0/9.0)
@@ -42,12 +47,23 @@ def initDataFrame():
     for i in range(1,25):
         hourList2.append('c'+str(i))
 
-    dfNew = pd.melt(df, id_vars=['zone_id', 'year', 'month', 'day', 'dayLoad', 'date'], value_vars=hourList, var_name='hour', value_name='hourLoad')
+    dfNew = pd.melt(df, id_vars=['year', 'month', 'day',  'date', 'dayLoad', 'zone_id'], value_vars=hourList, var_name='hour', value_name='hourLoad')
     dfNewT = pd.melt(dfT, id_vars=['station_id', 'year', 'month', 'day', 'dayTemp', 'date'], value_vars=hourList2, var_name='hour', value_name='hourTemp')
     dfNew['hour'] = dfNew['hour'].apply(lambda x: x[1:])
     dfNewT['hour'] = dfNewT['hour'].apply(lambda x: x[1:])
     dfNewTP = dfNewT.pivot_table(values='hourTemp', index=['year', 'month', 'day', 'date', 'hour'], columns="station_id").reset_index(['year', 'month', 'day', 'date', 'hour'])
     dfNewM = pd.merge(dfNew, dfNewTP, on=['date','hour'])
+
+    c_names = {}
+    for i in range(1,25):
+        c_names[i] = 'station_'+str(i)
+
+    dfNewM.rename(columns=c_names, inplace=True)
+    dfNewM.drop(['year_y','month_y','day_y','day_y'],inplace=True,axis=1,errors='ignore')
+    dfNewM2 = dfNewM.pivot_table(values='hourLoad', index=['year_x', 'month_x', 'day_x', 'date', 'hour', 'station_1',
+                                                             'station_2','station_3','station_4','station_5','station_6','station_7',
+                                                             'station_8','station_9', 'station_10', 'station_11'], columns="zone_id")
+    print dfNewM2.corr()
     #dfNew.to_csv("allN.csv")
     return dfNew
 
