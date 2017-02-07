@@ -2,15 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="532c3549-07c7-4872-84ee-123a0fd38e70" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/corr.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/settings.jar" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/heatmap.html" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vbar1.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/energyload_explore.py" afterPath="$PROJECT_DIR$/energyload_explore.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/minimalExample.y.py" afterPath="$PROJECT_DIR$/minimalExample.y.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vbar.html" afterPath="$PROJECT_DIR$/vbar.html" />
     </list>
     <ignored path="tf_rnn.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -509,7 +501,14 @@
       <option name="project" value="LOCAL" />
       <updated>1486330207782</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="added correlation heatmaps plots">
+      <created>1486475329683</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1486475329683</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -553,7 +552,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="test" />
-    <option name="LAST_COMMIT_MESSAGE" value="test" />
+    <MESSAGE value="added correlation heatmaps plots" />
+    <option name="LAST_COMMIT_MESSAGE" value="added correlation heatmaps plots" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
