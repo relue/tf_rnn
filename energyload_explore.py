@@ -21,6 +21,12 @@ optional convert nach fahrenheit
 + Korrelation
 
 Transformation bzw Impute von Missing Values?
+
+Neue Todos:
+- Korrelation Heatmap
+- einfaches RNN
+- transformierte Daten überprüfen
+-
 '''
 
 import pandas as pd
@@ -219,7 +225,7 @@ p5 = figure(width=1000, height=500, x_range = (df1['dayLoad'].min(),df1['dayLoad
 p5.xaxis.axis_label = "Date"
 p5.yaxis.axis_label = "Temperature "
 p5.yaxis[0].formatter = PrintfTickFormatter(format="%5.1f C")
-r31 = p5.circle(df1['dayLoad'], df1['dayTemp'], color="red")
+r31 = p5.circle(df1['dayLoad'], df1['dayTemp'], color="red", size=0.5)
 
 legend3 = Legend(legends=[
     ("Avg. Temperature in Celsius",   [r31])

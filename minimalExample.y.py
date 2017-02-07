@@ -11,13 +11,15 @@ from bokeh.io import output_file, show, vplot
 from datetime import datetime as dt
 from bokeh.models import DatetimeTickFormatter
 from bokeh.charts import HeatMap, output_file, show
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 
 #df = pd.read_csv('all.csv')
 #pd.set_option('display.max_rows', 1000)
 pd.set_option('display.height', 1000)
 pd.set_option('display.max_rows', 100)
-pd.set_option('display.max_columns', 23)
+pd.set_option('display.max_columns', 19)
 pd.set_option('display.width', 1000)
 
 def convert_temp(source_temp=None):
@@ -72,24 +74,40 @@ def initDataFrame():
                                                              'station_2','station_3','station_4','station_5','station_6','station_7',
                                                              'station_8','station_9', 'station_10', 'station_11'])
     dfNewM2.rename(columns=c_names2, inplace=True)
-    corrs = dfNewM2.corr()
-    output_file('vbar1.html')
 
-    # this shows the right 4x4 matrix, but values are still wrong
-    df1 = pd.DataFrame(
-        dict(
-            apples=[4, 5, 8],
-            bananas=[1, 2, 4],
-            pears=[6, 5, 4],
-        ),
-        index=['2012', '2013', '2014']
-    )
+    dfNewM2['station_avg'] = dfNewM2['station_1'] / 12
+    for i in range(1, 12):
+        dfNewM2['station_avg'] = dfNewM2['station_avg'] + dfNewM2['station_' + str(i)] / 12
 
-    p = HeatMap(df1, title='Fruits')
+    dfNewM2['zone_avg'] = dfNewM2['zone_1'] / 20
+    for i in range(1, 21):
+        dfNewM2['zone_avg'] = dfNewM2['zone_avg'] + dfNewM2['zone_' + str(i)] / 20
 
-    show(p)
     #dfNew.to_csv("allN.csv")
-    return dfNew
+    return dfNewM2
+
+def plot_corr1(df,size=10):
+    '''Function plots a graphical correlation matrix for each pair of columns in the dataframe.
+
+    Input:
+        df: pandas DataFrame
+        size: vertical and horizontal size of the plot'''
+
+    corr = df.corr()
+    fig, ax = plt.subplots(figsize=(size, size))
+
+    ax.matshow(corr)
+    plt.xticks(range(len(corr.columns)), corr.columns, rotation=90)
+    plt.yticks(range(len(corr.columns)), corr.columns);
+    fig.savefig('corr.png')
+
+def plot_corr2(df):
+    corr = df.corr()
+    sns.heatmap(corr, xticklabels=corr.columns.values, yticklabels=corr.columns.values)
+    sns.plt.xticks(range(len(corr.columns)), corr.columns, rotation=90)
+    sns.plt.yticks(range(len(corr.columns)), corr.columns, rotation=-360)
+    sns.plt.show()
+
 
 
 df = initDataFrame()
