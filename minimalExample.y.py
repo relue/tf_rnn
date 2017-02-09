@@ -13,7 +13,7 @@ from bokeh.models import DatetimeTickFormatter
 from bokeh.charts import HeatMap, output_file, show
 import seaborn as sns
 import matplotlib.pyplot as plt
-
+import itertools
 
 #df = pd.read_csv('all.csv')
 #pd.set_option('display.max_rows', 1000)
@@ -105,11 +105,38 @@ def plot_corr2(df):
     corr = df.corr()
     sns.heatmap(corr, xticklabels=corr.columns.values, yticklabels=corr.columns.values)
     sns.plt.xticks(range(len(corr.columns)), corr.columns, rotation=90)
-    sns.plt.yticks(range(len(corr.columns)), corr.columns, rotation=-360)
+    sns.plt.yticks(range(len(corr.columns)), corr.columns, rotation=0)
     sns.plt.show()
+    fig = sns.plt.gcf()
+    fig.savefig('corr2.png')
 
+def plot_corr3(df):
+    corr = df.corr()
+    c_names = []
+    for i in range(1,12):
+        c_names.append('station_'+str(i))
 
+    c_names2 = []
+    for i in range(1, 21):
+        c_names2.append('zone_' + str(i))
+
+    zones = []
+    stations = []
+    values = []
+    for r in itertools.product(c_names, c_names2):
+        zones.append(r[1])
+        stations.append(r[0])
+        values.append(corr.at[r[0],r[1]])
+
+    heatData = {'x': zones,
+              'values': values,
+              'y': stations}
+
+    hm9 = HeatMap(heatData, y='y', x='x', values='values', stat=None)
+    output_file("heatmap.html", title="heatmap.py example")
+    show(hm9)
 
 df = initDataFrame()
+plot_corr3(df)
 #pd.melt(df, id_vars=['A'], value_vars=['B', 'C'], var_name='myVarname', value_name='myValname')
 

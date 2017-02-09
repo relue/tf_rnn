@@ -37,39 +37,21 @@ from bokeh.plotting import figure, show, output_file
 from bokeh.sampledata.autompg import autompg as df
 from bokeh.models import LinearAxis, Range1d
 from bokeh.models import Legend
-from bokeh.io import output_file, show, vplot
+from bokeh.io import output_file, show, vplot, gridplot
 from bokeh.models import DatetimeTickFormatter
 from bokeh.models import PrintfTickFormatter
+from bokeh.charts import HeatMap, output_file, show, TimeSeries
+import itertools
 import calendar
+from bokeh.models import ColumnDataSource, CustomJS
+from bokeh.models.widgets import DataTable, DateFormatter, TableColumn, Dropdown
 
+import energyload_class
 
-def convert_temp(source_temp=None):
-   return (source_temp - 32.0) * (5.0/9.0)
+df, dfHourly = energyload_class.init_dfs()
+dfHourly['date'] = pd.to_datetime(dfHourly['date'])
+output_file('diagrams1.html')
 
-def initDataFrame():
-    df = pd.read_csv('energy_load/Load_history.csv', thousands=',', dtype='float', na_values=[''])
-    dfT = pd.read_csv('energy_load/temperature_history.csv', thousands=',', dtype='float', na_values=[''],sep=';')
-
-    for i in range(1, 25):
-        dfT['c'+str(i)] = dfT['h'+str(i)].apply(convert_temp)
-
-    df['date'] = pd.to_datetime(df[['year', 'month', 'day']])
-    dfT['date'] = pd.to_datetime(dfT[['year', 'month', 'day']])
-
-    df['dayLoad'] = df['h1']
-    for i in range(2, 25):
-        df['dayLoad'] = df['dayLoad'] + df['h'+str(i)]
-
-    dfT['dayTemp'] = dfT['c1']
-    for i in range(2, 25):
-        dfT['dayTemp'] = dfT['dayTemp'] + dfT['c'+str(i)]
-
-    dfNew = pd.merge(df, dfT, on='date')
-    dfNew.to_csv("all.csv")
-    return dfNew
-
-df = pd.read_csv('all.csv', na_values=[''])
-#df = initDataFrame()
 tempList = []
 loadList = []
 for i in range(1, 25):
@@ -78,13 +60,13 @@ for i in range(1, 25):
 for i in range(1, 25):
     loadList.append(df[['h'+str(i)+'_x']].mean(axis=0))
 
-output_file('vbar.html')
+
 
 #
 # Durchschnitte Temp und Load für Agg-Uhrzeit
 #
 p = figure(width=1000, height=500, x_range=(0, 24), y_range=(-10, 40),
-                toolbar_location=None)
+                toolbar_location="above")
 
 p.xaxis.axis_label = "Hour of Daytime"
 p.yaxis.axis_label = "Temperature in Celsius"
@@ -216,13 +198,13 @@ p4.add_layout(ax, 'right')
 p4.add_layout(legend3, 'below')
 
 #
-# Scatterplot daily
+# Scatterplot daily basis
 
 df1 = df[['dayLoad','dayTemp']]
 
 p5 = figure(width=1000, height=500, x_range = (df1['dayLoad'].min(),df1['dayLoad'].max()), y_range=(df1['dayTemp'].min(),df1['dayTemp'].max()))
 
-p5.xaxis.axis_label = "Date"
+p5.xaxis.axis_label = "Energy Load"
 p5.yaxis.axis_label = "Temperature "
 p5.yaxis[0].formatter = PrintfTickFormatter(format="%5.1f C")
 r31 = p5.circle(df1['dayLoad'], df1['dayTemp'], color="red", size=0.5)
@@ -233,8 +215,25 @@ legend3 = Legend(legends=[
 
 p5.add_layout(legend3, 'below')
 
-ap = vplot(p5, p, p2, p3, p4)
-dfHours = pd.melt(df, id_vars=['A'], value_vars=['B', 'C'])
+#
+# Scatterplot hourly basis
+
+
+p6 = figure(width=1000, height=500, x_range = (dfHourly['zone_avg'].min(),dfHourly['zone_avg'].max()), y_range=(dfHourly['station_avg'].min(),dfHourly['station_avg'].max()))
+
+p6.xaxis.axis_label = "Date"
+p6.yaxis.axis_label = "Temperature "
+p6.yaxis[0].formatter = PrintfTickFormatter(format="%5.1f C")
+r31 = p6.circle(dfHourly['zone_avg'], dfHourly['station_avg'], color="red", size=0.5)
+
+legend3 = Legend(legends=[
+    ("Avg. Temperature in Celsius",   [r31])
+], location=(40, 5))
+
+p6.add_layout(legend3, 'below')
+
+ap = gridplot([[p, None],[p2, None], [p3, None], [p4, None], [p5,p6]])
+
 
 show(ap)
 
