@@ -107,9 +107,11 @@ def initDataFrameHourly():
     dfNewM2.to_csv("allHours.csv")
     return dfNewM2
 
-def init_dfs():
-    df = pd.read_csv('all.csv', na_values=[''])
-    dfHourly = pd.read_csv('allHours.csv', na_values=[''])
-    #df = initDataFrame()
-    #dfHourly = initDataFrameHourly()
+def init_dfs(create = False):
+    if create:
+        df = initDataFrame()
+        dfHourly = initDataFrameHourly()
+    else:
+        df = pd.read_csv('all.csv', na_values=[''])
+        dfHourly = pd.read_csv('allHours.csv', na_values=[''])
     return df, dfHourly
