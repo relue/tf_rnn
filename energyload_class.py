@@ -104,14 +104,19 @@ def initDataFrameHourly():
     dfNewM2['hour'] = dfNewM2['hour'].astype(int) - 1
     dfNewM2['hour'] = dfNewM2['hour'].astype(str).apply(lambda x: x.zfill(2))
     dfNewM2['date'] = dfNewM2['date'].astype(str) + " " + dfNewM2['hour'].astype(str) + ":00"
+    dfNewM2.sort_values(['date'], ascending=[True], inplace=True)
     dfNewM2.to_csv("allHours.csv")
     return dfNewM2
 
-def init_dfs(create = False):
+def init_dfs(create = False, all = True):
     if create:
         df = initDataFrame()
         dfHourly = initDataFrameHourly()
     else:
-        df = pd.read_csv('all.csv', na_values=[''])
         dfHourly = pd.read_csv('allHours.csv', na_values=[''])
-    return df, dfHourly
+        if all:
+            df = pd.read_csv('all.csv', na_values=[''])
+            return df, dfHourly
+        else:
+            return dfHourly
+

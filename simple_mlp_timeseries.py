@@ -15,7 +15,7 @@ import numpy
 
 rows = 10000
 isTransform = True
-timeWindow = 1
+timeWindow = 5
 dimensionsX = 2
 testIndex = rows/2
 ar = ts_gen.generate_ts(rows, isTransform)

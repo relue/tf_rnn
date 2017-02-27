@@ -49,6 +49,7 @@ from bokeh.models.widgets import DataTable, DateFormatter, TableColumn, Dropdown
 import energyload_class
 
 df, dfHourly = energyload_class.init_dfs()
+
 dfHourly['date'] = pd.to_datetime(dfHourly['date'])
 output_file('diagrams1.html')
 
