@@ -21,7 +21,7 @@ newInput = True  # reinit Feature Vektor if true (set this when windowSize ist u
 
 # Parameters
 learning_rate = 0.01
-hm_epochs = 20
+hm_epochs = 10
 n_hidden = 10 # hidden layer num of features
 n_classes = 1 # linear sequence or not
 batchSize = 100
@@ -39,9 +39,8 @@ if isMLP:
     inputSize = inputSize*(timeWindow+1)
 
 if newInput:
-    df = energyload_class.init_dfs(True, False)
+    df = energyload_class.init_dfs(False, False)
     #dataExplore2.showDF(df, True)
-
     df['weekday'] = df['date'].dt.dayofweek
 else:
     df = pd.DataFrame()

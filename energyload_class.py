@@ -115,6 +115,7 @@ def init_dfs(create = False, all = True):
     if create:
         df = initDataFrame()
         dfHourly = initDataFrameHourly()
+        dfHourly['date'] = pd.to_datetime(dfHourly['date'])
     else:
         dfHourly = pd.read_csv('allHours.csv', na_values=[''])
         dfHourly['date'] = pd.to_datetime(dfHourly['date'])
