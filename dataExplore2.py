@@ -12,7 +12,7 @@ df = pd.read_pickle('rnnInput.pd')
 
 class TestApp(Frame):
     """Basic test frame for the table"""
-    def __init__(self, parent=None):
+    def __init__(self, dataFrame, parent=None, ):
         self.parent = parent
         Frame.__init__(self)
         self.main = self.master
@@ -21,11 +21,15 @@ class TestApp(Frame):
         f = Frame(self.main)
         f.pack(fill=BOTH,expand=1)
 
-        self.table = pt = Table(f, dataframe=df,
+        self.table = pt = Table(f, dataframe=dataFrame,
                                 showtoolbar=True, showstatusbar=True)
         pt.show()
         return
 
-app = TestApp()
-#launch the app
-app.mainloop()
+def showDF(df, breakIt = False):
+    app = TestApp(df)
+    #launch the app
+    app.mainloop()
+    if breakIt:
+        exit()
+
