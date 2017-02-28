@@ -5,7 +5,7 @@ module load cuda/8.0.44
 export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/sw/taurus/libraries/cuda/8.0.44/lib64:/sw/taurus/libraries/cuda/8.0.44/extras/CUPTI/lib64:${HOME}/libraries/cudnn/lib64:"
 export CUDA_HOME="/sw/taurus/libraries/cuda/8.0.44"
 #env/bin/python2.7 tensorflow/tensorflow/examples/tutorials/mnist/fully_connected_feed.py 
-srun --gres=gpu:1 --time=00:30:00 --mem=49110 ~/pythonProjects/env/bin/python2.7 $1
+srun --gres=gpu:4 --time=00:30:00 --mem=49110 ~/pythonProjects/env/bin/python2.7 $1
 
 
 
