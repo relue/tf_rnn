@@ -22,7 +22,7 @@ isMLP = True
 
 # Parameters
 learning_rate = 0.01
-hm_epochs = 10
+hm_epochs = 2
 n_hidden = 10 # hidden layer num of features
 n_classes = 1 # linear sequence or not
 batchSize = 100
@@ -129,7 +129,7 @@ with tf.Session() as sess:
             #raise Exception()
     #err = sess.run(error, feed_dict={x: xInput, y: xOutput})
     #print('errorC:',err)
-    errorC = sess.run(cost, feed_dict={x: xInput, y: xOutput})
+    #errorC = sess.run(cost, feed_dict={x: xInput, y: xOutput})
     print('errorC:',errorC)
     plt.plot(range(0,len(xOutput)),p)
     plt.plot(range(0,len(xOutput)), xOutput)
