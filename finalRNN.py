@@ -126,7 +126,7 @@ with tf.Session() as sess:
             #print(d,'d3',d3)
             #print('ins', inps1, 'ins2', inps2)
             #raise Exception()
-    err = sess.run(error, feed_dict={x: xInput, y: xOutput})
+    #err = sess.run(error, feed_dict={x: xInput, y: xOutput})
     #print('errorC:',err)
     errorC = sess.run(cost, feed_dict={x: xInput, y: xOutput})
     print('errorC:',errorC)
