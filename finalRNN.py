@@ -18,10 +18,11 @@ pd.set_option('display.max_columns', 19)
 pd.set_option('display.width', 1000)
 
 newInput = False  # reinit Feature Vektor if true (set this when windowSize ist updated)
+isMLP = True
 
 # Parameters
 learning_rate = 0.01
-hm_epochs = 10
+hm_epochs = 2
 n_hidden = 10 # hidden layer num of features
 n_classes = 1 # linear sequence or not
 batchSize = 100
@@ -29,7 +30,7 @@ timeWindow = 4
 
 jumpSequences = False
 isLogarithmic = False
-isMLP = True
+
 hiddenLayerCount = 6
 station_id = "station_1"
 zone_id = "zone_1"
@@ -128,7 +129,7 @@ with tf.Session() as sess:
             #raise Exception()
     #err = sess.run(error, feed_dict={x: xInput, y: xOutput})
     #print('errorC:',err)
-    errorC = sess.run(cost, feed_dict={x: xInput, y: xOutput})
+    #errorC = sess.run(cost, feed_dict={x: xInput, y: xOutput})
     print('errorC:',errorC)
     plt.plot(range(0,len(xOutput)),p)
     plt.plot(range(0,len(xOutput)), xOutput)
