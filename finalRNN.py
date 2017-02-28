@@ -39,8 +39,7 @@ if isMLP:
     inputSize = inputSize*(timeWindow+1)
 
 if newInput:
-    df = energyload_class.init_dfs(True, False)
-    #dataExplore2.showDF(df, True)
+    df = energyload_class.init_dfs(False, False)
     df['weekday'] = df['date'].dt.dayofweek
 else:
     df = pd.DataFrame()
@@ -56,7 +55,6 @@ def dynamicRNN(x, weights, biases):
     index = tf.range(0, batch_size) * timeWindow + (timeWindow - 1)
     outputs = tf.gather(tf.reshape(outputs, [-1, n_hidden]), index)
     return tf.matmul(outputs, weights['out'])  + biases['out']
-df
 
 def neural_network_model(data):
     data = tf.cast(data, tf.float32)
