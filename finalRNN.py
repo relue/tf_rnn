@@ -18,6 +18,7 @@ pd.set_option('display.max_columns', 19)
 pd.set_option('display.width', 1000)
 
 newInput = False  # reinit Feature Vektor if true (set this when windowSize ist updated)
+isMLP = True
 
 # Parameters
 learning_rate = 0.01
@@ -29,7 +30,7 @@ timeWindow = 4
 
 jumpSequences = False
 isLogarithmic = False
-isMLP = True
+
 hiddenLayerCount = 6
 station_id = "station_1"
 zone_id = "zone_1"
