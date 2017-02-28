@@ -14,7 +14,7 @@ import itertools
 import calendar
 from bokeh.models import ColumnDataSource, CustomJS
 from bokeh.models.widgets import DataTable, DateFormatter, TableColumn, Dropdown
-
+import dataExplore2
 
 
 def convert_temp(source_temp=None):
@@ -105,6 +105,9 @@ def initDataFrameHourly():
     dfNewM2['hour'] = dfNewM2['hour'].astype(str).apply(lambda x: x.zfill(2))
     dfNewM2['date'] = dfNewM2['date'].astype(str) + " " + dfNewM2['hour'].astype(str) + ":00"
     dfNewM2.sort_values(['date'], ascending=[True], inplace=True)
+    dfNewM2 = dfNewM2.dropna(subset = ['zone_1'])
+    #dataExplore2.showDF(dfNewM2, True)
+
     dfNewM2.to_csv("allHours.csv")
     return dfNewM2
 
@@ -114,9 +117,65 @@ def init_dfs(create = False, all = True):
         dfHourly = initDataFrameHourly()
     else:
         dfHourly = pd.read_csv('allHours.csv', na_values=[''])
+        dfHourly['date'] = pd.to_datetime(dfHourly['date'])
         if all:
             df = pd.read_csv('all.csv', na_values=[''])
             return df, dfHourly
         else:
             return dfHourly
+
+def getBatch(gInput, gOutput, i, batchSize, isMLP):
+    fromI = i*batchSize
+    toI = fromI + batchSize
+    if isMLP:
+        inputR = gInput[fromI:toI,:]
+    else:
+        inputR = gInput[:,fromI:toI]
+    return inputR, gOutput[fromI:toI]
+
+
+def createX(df, featureList, save = False, isMLP = False, isLogarithmic = False, timeWindow = 1, jumpSequences = False, batchSize = 100):
+    columns = range(timeWindow, -1, -1)
+    if save:
+        dfNew = pd.DataFrame(columns=columns)
+        for i in range(0, len(df), timeWindow if jumpSequences else 1):#len(df.index)
+            if i >= timeWindow:
+                columnList = []
+                for t in columns:
+                    tupleList = []
+                    for feature in featureList:
+                        tupleList.append(df.iloc[i-t][feature])
+                    columnList.append(tupleList)
+                row=pd.Series(columnList,columns)
+                dfNew = dfNew.append([row],ignore_index=True)
+        dfNew[featureList] = dfNew[0].apply(pd.Series)
+        #dfNew[['load']] = dfNew[0].apply(pd.Series)
+        dfNew.to_pickle("rnnInput.pd")
+    else:
+        dfNew = pd.read_pickle('rnnInput.pd')
+
+    tfInput = []
+    tfOutput= []
+    embeddedInputColumns =[]
+
+    if isMLP:
+        for t in columns:
+            tempTuple = []
+            for feature in featureList:
+                tempTuple.append(feature+'_'+str(t))
+                embeddedInputColumns.append(feature+'_'+str(t))
+            dfNew[tempTuple] = dfNew[t].apply(pd.Series)
+        tfInput = dfNew.loc[:,embeddedInputColumns]
+        tfOutput = np.asarray(dfNew[featureList[-1]].tolist())
+    else:
+        for t in columns:
+            if t == 0:
+                tfOutput = np.asarray(dfNew[featureList[-1]].tolist())
+            else:
+                tfInput.append(dfNew[t].tolist())
+    #dataExplore2.showDF(tfInput)
+    if isLogarithmic:
+        return np.log(np.asarray(tfInput)),np.log(tfOutput)
+    else:
+        return np.asarray(tfInput),tfOutput
 
