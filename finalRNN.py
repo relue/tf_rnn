@@ -17,7 +17,7 @@ pd.set_option('display.max_rows', 100)
 pd.set_option('display.max_columns', 19)
 pd.set_option('display.width', 1000)
 
-newInput = True  # reinit Feature Vektor if true (set this when windowSize ist updated)
+newInput = False  # reinit Feature Vektor if true (set this when windowSize ist updated)
 
 # Parameters
 learning_rate = 0.01
@@ -39,7 +39,7 @@ if isMLP:
     inputSize = inputSize*(timeWindow+1)
 
 if newInput:
-    df = energyload_class.init_dfs(False, False)
+    df = energyload_class.init_dfs(True, False)
     #dataExplore2.showDF(df, True)
     df['weekday'] = df['date'].dt.dayofweek
 else:
