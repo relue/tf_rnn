@@ -130,7 +130,7 @@ with tf.Session() as sess:
     #err = sess.run(error, feed_dict={x: xInput, y: xOutput})
     #print('errorC:',err)
     #errorC = sess.run(cost, feed_dict={x: xInput, y: xOutput})
-    print('errorC:',errorC)
+    #print('errorC:',errorC)
     plt.plot(range(0,len(xOutput)),p)
     plt.plot(range(0,len(xOutput)), xOutput)
     plt.legend(['p(t)', 'y(t)'], loc='upper left')
