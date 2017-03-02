@@ -67,7 +67,7 @@ for i in range(1, 25):
 # Durchschnitte Temp und Load für Agg-Uhrzeit
 #
 p = figure(width=1000, height=500, x_range=(0, 24), y_range=(-10, 40),
-                toolbar_location="above")
+                toolbar_location="left")
 
 p.xaxis.axis_label = "Hour of Daytime"
 p.yaxis.axis_label = "Temperature in Celsius"
@@ -98,7 +98,8 @@ df['dayTemp'] = df['dayTemp'] / 24
 dfAggE = df.groupby(['date'], as_index = False)['dayLoad'].mean()
 dfAggT = df.groupby(['date'], as_index = False)['dayTemp'].mean()
 
-p2 = figure(width=1000, height=500, y_range=(dfAggT['dayTemp'].min(),dfAggT['dayTemp'].max()))
+p2 = figure(width=1000, height=500, y_range=(dfAggT['dayTemp'].min(),dfAggT['dayTemp'].max()),
+                toolbar_location="left")
 
 p2.xaxis.axis_label = "Date"
 p2.yaxis.axis_label = "Temperature "
@@ -233,7 +234,7 @@ legend3 = Legend(legends=[
 
 p6.add_layout(legend3, 'below')
 
-ap = gridplot([[p, None],[p2, None], [p3, None], [p4, None], [p5,p6]])
+ap = gridplot([[p],[p2], [p3], [p4], [p5], [p6]])
 
 
 show(ap)

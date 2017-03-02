@@ -11,22 +11,21 @@ import os
 import math
 import dataExplore2
 
-
 pd.set_option('display.height', 1000)
 pd.set_option('display.max_rows', 100)
 pd.set_option('display.max_columns', 19)
 pd.set_option('display.width', 1000)
 
-newInput = False  # reinit Feature Vektor if true (set this when windowSize ist updated)
-isMLP = True
+newInput = False # reinit Feature Vektor if true (set this when windowSize ist updated)
+isMLP = False
 
 # Parameters
-learning_rate = 0.01
-hm_epochs = 2
-n_hidden = 10 # hidden layer num of features
+learning_rate = 0.1
+hm_epochs = 5
+n_hidden = 4 # hidden layer num of features
 n_classes = 1 # linear sequence or not
-batchSize = 100
-timeWindow = 4
+batchSize = 32
+timeWindow = 1
 
 jumpSequences = False
 isLogarithmic = False
@@ -34,10 +33,11 @@ isLogarithmic = False
 hiddenLayerCount = 6
 station_id = "station_1"
 zone_id = "zone_1"
-featureList = ['hour', 'weekday',  station_id, zone_id]
+featureList = [zone_id]
 inputSize = len(featureList)
+
 if isMLP:
-    inputSize = inputSize*(timeWindow+1)
+    inputSize = inputSize*(timeWindow)
 
 if newInput:
     df = energyload_class.init_dfs(False, False)
@@ -88,12 +88,12 @@ def debug(x):
     return inputs2, x, outputs2, states2, outputs3
 
 xInput, xOutput = energyload_class.createX(df, featureList, save=newInput, isMLP = isMLP, isLogarithmic=isLogarithmic,
-                                           timeWindow = timeWindow, jumpSequences = jumpSequences,
-                                           batchSize = batchSize)
+                                           timeWindow = timeWindow, jumpSequences = jumpSequences)
 if isMLP:
     x = tf.placeholder('float', [None, inputSize])
 else:
     x = tf.placeholder("float", [timeWindow, None, inputSize])
+
 y = tf.placeholder("float", [None])
 weights = {
     'out': tf.Variable(tf.random_normal([n_hidden, n_classes]))
@@ -101,13 +101,18 @@ weights = {
 biases = {
     'out': tf.Variable(tf.random_normal([n_classes]))
 }
-prediction = neural_network_model(x)
-#prediction = dynamicRNN(x, weights, biases)
+if isMLP:
+    prediction = neural_network_model(x)
+else:
+    prediction = dynamicRNN(x, weights, biases)
+
 error = (prediction - y) ** 2
 cost = tf.reduce_mean(error)
-optimizer = tf.train.AdamOptimizer().minimize(cost)
-#optimizer = tf.train.GradientDescentOptimizer(learning_rate=learning_rate).minimize(cost)
-#dB = debug(x)
+if isMLP:
+    optimizer = tf.train.AdamOptimizer().minimize(cost)
+else:
+    optimizer = tf.train.GradientDescentOptimizer(learning_rate=learning_rate).minimize(cost)
+
 init = tf.global_variables_initializer()
 with tf.Session() as sess:
     sess.run(init)
@@ -121,7 +126,7 @@ with tf.Session() as sess:
             #print("w", w, "b", b)
             print('cost:',c," epoch",epoch," batch",batchI)
             learnStep += 1
-            p = sess.run(prediction, feed_dict={x: xInput, y: xOutput})
+
             #print(p)
             #inps1,inps2, d, st, d3 = sess.run(dB, feed_dict={x: xInputBatch, y: xOutputBatch})
             #print(d,'d3',d3)
@@ -129,8 +134,9 @@ with tf.Session() as sess:
             #raise Exception()
     #err = sess.run(error, feed_dict={x: xInput, y: xOutput})
     #print('errorC:',err)
-    #errorC = sess.run(cost, feed_dict={x: xInput, y: xOutput})
-    #print('errorC:',errorC)
+    errorC = sess.run(cost, feed_dict={x: xInput, y: xOutput})
+    print('errorC:',errorC)
+    p = sess.run(prediction, feed_dict={x: xInput, y: xOutput})
     plt.plot(range(0,len(xOutput)),p)
     plt.plot(range(0,len(xOutput)), xOutput)
     plt.legend(['p(t)', 'y(t)'], loc='upper left')

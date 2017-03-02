@@ -15,7 +15,8 @@ import calendar
 from bokeh.models import ColumnDataSource, CustomJS
 from bokeh.models.widgets import DataTable, DateFormatter, TableColumn, Dropdown
 import dataExplore2
-
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.metrics import mean_squared_error
 
 def convert_temp(source_temp=None):
    return (source_temp - 32.0) * (5.0/9.0)
@@ -134,9 +135,8 @@ def getBatch(gInput, gOutput, i, batchSize, isMLP):
         inputR = gInput[:,fromI:toI]
     return inputR, gOutput[fromI:toI]
 
-
-def createX(df, featureList, save = False, isMLP = False, isLogarithmic = False, timeWindow = 1, jumpSequences = False, batchSize = 100):
-    columns = range(timeWindow, -1, -1)
+def createX(df, featureList, save = False, isMLP = False, isLogarithmic = False, timeWindow = 1, jumpSequences = False):
+    columns = range(timeWindow-1, -1, -1)
     if save:
         dfNew = pd.DataFrame(columns=columns)
         for i in range(0, len(df), timeWindow if jumpSequences else 1):#len(df.index)
@@ -152,6 +152,7 @@ def createX(df, featureList, save = False, isMLP = False, isLogarithmic = False,
         dfNew[featureList] = dfNew[0].apply(pd.Series)
         #dfNew[['load']] = dfNew[0].apply(pd.Series)
         dfNew.to_pickle("rnnInput.pd")
+        #dataExplore2.showDF(dfNew, True)
     else:
         dfNew = pd.read_pickle('rnnInput.pd')
 
@@ -168,13 +169,22 @@ def createX(df, featureList, save = False, isMLP = False, isLogarithmic = False,
             dfNew[tempTuple] = dfNew[t].apply(pd.Series)
         tfInput = dfNew.loc[:,embeddedInputColumns]
         tfOutput = np.asarray(dfNew[featureList[-1]].tolist())
+        #dataExplore2.showDF(tfInput, True)
     else:
         for t in columns:
             if t == 0:
-                tfOutput = np.asarray(dfNew[featureList[-1]].tolist())
+                scaler = MinMaxScaler(feature_range=(0, 1))
+                tmpI = scaler.fit_transform(dfNew[t].tolist())
+                scaler = MinMaxScaler(feature_range=(0, 1))
+                tmp = scaler.fit_transform(dfNew[featureList[-1]].tolist())
+
+                tfOutput = np.asarray(tmp)
+
+                tfInput.append(tmpI)
             else:
-                tfInput.append(dfNew[t].tolist())
-    #dataExplore2.showDF(tfInput)
+                tfInput.append(dfNew[t-1].tolist())
+    #[t, rows, inputs]
+
     if isLogarithmic:
         return np.log(np.asarray(tfInput)),np.log(tfOutput)
     else:
