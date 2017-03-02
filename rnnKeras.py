@@ -28,7 +28,7 @@ model = Sequential()
 model.add(SimpleRNN(4, input_length=timeWindow, input_dim=1))
 model.add(Dense(1))
 model.compile(loss='mean_squared_error', optimizer=opt)
-model.fit(xInput, xOutput, nb_epoch=50, batch_size=32, verbose=1)
+model.fit(xInput, xOutput, nb_epoch=50, batch_size=32, verbose=1, validation_split=0.2)
 p = model.predict(xInput)
 
 
