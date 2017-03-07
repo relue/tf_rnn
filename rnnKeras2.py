@@ -7,12 +7,14 @@ from keras.layers import Dense
 from keras.layers import LSTM,SimpleRNN
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import mean_squared_error
+
 import energyload_class
 import numpy as np
 import keras
 
 inputSize = 2
 df = energyload_class.init_dfs(False, False)
+
 df['weekday'] = df['date'].dt.dayofweek
 timeWindow = 48
 

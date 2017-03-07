@@ -18,7 +18,7 @@ df = energyload_class.init_dfs(False, False)
 df['weekday'] = df['date'].dt.dayofweek
 timeWindow = 3
 
-xInput, xOutput, scaler = energyload_class.createX(df, featureList, save=False, isMLP = False, isLogarithmic=True,
+xInput, xOutput, scaler = energyload_class.createX(df, featureList, save=True, isMLP = False, isLogarithmic=True,
                                            timeWindow = timeWindow, jumpSequences = False)
 xInput = xInput.swapaxes(0,1)
 
@@ -32,8 +32,6 @@ model.compile(loss='mean_squared_error', optimizer="adam")
 model.fit(xInput, xOutput, nb_epoch=300, batch_size=32, verbose=1, validation_split=0.2, callbacks=[early])
 p = model.predict(xInput)
 
-
-
 # model = Sequential()
 # model.add(Dense(1, input_dim=1, init='glorot_normal'))
 # model.add(Dense(1, init='glorot_normal'))
@@ -45,4 +43,3 @@ plt.plot(range(0,len(xOutput)),scaler.inverse_transform(p))
 plt.plot(range(0,len(xOutput)), scaler.inverse_transform(xOutput))
 plt.legend(['p(t)', 'y(t)'], loc='upper left')
 plt.show()
-

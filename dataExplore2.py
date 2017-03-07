@@ -1,10 +1,9 @@
 from tkinter import *
 from pandastable import Table, TableModel
-import tensorflow as tf
 import random
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import energyload_class
 from time import *
 
