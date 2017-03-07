@@ -18,18 +18,18 @@ df = energyload_class.init_dfs(False, False)
 df['weekday'] = df['date'].dt.dayofweek
 timeWindow = 3
 
-xInput, xOutput, scaler = energyload_class.createX(df, featureList, save=True, isMLP = False, isLogarithmic=True,
+xInput, xOutput, scaler = energyload_class.createX(df, featureList, save=False, isMLP = False, isLogarithmic=True,
                                            timeWindow = timeWindow, jumpSequences = False)
 xInput = xInput.swapaxes(0,1)
 
 opt = keras.optimizers.SGD(lr=0.1, momentum=0.0, decay=0.0, nesterov=False)
-early = keras.callbacks.EarlyStopping(monitor='val_loss', min_delta=0, patience=10, verbose=1, mode='auto')
+early = keras.callbacks.EarlyStopping(monitor='val_loss', min_delta=0, patience=10, verbose=3, mode='auto')
 #shapeInput = [rows, timeSteps, InputSize]                               batchSize = batchSize)
 model = Sequential()
 model.add(SimpleRNN(4, input_length=timeWindow, input_dim=2))
 model.add(Dense(1))
 model.compile(loss='mean_squared_error', optimizer="adam")
-model.fit(xInput, xOutput, nb_epoch=300, batch_size=32, verbose=1, validation_split=0.2, callbacks=[early])
+model.fit(xInput, xOutput, nb_epoch=10, batch_size=100, verbose=1, validation_split=0.2, callbacks=[early])
 p = model.predict(xInput)
 
 # model = Sequential()

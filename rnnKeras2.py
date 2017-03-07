@@ -28,7 +28,7 @@ model = Sequential()
 model.add(SimpleRNN(4, input_length=timeWindow, input_dim=2))
 model.add(Dense(24))
 model.compile(loss='mean_squared_error', optimizer="adam")
-model.fit(xInput, xOutput, nb_epoch=300, batch_size=1, verbose=1, validation_split=0.2, callbacks=[early])
+model.fit(xInput, xOutput, nb_epoch=10, batch_size=100, verbose=1, validation_split=0.2, callbacks=[early])
 p = model.predict(xInput)
 
 plt.plot(range(0,len(xOutput)),scaler.inverse_transform(p))
