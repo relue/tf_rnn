@@ -136,7 +136,7 @@ def getBatch(gInput, gOutput, i, batchSize, isMLP):
     return inputR, gOutput[fromI:toI]
 
 def createX(df, featureList, save = False, isMLP = False, isLogarithmic = False, timeWindow = 1, jumpSequences = False):
-    columns = range(timeWindow-1, -1, -1)
+    columns = range(timeWindow, -1, -1)
     if save:
         dfNew = pd.DataFrame(columns=columns)
         for i in range(0, len(df), timeWindow if jumpSequences else 1):#len(df.index)
@@ -150,8 +150,8 @@ def createX(df, featureList, save = False, isMLP = False, isLogarithmic = False,
                 row=pd.Series(columnList,columns)
                 dfNew = dfNew.append([row],ignore_index=True)
         dfNew[featureList] = dfNew[0].apply(pd.Series)
-        #dfNew[['load']] = dfNew[0].apply(pd.Series)
         dfNew.to_pickle("rnnInput.pd")
+        #dataExplore2.showDF(dfNew, True)
         #dataExplore2.showDF(dfNew, True)
     else:
         dfNew = pd.read_pickle('rnnInput.pd')
@@ -159,6 +159,8 @@ def createX(df, featureList, save = False, isMLP = False, isLogarithmic = False,
     tfInput = []
     tfOutput= []
     embeddedInputColumns =[]
+    if isLogarithmic:
+        scaler = MinMaxScaler(feature_range=(0, 1))
 
     if isMLP:
         for t in columns:
@@ -173,20 +175,64 @@ def createX(df, featureList, save = False, isMLP = False, isLogarithmic = False,
     else:
         for t in columns:
             if t == 0:
-                scaler = MinMaxScaler(feature_range=(0, 1))
-                tmpI = scaler.fit_transform(dfNew[t].tolist())
-                scaler = MinMaxScaler(feature_range=(0, 1))
-                tmp = scaler.fit_transform(dfNew[featureList[-1]].tolist())
-
-                tfOutput = np.asarray(tmp)
-
-                tfInput.append(tmpI)
+                tfOutput = dfNew[featureList[-1]].tolist()
             else:
-                tfInput.append(dfNew[t-1].tolist())
+                if isLogarithmic:
+                    scaledInputs = scaler.fit_transform(dfNew[t].tolist())
+                else:
+                    scaledInputs = dfNew[t].tolist()
+                tfInput.append(scaledInputs)
     #[t, rows, inputs]
 
+    tfInput= np.asarray(tfInput)
+    tfOutput= np.asarray(tfOutput)
     if isLogarithmic:
-        return np.log(np.asarray(tfInput)),np.log(tfOutput)
+        scaler = MinMaxScaler(feature_range=(0, 1))
+        return tfInput, scaler.fit_transform(tfOutput), scaler
     else:
-        return np.asarray(tfInput),tfOutput
+        return tfInput,tfOutput
 
+def createXmulti(df, timeWindow, station_id, zone_id, outputSize = 24, save = False, isStandardized = False):
+    columns = range(1, timeWindow+1)
+    dfS = df[["zone_"+str(zone_id),"station_"+str(station_id)]]
+    if isStandardized:
+        scalerOutput = MinMaxScaler(feature_range=(0, 1))
+        #scalerInput = MinMaxScaler(feature_range=(0, 1))
+        scaledFeatures = scalerOutput.fit_transform(dfS.values)
+        dfS = pd.DataFrame(scaledFeatures, index=dfS.index, columns=dfS.columns)
+
+    if save:
+        dfNew = pd.DataFrame(columns=columns)
+        for i in range(0, len(dfS), outputSize):#len(df.index)
+            if i >= timeWindow and i+outputSize < len(df):
+                columnList = []
+                for t in columns:
+                    tupleList = []
+                    tupleList.append(dfS.iloc[i-t]["zone_"+str(zone_id)])
+                    tupleList.append(dfS.iloc[i-t]["station_"+str(station_id)])
+                    columnList.append(tupleList)
+                    outputList = []
+                    for o in range(0, outputSize):
+                        outputList.append(dfS.iloc[i+o]["zone_"+str(zone_id)])
+                row=pd.Series(columnList+[outputList],columns+["output"])
+                dfNew = dfNew.append([row],ignore_index=True)
+        #dfNew[featureList] = dfNew[0].apply(pd.Series)
+        dfNew.to_pickle("rnnInput.pd")
+        #dataExplore2.showDF(dfNew, True)
+        #dataExplore2.showDF(dfNew, True)
+    else:
+        dfNew = pd.read_pickle('rnnInput.pd')
+
+
+
+    tfOutput = np.asarray(dfNew["output"].tolist())
+    tfInput = []
+    for t in columns:
+        tfInput.append(dfNew[t].tolist())
+    #[t, rows, inputs]
+
+    tfInput= np.asarray(tfInput)
+    if isStandardized:
+        return tfInput, tfOutput, scalerOutput
+    else:
+        return tfInput,tfOutput
