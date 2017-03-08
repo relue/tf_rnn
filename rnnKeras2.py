@@ -21,7 +21,7 @@ df = energyload_class.init_dfs(False, False)
 df['weekday'] = df['date'].dt.dayofweek
 timeWindow = 48
 
-xInput, xOutput, scaler = energyload_class.createXmulti(df, timeWindow, 1, 1, save=False, isStandardized=True)
+xInput, xOutput, scaler = energyload_class.createXmulti(df, timeWindow, 1, 1, save=True, isStandardized=True)
 xInput = xInput.swapaxes(0,1)
 
 opt = keras.optimizers.SGD(lr=0.1, momentum=0.0, decay=0.0, nesterov=False)
