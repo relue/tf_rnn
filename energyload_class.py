@@ -150,11 +150,11 @@ def createX(df, featureList, save = False, isMLP = False, isLogarithmic = False,
                 row=pd.Series(columnList,columns)
                 dfNew = dfNew.append([row],ignore_index=True)
         dfNew[featureList] = dfNew[0].apply(pd.Series)
-        dfNew.to_pickle("rnnInput.pd")
+        dfNew.to_pickle("rnnInputOld.pd")
         #dataExplore2.showDF(dfNew, True)
         #dataExplore2.showDF(dfNew, True)
     else:
-        dfNew = pd.read_pickle('rnnInput.pd')
+        dfNew = pd.read_pickle('rnnInputOld.pd')
 
     tfInput = []
     tfOutput= []
@@ -197,9 +197,15 @@ def createXmulti(df, timeWindow, station_id, zone_id, outputSize = 24, save = Fa
     dfS = df[["zone_"+str(zone_id),"station_"+str(station_id)]]
     if isStandardized:
         scalerOutput = MinMaxScaler(feature_range=(0, 1))
-        #scalerInput = MinMaxScaler(feature_range=(0, 1))
-        scaledFeatures = scalerOutput.fit_transform(dfS.values)
-        dfS = pd.DataFrame(scaledFeatures, index=dfS.index, columns=dfS.columns)
+        scalerInput = MinMaxScaler(feature_range=(0, 1))
+
+        scaledLoads = scalerOutput.fit_transform(dfS["zone_"+str(zone_id)].tolist())
+        lo = pd.Series(scaledLoads)
+        dfS["zone_"+str(zone_id)] = lo.values
+
+        scaledTemps = scalerInput.fit_transform(dfS["station_"+str(station_id)].tolist())
+        te = pd.Series(scaledTemps)
+        dfS["station_"+str(station_id)] = te.values
 
     if save:
         dfNew = pd.DataFrame(columns=columns)

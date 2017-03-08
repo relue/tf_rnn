@@ -18,7 +18,7 @@ df = energyload_class.init_dfs(False, False)
 df['weekday'] = df['date'].dt.dayofweek
 timeWindow = 3
 
-xInput, xOutput, scaler = energyload_class.createX(df, featureList, save=False, isMLP = False, isLogarithmic=True,
+xInput, xOutput, scaler = energyload_class.createX(df, featureList, save=True, isMLP = False, isLogarithmic=True,
                                            timeWindow = timeWindow, jumpSequences = False)
 xInput = xInput.swapaxes(0,1)
 
@@ -29,7 +29,7 @@ model = Sequential()
 model.add(SimpleRNN(4, input_length=timeWindow, input_dim=2))
 model.add(Dense(1))
 model.compile(loss='mean_squared_error', optimizer="adam")
-model.fit(xInput, xOutput, nb_epoch=10, batch_size=100, verbose=1, validation_split=0.2, callbacks=[early])
+model.fit(xInput, xOutput, nb_epoch=20, batch_size=10, verbose=2, validation_split=0.2, callbacks=[early])
 p = model.predict(xInput)
 
 # model = Sequential()
