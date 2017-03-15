@@ -21,7 +21,7 @@ permMatrix = list(itertools.product(*parameters.values()))
 iters = len(permMatrix)
 print "Anzahl der Permutationen:"+str(iters)
 print (permMatrix)
-log = open("parallelExecDetail.log", "w", 1)
+log = open("parallelExecDetail.log", "a")
 
 permIndex = 0
 for el in permMatrix:
