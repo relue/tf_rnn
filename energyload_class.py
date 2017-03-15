@@ -17,6 +17,7 @@ from bokeh.models.widgets import DataTable, DateFormatter, TableColumn, Dropdown
 import dataExplore2
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import mean_squared_error
+import os.path
 
 def convert_temp(source_temp=None):
    return (source_temp - 32.0) * (5.0/9.0)
@@ -207,7 +208,10 @@ def createXmulti(df, timeWindow, station_id, zone_id, outputSize, save = False, 
         te = pd.Series(scaledTemps)
         dfS["station_"+str(station_id)] = te.values
 
-    if save:
+    cacheIdent = str(timeWindow) + "_" + str(outputSize)
+    filename = "rnnInputs/rnnInput"+str(cacheIdent)+".pd"
+    cacheExists = os.path.isfile(filename)
+    if save or not(cacheExists):
         dfNew = pd.DataFrame(columns=columns)
         for i in range(0, len(dfS), outputSize):#len(df.index)
             if i >= timeWindow and i+outputSize < len(df):
@@ -223,10 +227,11 @@ def createXmulti(df, timeWindow, station_id, zone_id, outputSize, save = False, 
                 row=pd.Series(columnList+[outputList],columns+["output"])
                 dfNew = dfNew.append([row],ignore_index=True)
         #dfNew[featureList] = dfNew[0].apply(pd.Series)
-        dfNew.to_pickle("rnnInput.pd")
+
+        dfNew.to_pickle(filename)
         #dataExplore2.showDF(dfNew, False)
     else:
-        dfNew = pd.read_pickle('rnnInput.pd')
+        dfNew = pd.read_pickle(filename)
         #dataExplore2.showDF(dfNew, False)
 
 
