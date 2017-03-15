@@ -21,7 +21,7 @@ permMatrix = list(itertools.product(*parameters.values()))
 iters = len(permMatrix)
 print "Anzahl der Permutationen:"+str(iters)
 print (permMatrix)
-
+log = open("parallelExecDetail.log", "w", 1)
 
 permIndex = 0
 for el in permMatrix:
@@ -39,8 +39,8 @@ for el in permMatrix:
 
 #env/bin/python2.7 tensorflow/tensorflow/examples/tutorials/mnist/fully_connected_feed.py
     command = "srun --gres=cpu:16 --time=00:05:00 --mem=10110  --pty " \
-              "~/pythonProjects/env/bin/python2.7 ~/pythonProjects/tf_rnn/singleExecution.py '"+data_str + "' >> parallelExecDetail.log"
-    p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+              "~/pythonProjects/env/bin/python2.7 ~/pythonProjects/tf_rnn/singleExecution.py '"+data_str + "'"
+    p = subprocess.Popen(command, shell=True, stdout=log)
     logging.warning('command'+str(permIndex)+": "+command)
 
     if permIndex == maxIters:
