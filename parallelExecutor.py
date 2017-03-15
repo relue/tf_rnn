@@ -38,9 +38,9 @@ for el in permMatrix:
     data_str=json.dumps(setting)
 
 #env/bin/python2.7 tensorflow/tensorflow/examples/tutorials/mnist/fully_connected_feed.py
-    command = "srun --gres=cpu:16 --time=00:05:00 --mem=10110  --pty " \
+    command = "srun --gres=cpu:16 --time=00:05:00 --mem=10110 " \
               "~/pythonProjects/env/bin/python2.7 ~/pythonProjects/tf_rnn/singleExecution.py '"+data_str + "'"
-    p = subprocess.Popen(command,  stdout=log)
+    p = subprocess.Popen(command,  stdout=log, stderr=log)
     logging.warning('command'+str(permIndex)+": "+command)
 
     if permIndex == maxIters:
