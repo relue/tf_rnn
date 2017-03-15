@@ -1,6 +1,8 @@
 all.csv
 allHours.csv
 .idea/
+bokehPlots/
+rnnInputs
 diagrams1.html
 diagrams2.html
 rnnInput.pd
