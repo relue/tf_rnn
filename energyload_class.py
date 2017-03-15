@@ -14,7 +14,7 @@ import itertools
 import calendar
 from bokeh.models import ColumnDataSource, CustomJS
 from bokeh.models.widgets import DataTable, DateFormatter, TableColumn, Dropdown
-#import dataExplore2
+import dataExplore2
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import mean_squared_error
 
@@ -192,7 +192,7 @@ def createX(df, featureList, save = False, isMLP = False, isLogarithmic = False,
     else:
         return tfInput,tfOutput
 
-def createXmulti(df, timeWindow, station_id, zone_id, outputSize = 24, save = False, isStandardized = False):
+def createXmulti(df, timeWindow, station_id, zone_id, outputSize, save = False, isStandardized = False):
     columns = range(1, timeWindow+1)
     dfS = df[["zone_"+str(zone_id),"station_"+str(station_id)]]
     if isStandardized:
@@ -224,10 +224,10 @@ def createXmulti(df, timeWindow, station_id, zone_id, outputSize = 24, save = Fa
                 dfNew = dfNew.append([row],ignore_index=True)
         #dfNew[featureList] = dfNew[0].apply(pd.Series)
         dfNew.to_pickle("rnnInput.pd")
-        #dataExplore2.showDF(dfNew, True)
-        #dataExplore2.showDF(dfNew, True)
+        #dataExplore2.showDF(dfNew, False)
     else:
         dfNew = pd.read_pickle('rnnInput.pd')
+        #dataExplore2.showDF(dfNew, False)
 
 
 
