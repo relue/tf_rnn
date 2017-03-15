@@ -21,7 +21,6 @@ iters = len(permMatrix)
 print "Anzahl der Permutationen:"+str(iters)
 print (permMatrix)
 
-pre = subprocess.Popen("~/pythonProjects/tf_rnn/preInit.sh ", shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
 permIndex = 0
 for el in permMatrix:
@@ -40,8 +39,6 @@ for el in permMatrix:
 #env/bin/python2.7 tensorflow/tensorflow/examples/tutorials/mnist/fully_connected_feed.py
 
     p = subprocess.Popen("srun --gres=cpu:16 --time=00:30:00 --mem=40110  --pty ~/pythonProjects/env/bin/python2.7 ~/pythonProjects/tf_rnn/singleExecution.py "+data_str, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    for line in iter(p.stdout.readline, ''): print line,
-    retval = p.wait()
 
     if permIndex == maxIters:
         break
