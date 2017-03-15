@@ -3,6 +3,8 @@ import modelKeras
 import collections
 import json
 import subprocess
+import logging
+logging.basicConfig(filename='parallelExec.log',level=logging.DEBUG)
 
 # Define Parameter Settings
 maxIters = 20
@@ -37,8 +39,9 @@ for el in permMatrix:
     data_str=json.dumps(setting)
 
 #env/bin/python2.7 tensorflow/tensorflow/examples/tutorials/mnist/fully_connected_feed.py
-
-    p = subprocess.Popen("srun --gres=cpu:16 --time=00:30:00 --mem=40110  --pty ~/pythonProjects/env/bin/python2.7 ~/pythonProjects/tf_rnn/singleExecution.py "+data_str, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    command = "srun --gres=cpu:16 --time=00:05:00 --mem=10110  --pty ~/pythonProjects/env/bin/python2.7 ~/pythonProjects/tf_rnn/singleExecution.py "+data_str
+    p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    logging.warning('command'+str(permIndex)+": "+command)
 
     if permIndex == maxIters:
         break

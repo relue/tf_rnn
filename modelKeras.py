@@ -91,4 +91,4 @@ def kerasModel(timeWindow = 7*24,
         show(ap)
     return history
 
-kerasModel(isShow = True)
+#kerasModel(isShow = True)
