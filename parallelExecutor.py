@@ -6,7 +6,7 @@ import logging
 logging.basicConfig(filename='parallelExec.log',level=logging.DEBUG)
 
 # Define Parameter Settings
-maxIters = 5
+maxIters = 3
 parameters = collections.OrderedDict((
 ("learningRate", [0.001, 0.01, 0.05, 0.1, 0.2, 0.4, 0.7]),
 ("hiddenLayer"  , [1, 2, 3, 4]),
@@ -44,3 +44,6 @@ for el in permMatrix:
     if permIndex == maxIters:
         break
     permIndex += 1
+    import time
+    time.sleep(3)
+    p = subprocess.Popen("cat parallelExecDetail.log",  stdout=log, stderr=log, shell=True)
