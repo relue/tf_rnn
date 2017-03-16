@@ -20,8 +20,6 @@ parameters = collections.OrderedDict((
 permMatrix = list(itertools.product(*parameters.values()))
 iters = len(permMatrix)
 print "Anzahl der Permutationen:"+str(iters)
-print (permMatrix)
-
 
 permIndex = 0
 for el in permMatrix:
