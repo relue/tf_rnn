@@ -47,6 +47,6 @@ for el in permMatrix:
 
 import time
 time.sleep(3)
-p = subprocess.Popen("cat parallelExecDetail.log",  stdout=log, stderr=log, shell=True)
+p= subprocess.Popen("cat parallelExecDetail.log", stdout=subprocess.PIPE, stderr=None, shell=True)
 result = p.communicate()[0]
 print result
