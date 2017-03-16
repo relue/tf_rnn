@@ -44,6 +44,9 @@ for el in permMatrix:
     if permIndex == maxIters:
         break
     permIndex += 1
-    import time
-    time.sleep(3)
-    p = subprocess.Popen("cat parallelExecDetail.log",  stdout=log, stderr=log, shell=True)
+
+import time
+time.sleep(3)
+p = subprocess.Popen("cat parallelExecDetail.log",  stdout=log, stderr=log, shell=True)
+result = p.communicate()[0]
+print result
