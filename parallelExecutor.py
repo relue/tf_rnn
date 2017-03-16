@@ -20,7 +20,7 @@ parameters = collections.OrderedDict((
 permMatrix = list(itertools.product(*parameters.values()))
 iters = len(permMatrix)
 print "Anzahl der Permutationen:"+str(iters)
-log = open("~/pythonProjects/tf_rnn/parallelExecDetail.log", "w")
+log = open("parallelExecDetail.log", "w")
 permIndex = 0
 for el in permMatrix:
     keys=parameters.keys()
