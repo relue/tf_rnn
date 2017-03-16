@@ -28,7 +28,7 @@ for el in permMatrix:
         "learningRate" : el[keys.index("learningRate")],
         "hiddenNodes" : el[keys.index("hiddenNodes")],
         "timeWindow" : el[keys.index("timeWindow")],
-        "optimizers" : el[keys.index("optimizers")],
+        "optimizer" : el[keys.index("optimizers")],
         "batchSize" : el[keys.index("batchSize")],
         "epochSize" : el[keys.index("epochSize")],
         "indexID" : permIndex
