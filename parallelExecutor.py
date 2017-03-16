@@ -36,7 +36,7 @@ for el in permMatrix:
     data_str=json.dumps(setting)
 
 #env/bin/python2.7 tensorflow/tensorflow/examples/tutorials/mnist/fully_connected_feed.py
-    command = "srun --cpus-per-task=16 --time=00:30:00 --mem=30110 " \
+    command = "sh ~/pythonProjects/tf_rnn/preInit.sh;srun --cpus-per-task=16 --time=00:30:00 --mem=30110 " \
               "~/pythonProjects/env/bin/python2.7 ~/pythonProjects/tf_rnn/singleExecution.py '"+data_str + "'"
     p = subprocess.Popen(command,  stdout=log, stderr=log, shell=True)
     logging.warning('command'+str(permIndex)+": "+command)
