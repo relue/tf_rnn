@@ -21,10 +21,11 @@ permMatrix = list(itertools.product(*parameters.values()))
 iters = len(permMatrix)
 print "Anzahl der Permutationen:"+str(iters)
 print (permMatrix)
-log = open("parallelExecDetail.log", "w")
+
 
 permIndex = 0
 for el in permMatrix:
+    log = open("parallelExecDetail"+str(permIndex)+".log", "w")
     keys=parameters.keys()
     setting = {
         "learningRate" : el[keys.index("learningRate")],
