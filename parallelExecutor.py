@@ -23,7 +23,6 @@ print "Anzahl der Permutationen:"+str(iters)
 log = open("~/pythonProjects/tf_rnn/parallelExecDetail.log", "w")
 permIndex = 0
 for el in permMatrix:
-    l
     keys=parameters.keys()
     setting = {
         "learningRate" : el[keys.index("learningRate")],
@@ -40,7 +39,7 @@ for el in permMatrix:
     command = "srun --gres=cpu:16 --time=00:05:00 --mem=10110 " \
               "~/pythonProjects/env/bin/python2.7 ~/pythonProjects/tf_rnn/singleExecution.py '"+data_str + "'"
     p = subprocess.Popen(command,  stdout=log, shell=True)
-    #logging.warning('command'+str(permIndex)+": "+command)
+    logging.warning('command'+str(permIndex)+": "+command)
 
     if permIndex == maxIters:
         break
