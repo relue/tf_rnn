@@ -20,10 +20,10 @@ parameters = collections.OrderedDict((
 permMatrix = list(itertools.product(*parameters.values()))
 iters = len(permMatrix)
 print "Anzahl der Permutationen:"+str(iters)
-
+log = open("~/pythonProjects/tf_rnn/parallelExecDetail.log", "w")
 permIndex = 0
 for el in permMatrix:
-    log = open("parallelExecDetail"+str(permIndex)+".log", "w")
+    l
     keys=parameters.keys()
     setting = {
         "learningRate" : el[keys.index("learningRate")],
@@ -39,7 +39,7 @@ for el in permMatrix:
 #env/bin/python2.7 tensorflow/tensorflow/examples/tutorials/mnist/fully_connected_feed.py
     command = "srun --gres=cpu:16 --time=00:05:00 --mem=10110 " \
               "~/pythonProjects/env/bin/python2.7 ~/pythonProjects/tf_rnn/singleExecution.py '"+data_str + "'"
-    p = subprocess.Popen(command,  stdout=log)
+    p = subprocess.Popen(command,  stdout=log, shell=True, )
     logging.warning('command'+str(permIndex)+": "+command)
 
     if permIndex == maxIters:
