@@ -6,7 +6,7 @@ import logging
 logging.basicConfig(filename='parallelExec.log',level=logging.DEBUG)
 
 # Define Parameter Settings
-maxIters = 20
+maxIters = 5
 parameters = collections.OrderedDict((
 ("learningRate", [0.001, 0.01, 0.05, 0.1, 0.2, 0.4, 0.7]),
 ("hiddenLayer"  , [1, 2, 3, 4]),
