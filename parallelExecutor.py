@@ -44,7 +44,7 @@ for el in permMatrix:
     command = "source ~/pythonProjects/tf_rnn/preInit.sh && srun --cpus-per-task=16 --time=00:30:00 --mem=30110 " \
               "~/pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/singleExecution.py '"+data_str + "'"
     p = subprocess.Popen(command,  stdout=log, stderr=log, shell=True)
-    print "permIndex"+permIndex
+    print "permIndex"+str(permIndex)
     if permIndex == maxIters:
         break
     permIndex += 1
