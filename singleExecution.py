@@ -15,5 +15,8 @@ modelOut = modelKeras.kerasModel(**data)
 data['loss'] = modelOut.history['loss'][-1]
 data['val_loss'] = modelOut.history['val_loss'][-1]
 data['exec_time'] = (time.time() - start_time)
-singleResult = pd.Series(data)
+columns = data.keys() + ['loss', 'val_loss','exec_time']
+
+singleResult = pd.DataFrame(data, index=[data["indexID"]])
 singleResult.to_pickle("jobResults/result"+str(data["indexID"]))
+print singleResult
