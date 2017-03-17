@@ -3,6 +3,7 @@ import sys
 import json
 data=json.loads(sys.argv[1])
 sys.stdout = open('jobResults/output'+str(data["indexID"]), 'w')
+sys.err = open('jobResults/error'+str(data["indexID"]), 'w')
 import modelKeras
 
 import time
