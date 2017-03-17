@@ -1,7 +1,10 @@
-all.csv
-allHours.csv
 .idea/
 bokehPlots/
+jobResults/
+rnnInputs/
+
+all.csv
+allHours.csv
 rnnInputs
 diagrams1.html
 diagrams2.html
