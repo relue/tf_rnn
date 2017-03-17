@@ -7,7 +7,7 @@ import os
 
 
 # Define Parameter Settings
-maxIters = 100
+maxIters = 1000
 parameters = collections.OrderedDict((
 ("learningRate", [0.001, 0.01, 0.05, 0.1, 0.2, 0.4, 0.7]),
 #("hiddenLayer"  , [1, 2, 3, 4]),
