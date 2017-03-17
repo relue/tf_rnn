@@ -87,7 +87,7 @@ def kerasModel(timeWindow = 7*24,
     p3.add_layout(legend2, 'below')
 
     ap = gridplot([[p2],[p3]])
-    if show:
+    if isShow:
         show(ap)
     return history
 
