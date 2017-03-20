@@ -6,6 +6,14 @@ import logging
 import os
 import time
 
+def createBatchFile(singleCommand, id):
+     with open("sbatchConfig.sh", "rt") as fin:
+        with open("batchScripts/script"+str(id)+".sh", "wt") as fout:
+            for line in fin:
+                fout.write(line.replace('?job?', singleCommand))
+
+#createBatchFile("srun --cpus-per-task=1 --time=00:30:00 --mem=3110 ~/pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/singleExecution.py", 2)
+
 maxIters = 500
 parameters = collections.OrderedDict((
 ("learningRate", [0.001, 0.01, 0.05, 0.1, 0.2, 0.4, 0.7]),
@@ -25,6 +33,8 @@ permIndex = 0
 p = subprocess.Popen("scancel -u s2071275",  stdout=log, stderr=log, shell=True)
 for filename in os.listdir("jobResults/"):
     os.remove("jobResults/"+filename)
+for filename in os.listdir("batchScripts/"):
+    os.remove("batchScripts/"+filename)
 preCommand = "export PYTHONWARNINGS='ignore' && source ~/pythonProjects/tf_rnn/preInit.sh && "
 command = ""
 for el in permMatrix:
@@ -39,10 +49,8 @@ for el in permMatrix:
         "indexID" : permIndex
     }
     data_str=json.dumps(setting)
-    print data_str
-#env/bin/python2.7 tensorflow/tensorflow/examples/tutorials/mnist/fully_connected_feed.py
-    command = preCommand+"srun --cpus-per-task=1 --time=00:30:00 --mem=3110 ~/pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/singleExecution.py '"+data_str + "' "
-    p = subprocess.Popen(command,  stdout=log, stderr=log, shell=True)
+    createBatchFile("srun --cpus-per-task=1 --time=00:30:00 --mem=3110 ~/pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/singleExecution.py '"+data_str + "' ", permIndex)
+    p = subprocess.Popen("sbatch batchScripts/script"+str(permIndex)+".sh",  stdout=log, stderr=log, shell=True)
     time.sleep(1)
     if permIndex >= maxIters:
         break

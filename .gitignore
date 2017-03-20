@@ -12,3 +12,4 @@ rnnInput.pd
 *.pyc
 *.html
 *.log
+batchScripts/
