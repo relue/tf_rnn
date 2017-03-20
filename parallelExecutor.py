@@ -51,7 +51,7 @@ for el in permMatrix:
     data_str=json.dumps(setting)
     createBatchFile("srun --cpus-per-task=1 --time=00:30:00 --mem=3110 ~/pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/singleExecution.py '"+data_str + "' ", permIndex)
     p = subprocess.Popen("sbatch batchScripts/script"+str(permIndex)+".sh",  stdout=log, stderr=log, shell=True)
-    time.sleep(1)
+    #time.sleep(1)
     if permIndex >= maxIters:
         break
     permIndex += 1
