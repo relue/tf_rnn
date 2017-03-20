@@ -41,7 +41,7 @@ for el in permMatrix:
     data_str=json.dumps(setting)
 
 #env/bin/python2.7 tensorflow/tensorflow/examples/tutorials/mnist/fully_connected_feed.py
-    command = preCommand+"srun --cpus-per-task=4 --time=00:30:00 --mem=20110 ~/pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/singleExecution.py '"+data_str + "' "
+    command = preCommand+"sbatch sbatchConfig.sh ~/pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/singleExecution.py '"+data_str + "' "
     p = subprocess.Popen(command,  stdout=log, stderr=log, shell=True)
     time.sleep(1)
     if permIndex == maxIters:
