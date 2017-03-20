@@ -15,6 +15,7 @@ missing = []
 maxAwaiting = sys.argv[1]
 for s in dirList:
     name, id = s.split("_")
+    id = int(id)
     if name == "error":
         size = os.stat(dirName+s).st_size
         if size > 3330:
