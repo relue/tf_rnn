@@ -37,6 +37,7 @@ for filename in os.listdir("batchScripts/"):
     os.remove("batchScripts/"+filename)
 preCommand = "export PYTHONWARNINGS='ignore' && source ~/pythonProjects/tf_rnn/preInit.sh && "
 command = ""
+
 for el in permMatrix:
     keys=parameters.keys()
     setting = {
@@ -52,9 +53,10 @@ for el in permMatrix:
     createBatchFile("srun --cpus-per-task=1 --time=00:30:00 --mem=3110 ~/pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/singleExecution.py '"+data_str + "' ", permIndex)
     p = subprocess.Popen("sbatch batchScripts/script"+str(permIndex)+".sh",  stdout=log, stderr=log, shell=True)
     #time.sleep(1)
+    permIndex += 1
     if permIndex >= maxIters:
         break
-    permIndex += 1
+
     print 'permIndex:'+str(permIndex)
 
 while 1:
