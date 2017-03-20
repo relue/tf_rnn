@@ -28,7 +28,7 @@ for s in dirList:
 result = pd.concat(dfList)
 result = result.sort_values(['val_loss'], ascending=[True])
 
-for i in range(0, maxAwaiting):
+for i in range(0, int(maxAwaiting)):
     if i not in results:
         missing.append(i)
 print str(len(errors))+' Fehler in:'
