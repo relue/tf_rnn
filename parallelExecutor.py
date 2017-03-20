@@ -7,7 +7,7 @@ import os
 
 
 # Define Parameter Settings
-maxIters = 1000
+maxIters = 100
 parameters = collections.OrderedDict((
 ("learningRate", [0.001, 0.01, 0.05, 0.1, 0.2, 0.4, 0.7]),
 #("hiddenLayer"  , [1, 2, 3, 4]),
@@ -45,6 +45,7 @@ for el in permMatrix:
     if permIndex == maxIters:
         break
     permIndex += 1
+print command
 p = subprocess.Popen(command,  stdout=log, stderr=log, shell=True)
 import time
 time.sleep(3)
