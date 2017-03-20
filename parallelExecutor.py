@@ -22,7 +22,7 @@ iters = len(permMatrix)
 print "Anzahl der Permutationen:"+str(iters)
 log = open("parallelExecDetail.log", "w")
 permIndex = 0
-
+p = subprocess.Popen("scancel -u s2071275",  stdout=log, stderr=log, shell=True)
 for filename in os.listdir("jobResults/"):
     os.remove("jobResults/"+filename)
 preCommand = "export PYTHONWARNINGS='ignore' && source ~/pythonProjects/tf_rnn/preInit.sh && "
@@ -49,8 +49,8 @@ for el in permMatrix:
     permIndex += 1
     print 'permIndex:'+str(permIndex)
 
-
-time.sleep(3)
-p= subprocess.Popen("cat parallelExecDetail.log", stdout=subprocess.PIPE, stderr=None, shell=True)
-result = p.communicate()[0]
-print result
+while 1:
+    time.sleep(10)
+    p= subprocess.Popen("cat parallelExecDetail.log", stdout=subprocess.PIPE, stderr=None, shell=True)
+    result = p.communicate()[0]
+    print result
