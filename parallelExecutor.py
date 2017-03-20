@@ -47,7 +47,7 @@ for el in permMatrix:
         break
     permIndex += 1
 print command
-print 'command length:'+utf8len(command)
+print 'command length:'+str(utf8len(command))
 p = subprocess.Popen(command,  stdout=log, stderr=log, shell=True)
 import time
 time.sleep(3)
