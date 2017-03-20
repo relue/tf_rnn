@@ -27,7 +27,8 @@ permIndex = 0
 
 for filename in os.listdir("jobResults/"):
     os.remove("jobResults/"+filename)
-command = "source ~/pythonProjects/tf_rnn/preInit.sh &&  "
+preCommand = "source ~/pythonProjects/tf_rnn/preInit.sh &&  "
+command = ""
 for el in permMatrix:
     keys=parameters.keys()
     setting = {
@@ -43,12 +44,13 @@ for el in permMatrix:
 
 #env/bin/python2.7 tensorflow/tensorflow/examples/tutorials/mnist/fully_connected_feed.py
     command += "srun --cpus-per-task=16 --time=00:30:00 --mem=30110 ~/pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/singleExecution.py '"+data_str + "';"
+    if permIndex == 100:
+        p = subprocess.Popen(preCommand+command,  stdout=log, stderr=log, shell=True)
+        command = ""
     if permIndex == maxIters:
         break
     permIndex += 1
-print command
-print 'command length:'+str(utf8len(command))
-p = subprocess.Popen(command,  stdout=log, stderr=log, shell=True)
+
 import time
 time.sleep(3)
 p= subprocess.Popen("cat parallelExecDetail.log", stdout=subprocess.PIPE, stderr=None, shell=True)
