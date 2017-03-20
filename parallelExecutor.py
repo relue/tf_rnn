@@ -6,7 +6,7 @@ import logging
 import os
 import time
 
-maxIters = 1000
+maxIters = 500
 parameters = collections.OrderedDict((
 ("learningRate", [0.001, 0.01, 0.05, 0.1, 0.2, 0.4, 0.7]),
 #("hiddenLayer"  , [1, 2, 3, 4]),
@@ -41,9 +41,9 @@ for el in permMatrix:
     data_str=json.dumps(setting)
 
 #env/bin/python2.7 tensorflow/tensorflow/examples/tutorials/mnist/fully_connected_feed.py
-    command = preCommand+"srun --cpus-per-task=4 --time=00:30:00 --mem=20110 ~/pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/singleExecution.py '"+data_str + "' &"
+    command = preCommand+"srun --cpus-per-task=4 --time=00:30:00 --mem=20110 ~/pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/singleExecution.py '"+data_str + "' "
     p = subprocess.Popen(command,  stdout=log, stderr=log, shell=True)
-    time.sleep(0.5)
+    time.sleep(1)
     if permIndex == maxIters:
         break
     permIndex += 1
