@@ -14,7 +14,7 @@ def createBatchFile(singleCommand, id):
 
 #createBatchFile("srun --cpus-per-task=1 --time=00:30:00 --mem=3110 ~/pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/singleExecution.py", 2)
 
-maxIters = 500
+maxIters = 2000
 parameters = collections.OrderedDict((
 ("learningRate", [0.001, 0.01, 0.05, 0.1, 0.2, 0.4, 0.7]),
 #("hiddenLayer"  , [1, 2, 3, 4]),
