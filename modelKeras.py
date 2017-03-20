@@ -16,6 +16,10 @@ from bokeh.plotting import figure, show, output_file
 from bokeh.models import Legend
 from bokeh.io import output_file, show, vplot, gridplot
 
+def validateOriginal():
+
+    return val_loss
+
 def kerasModel(timeWindow = 7*24,
                outputSize = 24,
                learningRate = 0.01,
