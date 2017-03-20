@@ -11,12 +11,12 @@ dfList = []
 errors = []
 running = []
 results = []
+missing = []
 maxAwaiting = sys.argv[1]
 for s in dirList:
     name, id = s.split("_")
     if name == "error":
         size = os.stat(dirName+s).st_size
-        print s+' has size: '+str(size)
         if size > 3330:
             errors.append(id)
     if name == "output":
@@ -28,10 +28,14 @@ for s in dirList:
 result = pd.concat(dfList)
 result = result.sort_values(['val_loss'], ascending=[True])
 
+for i in range(0, maxAwaiting):
+    if i not in results:
+        missing.append(i)
 print str(len(errors))+' Fehler in:'
 print errors
 
 print str(len(running))+' laufende Jobs'
 print str(len(results))+' abgeschlossene Jobs'
 print maxAwaiting+ 'jobs geplant'
+print "fehlende id's:"+missing
 print result
