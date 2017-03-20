@@ -4,10 +4,8 @@ import json
 import subprocess
 import logging
 import os
+import time
 
-def utf8len(s):
-    return len(s.encode('utf-8'))
-# Define Parameter Settings
 maxIters = 1000
 parameters = collections.OrderedDict((
 ("learningRate", [0.001, 0.01, 0.05, 0.1, 0.2, 0.4, 0.7]),
@@ -27,7 +25,7 @@ permIndex = 0
 
 for filename in os.listdir("jobResults/"):
     os.remove("jobResults/"+filename)
-preCommand = "source ~/pythonProjects/tf_rnn/preInit.sh &&  "
+preCommand = "source ~/pythonProjects/tf_rnn/preInit.sh && "
 command = ""
 for el in permMatrix:
     keys=parameters.keys()
@@ -43,16 +41,14 @@ for el in permMatrix:
     data_str=json.dumps(setting)
 
 #env/bin/python2.7 tensorflow/tensorflow/examples/tutorials/mnist/fully_connected_feed.py
-    command += preCommand+"srun --cpus-per-task=16 --time=00:30:00 --mem=30110 ~/pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/singleExecution.py '"+data_str + "' &"
-    if permIndex % 100 == 0:
-        p = subprocess.Popen(command,  stdout=log, stderr=log, shell=True)
-        print command
-        command = ""
+    command = preCommand+"srun --cpus-per-task=4 --time=00:30:00 --mem=20110 ~/pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/singleExecution.py '"+data_str + "' &"
+    p = subprocess.Popen(command,  stdout=log, stderr=log, shell=True)
+    time.sleep(0.5)
     if permIndex == maxIters:
         break
     permIndex += 1
 
-import time
+
 time.sleep(3)
 p= subprocess.Popen("cat parallelExecDetail.log", stdout=subprocess.PIPE, stderr=None, shell=True)
 result = p.communicate()[0]
