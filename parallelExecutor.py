@@ -44,8 +44,9 @@ for el in permMatrix:
 
 #env/bin/python2.7 tensorflow/tensorflow/examples/tutorials/mnist/fully_connected_feed.py
     command += "srun --cpus-per-task=16 --time=00:30:00 --mem=30110 ~/pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/singleExecution.py '"+data_str + "';"
-    if permIndex == 100:
+    if permIndex % 100 == 0:
         p = subprocess.Popen(preCommand+command,  stdout=log, stderr=log, shell=True)
+        print command
         command = ""
     if permIndex == maxIters:
         break
