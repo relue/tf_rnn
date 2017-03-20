@@ -2,6 +2,8 @@
 import sys
 import json
 data=json.loads(sys.argv[1])
+print sys.argv[1]
+print data
 sys.stdout = open('jobResults/output_'+str(data["indexID"]), 'w')
 sys.stderr = open('jobResults/error_'+str(data["indexID"]), 'w')
 
