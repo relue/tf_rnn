@@ -5,7 +5,8 @@ import subprocess
 import logging
 import os
 
-
+def utf8len(s):
+    return len(s.encode('utf-8'))
 # Define Parameter Settings
 maxIters = 100
 parameters = collections.OrderedDict((
@@ -46,6 +47,7 @@ for el in permMatrix:
         break
     permIndex += 1
 print command
+print 'command length:'+utf8len(command)
 p = subprocess.Popen(command,  stdout=log, stderr=log, shell=True)
 import time
 time.sleep(3)
