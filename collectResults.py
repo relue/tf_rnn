@@ -12,7 +12,7 @@ errors = []
 running = []
 results = []
 missing = []
-maxAwaiting = sys.argv[1]
+
 for s in dirList:
     name, id = s.split("_")
     id = int(id)
@@ -29,6 +29,7 @@ for s in dirList:
 result = pd.concat(dfList)
 result = result.sort_values(['val_loss'], ascending=[True])
 
+maxAwaiting = running.max()
 for i in range(0, int(maxAwaiting)):
     if i not in results:
         missing.append(i)

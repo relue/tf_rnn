@@ -28,7 +28,8 @@ def kerasModel(timeWindow = 7*24,
                epochSize = 5,
                indexID = 1,
                optimizer = "adam",
-               isShow = False):
+               isShow = False,
+               stationID = 1):
     optimizerObjects = {
         "sgd" : keras.optimizers.SGD(lr=learningRate, momentum=0.0, decay=0.0, nesterov=False),
         "adam" : keras.optimizers.Adam(lr=learningRate, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=0.0),
@@ -37,7 +38,7 @@ def kerasModel(timeWindow = 7*24,
     df = energyload_class.init_dfs(False, False)
 
     df['weekday'] = df['date'].dt.dayofweek
-    xInput, xOutput, scaler = energyload_class.createXmulti(df, timeWindow, 1, 1, outputSize, save=False, isStandardized=True)
+    xInput, xOutput, scaler = energyload_class.createXmulti(df, timeWindow, stationID, 1, outputSize, save=False, isStandardized=True)
     xInput = xInput.swapaxes(0,1)
 
     opt = keras.optimizers.SGD(lr=0.1, momentum=0.0, decay=0.0, nesterov=False)
