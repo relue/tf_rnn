@@ -19,9 +19,10 @@ parameters = collections.OrderedDict((
 ("learningRate", [0.001, 0.01, 0.05, 0.1, 0.2, 0.4, 0.7]),
 #("hiddenLayer"  , [1, 2, 3, 4]),
 ("hiddenNodes" , [2, 4, 8, 16, 32, 62, 128,256]),
+("stationID" , [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]),
 ("optimizers" , ['adam', 'sgd']),
-("timeWindow" , [1, 12, 24, 36, 48, 96,120,144]),
-("batchSize" , [1,10,20,30,100]),
+("timeWindow" , [1, 12, 24, 36, 48, 96]),
+("batchSize" , [1,10,20,30]),
 ("epochSize" , [100]),
 #("activationFunction" , ["tanh", "sigmoid"])
 ))
@@ -47,6 +48,7 @@ for el in permMatrix:
         "optimizer" : el[keys.index("optimizers")],
         "batchSize" : el[keys.index("batchSize")],
         "epochSize" : el[keys.index("epochSize")],
+        "stationID" : el[keys.index("stationID")],
         "indexID" : permIndex
     }
     data_str=json.dumps(setting)
