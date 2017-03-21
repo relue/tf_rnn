@@ -38,7 +38,7 @@ print errors
 
 print str(len(running))+' laufende Jobs'
 print str(len(results))+' abgeschlossene Jobs'
-print maxAwaiting+ 'jobs geplant'
+print str(maxAwaiting)+ 'jobs geplant'
 print "fehlende id's:"
 print missing
 print result
