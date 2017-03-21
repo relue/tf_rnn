@@ -29,7 +29,7 @@ for s in dirList:
 result = pd.concat(dfList)
 result = result.sort_values(['val_loss'], ascending=[True])
 
-maxAwaiting = running.max()
+maxAwaiting = max(running)
 for i in range(0, int(maxAwaiting)):
     if i not in results:
         missing.append(i)
