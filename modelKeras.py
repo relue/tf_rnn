@@ -145,7 +145,7 @@ class KerasModel():
             inputSize = 2
             finalOutputSize = outputSize
 
-        df = energyload_class.init_dfs(False, False)
+        df = energyload_class.init_dfs(True, False)
 
     #    df['weekday'] = df['date'].dt.dayofweek
         xInput, xOutput, scaler = energyload_class.createXmulti(df, timeWindow, stationID, zoneID, outputSize, save=True, isStandardized=True, embedAllLoads = embedAllLoads)
