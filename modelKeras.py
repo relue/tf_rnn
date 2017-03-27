@@ -148,7 +148,7 @@ class KerasModel():
         df = energyload_class.init_dfs(False, False)
 
     #    df['weekday'] = df['date'].dt.dayofweek
-        xInput, xOutput, scaler = energyload_class.createXmulti(df, timeWindow, stationID, zoneID, outputSize, save=False, isStandardized=True, embedAllLoads = embedAllLoads)
+        xInput, xOutput, scaler = energyload_class.createXmulti(df, timeWindow, stationID, zoneID, outputSize, save=True, isStandardized=True, embedAllLoads = embedAllLoads)
         xInput = xInput.swapaxes(0,1)
 
         opt = keras.optimizers.SGD(lr=0.1, momentum=0.0, decay=0.0, nesterov=False)
