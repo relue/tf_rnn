@@ -47,7 +47,9 @@ def initDataFrame():
 def initDataFrameHourly():
     df = pd.read_csv('energy_load/Load_history.csv', thousands=',', dtype='float', na_values=[''])
     dfT = pd.read_csv('energy_load/temperature_history.csv', thousands=',', dtype='float', na_values=[''],sep=';')
-
+    dfLoadS = pd.read_csv('energy_load/Load_solution.csv', dtype='float', sep=',')
+    df = pd.concat([df, dfLoadS])
+    #dataExplore2.showDF(df, False)
     for i in range(1, 25):
         dfT['c'+str(i)] = dfT['h'+str(i)].apply(convert_temp)
 
@@ -82,7 +84,7 @@ def initDataFrameHourly():
         c_names[i] = 'station_'+str(i)
 
     c_names2 = {}
-    for i in range(1, 21):
+    for i in range(1, 22):
         c_names2[i] = 'zone_' + str(i)
 
     dfNewM.rename(columns=c_names, inplace=True)
@@ -108,8 +110,8 @@ def initDataFrameHourly():
     dfNewM2['date'] = dfNewM2['date'].astype(str) + " " + dfNewM2['hour'].astype(str) + ":00"
     dfNewM2.sort_values(['date'], ascending=[True], inplace=True)
     dfNewM2 = dfNewM2.dropna(subset = ['zone_1'])
-    #dataExplore2.showDF(dfNewM2, True)
-
+    #dataExplore2.showDF(dfNewM2, False)
+    #dataExplore2.showDF(dfNewM2, False)
     dfNewM2.to_csv("allHours.csv")
     return dfNewM2
 
@@ -118,6 +120,7 @@ def init_dfs(create = False, all = True):
         df = initDataFrame()
         dfHourly = initDataFrameHourly()
         dfHourly['date'] = pd.to_datetime(dfHourly['date'])
+        return dfHourly
     else:
         dfHourly = pd.read_csv('allHours.csv', na_values=[''])
         dfHourly['date'] = pd.to_datetime(dfHourly['date'])
@@ -193,16 +196,43 @@ def createX(df, featureList, save = False, isMLP = False, isLogarithmic = False,
     else:
         return tfInput,tfOutput
 
-def createXmulti(df, timeWindow, station_id, zone_id, outputSize, save = False, isStandardized = False):
+def createInputOutputRow(dfS, i, columns, zoneColumns, station_id, outputSize, addSystemLevel = False):
+    columnList = []
+    for t in columns:
+        tupleList = []
+        timeRowInput = dfS.ix[i-t]
+#        tupleList.append(dfS.ix[i-t]['date'])
+        for zone_name in zoneColumns:
+            tupleList.append(timeRowInput[zone_name])
+        tupleList.append(timeRowInput["station_"+str(station_id)])
+        columnList.append(tupleList)
+    outputList = []
+    for o in range(0, outputSize):
+        timeRowOutput = dfS.ix[i+o]
+        for zone_name in zoneColumns:
+            outputList.append(timeRowOutput[zone_name])
+        if addSystemLevel:
+            outputList.append(timeRowOutput["zone_21"])
+    row=pd.Series(columnList+[outputList],columns+["output"])
+    return row
+
+def createXmulti(df, timeWindow, station_id, zone_id, outputSize, save = False, isStandardized = False, embedAllLoads = True):
     columns = range(1, timeWindow+1)
-    dfS = df[["zone_"+str(zone_id),"station_"+str(station_id)]]
+    if embedAllLoads:
+        zoneIDs = range(1,21)
+    else:
+        zoneIDs = [zone_id]
+    zoneColumns = ["zone_" + str(i) for i in zoneIDs]
+
+    dfS = df[zoneColumns+["station_"+str(station_id)]]
     if isStandardized:
         scalerOutput = MinMaxScaler(feature_range=(0, 1))
         scalerInput = MinMaxScaler(feature_range=(0, 1))
 
-        scaledLoads = scalerOutput.fit_transform(dfS["zone_"+str(zone_id)].tolist())
-        lo = pd.Series(scaledLoads)
-        dfS["zone_"+str(zone_id)] = lo.values
+        for zone_name in zoneColumns:
+            scaledLoads = scalerOutput.fit_transform(dfS[zone_name].tolist())
+            lo = pd.Series(scaledLoads)
+            dfS[zone_name] = lo.values
 
         scaledTemps = scalerInput.fit_transform(dfS["station_"+str(station_id)].tolist())
         te = pd.Series(scaledTemps)
@@ -213,18 +243,9 @@ def createXmulti(df, timeWindow, station_id, zone_id, outputSize, save = False, 
     cacheExists = os.path.isfile(filename)
     if save or not(cacheExists):
         dfNew = pd.DataFrame(columns=columns)
-        for i in range(0, len(dfS), outputSize):#len(df.index)
+        for i in range(0, len(dfS), 24):#len(df.index)
             if i >= timeWindow and i+outputSize < len(df):
-                columnList = []
-                for t in columns:
-                    tupleList = []
-                    tupleList.append(dfS.iloc[i-t]["zone_"+str(zone_id)])
-                    tupleList.append(dfS.iloc[i-t]["station_"+str(station_id)])
-                    columnList.append(tupleList)
-                    outputList = []
-                    for o in range(0, outputSize):
-                        outputList.append(dfS.iloc[i+o]["zone_"+str(zone_id)])
-                row=pd.Series(columnList+[outputList],columns+["output"])
+                row = createInputOutputRow(dfS, i, columns, zoneColumns, station_id, outputSize)
                 dfNew = dfNew.append([row],ignore_index=True)
         #dfNew[featureList] = dfNew[0].apply(pd.Series)
 
