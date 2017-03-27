@@ -137,6 +137,8 @@ class KerasModel():
         optimizerObjects = {
             "sgd" : keras.optimizers.SGD(lr=learningRate, momentum=0.0, decay=0.0, nesterov=False),
             "adam" : keras.optimizers.Adam(lr=learningRate, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=0.0),
+            "rms" : keras.optimizers.RMSprop(lr=learningRate, rho=0.9, epsilon=1e-08, decay=0.0),
+            "ada" : keras.optimizers.Adagrad(lr=learningRate, epsilon=1e-08, decay=0.0)
         }
 
         inputSize = len(stationIDs)+20
@@ -146,7 +148,7 @@ class KerasModel():
         df = energyload_class.init_dfs(False, False)
 
     #    df['weekday'] = df['date'].dt.dayofweek
-        xInput, xOutput, scaler = energyload_class.createXmulti(df, timeWindow, stationIDs, outputSize, save=True, isStandardized=True)
+        xInput, xOutput, scaler = energyload_class.createXmulti(df, timeWindow, stationIDs, outputSize, save=False, isStandardized=True)
         xInput = xInput.swapaxes(0,1)
 
         opt = keras.optimizers.SGD(lr=0.1, momentum=0.0, decay=0.0, nesterov=False)

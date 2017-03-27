@@ -14,16 +14,15 @@ def createBatchFile(singleCommand, id):
 
 #createBatchFile("srun --cpus-per-task=1 --time=00:30:00 --mem=3110 ~/pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/singleExecution.py", 2)
 
-maxIters = 1
+maxIters = 100000
 parameters = collections.OrderedDict((
 ("learningRate", [0.001, 0.01, 0.05, 0.1, 0.2]),
 #("hiddenLayer"  , [1, 2, 3, 4]),
 ("hiddenNodes" , [2, 4, 8, 16, 32, 50, 62, 128,256]),
-("stationID" , [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]),
-("optimizers" , ['adam', 'sgd']),
-("timeWindow" , [1, 12, 24, 36, 48, 96]),
-("batchSize" , [1,10,20,30]),
-("epochSize" , [50]),
+("optimizers" , ['adam', 'sgd', 'rms','ada']),
+("timeWindow" , [1, 12, 24, 36, 48, 96, 144, 120, 168]),
+("batchSize" , [1,10, 100]),
+("epochSize" , [30]),
 #("activationFunction" , ["tanh", "sigmoid"])
 ))
 permMatrix = list(itertools.product(*parameters.values()))
