@@ -50,7 +50,7 @@ class KerasModel():
         columns = range(1, timeWindow+1)
         zoneIDs = range(1,21)
         zoneColumns = ["zone_" + str(i) for i in zoneIDs]
-        stationColumns = ["station" + str(i) for i in stationIDs]
+        stationColumns = ["station_" + str(i) for i in stationIDs]
         dfNew = pd.DataFrame(columns=columns)
 
         dfS = df[zoneColumns+stationColumns+["zone_21"]]
@@ -123,35 +123,30 @@ class KerasModel():
                 sequenceLoads[zoneID].append(column)
         return sequenceLoads
 
-    def __init__(self, timeWindow = 24*2,
+    def __init__(self, timeWindow = 24*7,
                    outputSize = 24*7,
                    learningRate = 0.001,
-                   hiddenNodes = 40,
+                   hiddenNodes = 20,
                    batchSize = 1,
                    epochSize = 15,
                    indexID = 1,
                    optimizer = "adam",
                    isShow = False,
-                   stationID = 1,
-                   zoneID = 1,
-                   embedAllLoads = True,
+                   stationIDs = [12],
                    createHTML = False):
         optimizerObjects = {
             "sgd" : keras.optimizers.SGD(lr=learningRate, momentum=0.0, decay=0.0, nesterov=False),
             "adam" : keras.optimizers.Adam(lr=learningRate, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=0.0),
         }
-        if embedAllLoads:
-            inputSize = 1+20
-            finalOutputSize = outputSize * 20
-        else:
-            inputSize = 2
-            finalOutputSize = outputSize
 
-        df = energyload_class.init_dfs(False, False)
+        inputSize = len(stationIDs)+20
+        finalOutputSize = outputSize * 20
+
+
+        df = energyload_class.init_dfs(True, False)
 
     #    df['weekday'] = df['date'].dt.dayofweek
-        stationIDs = range(1,11)
-        xInput, xOutput, scaler = energyload_class.createXmulti(df, timeWindow, stationIDs, zoneID, outputSize, save=True, isStandardized=True, embedAllLoads = embedAllLoads)
+        xInput, xOutput, scaler = energyload_class.createXmulti(df, timeWindow, stationIDs, outputSize, save=True, isStandardized=True)
         xInput = xInput.swapaxes(0,1)
 
         opt = keras.optimizers.SGD(lr=0.1, momentum=0.0, decay=0.0, nesterov=False)
@@ -241,4 +236,4 @@ class KerasModel():
             if isShow:
                 show(ap)
 
-#KerasModel(isShow= True, createHTML= True)
+KerasModel(isShow= True, createHTML= True)
