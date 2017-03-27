@@ -139,64 +139,7 @@ def getBatch(gInput, gOutput, i, batchSize, isMLP):
         inputR = gInput[:,fromI:toI]
     return inputR, gOutput[fromI:toI]
 
-def createX(df, featureList, save = False, isMLP = False, isLogarithmic = False, timeWindow = 1, jumpSequences = False):
-    columns = range(timeWindow, -1, -1)
-    if save:
-        dfNew = pd.DataFrame(columns=columns)
-        for i in range(0, len(df), timeWindow if jumpSequences else 1):#len(df.index)
-            if i >= timeWindow:
-                columnList = []
-                for t in columns:
-                    tupleList = []
-                    for feature in featureList:
-                        tupleList.append(df.iloc[i-t][feature])
-                    columnList.append(tupleList)
-                row=pd.Series(columnList,columns)
-                dfNew = dfNew.append([row],ignore_index=True)
-        dfNew[featureList] = dfNew[0].apply(pd.Series)
-        dfNew.to_pickle("rnnInputOld.pd")
-        #dataExplore2.showDF(dfNew, True)
-        #dataExplore2.showDF(dfNew, True)
-    else:
-        dfNew = pd.read_pickle('rnnInputOld.pd')
-
-    tfInput = []
-    tfOutput= []
-    embeddedInputColumns =[]
-    if isLogarithmic:
-        scaler = MinMaxScaler(feature_range=(0, 1))
-
-    if isMLP:
-        for t in columns:
-            tempTuple = []
-            for feature in featureList:
-                tempTuple.append(feature+'_'+str(t))
-                embeddedInputColumns.append(feature+'_'+str(t))
-            dfNew[tempTuple] = dfNew[t].apply(pd.Series)
-        tfInput = dfNew.loc[:,embeddedInputColumns]
-        tfOutput = np.asarray(dfNew[featureList[-1]].tolist())
-        #dataExplore2.showDF(tfInput, True)
-    else:
-        for t in columns:
-            if t == 0:
-                tfOutput = dfNew[featureList[-1]].tolist()
-            else:
-                if isLogarithmic:
-                    scaledInputs = scaler.fit_transform(dfNew[t].tolist())
-                else:
-                    scaledInputs = dfNew[t].tolist()
-                tfInput.append(scaledInputs)
-    #[t, rows, inputs]
-
-    tfInput= np.asarray(tfInput)
-    tfOutput= np.asarray(tfOutput)
-    if isLogarithmic:
-        scaler = MinMaxScaler(feature_range=(0, 1))
-        return tfInput, scaler.fit_transform(tfOutput), scaler
-    else:
-        return tfInput,tfOutput
-
-def createInputOutputRow(dfS, i, columns, zoneColumns, station_id, outputSize, addSystemLevel = False):
+def createInputOutputRow(dfS, i, columns, zoneColumns, stationColumns, outputSize, addSystemLevel = False):
     columnList = []
     for t in columns:
         tupleList = []
@@ -204,7 +147,8 @@ def createInputOutputRow(dfS, i, columns, zoneColumns, station_id, outputSize, a
 #        tupleList.append(dfS.ix[i-t]['date'])
         for zone_name in zoneColumns:
             tupleList.append(timeRowInput[zone_name])
-        tupleList.append(timeRowInput["station_"+str(station_id)])
+        for station_name in stationColumns:
+            tupleList.append(timeRowInput[station_name])
         columnList.append(tupleList)
     outputList = []
     for o in range(0, outputSize):
@@ -216,15 +160,14 @@ def createInputOutputRow(dfS, i, columns, zoneColumns, station_id, outputSize, a
     row=pd.Series(columnList+[outputList],columns+["output"])
     return row
 
-def createXmulti(df, timeWindow, station_id, zone_id, outputSize, save = False, isStandardized = False, embedAllLoads = True):
+def createXmulti(df, timeWindow, stationIDs, outputSize, save = False, isStandardized = False):
     columns = range(1, timeWindow+1)
-    if embedAllLoads:
-        zoneIDs = range(1,21)
-    else:
-        zoneIDs = [zone_id]
-    zoneColumns = ["zone_" + str(i) for i in zoneIDs]
+    zoneIDs = range(1,21)
 
-    dfS = df[zoneColumns+["station_"+str(station_id)]]
+    zoneColumns = ["zone_" + str(i) for i in zoneIDs]
+    stationColumns = ["station" + str(i) for i in stationIDs]
+
+    dfS = df[zoneColumns+stationColumns]
     if isStandardized:
         scalerOutput = MinMaxScaler(feature_range=(0, 1))
         scalerInput = MinMaxScaler(feature_range=(0, 1))
@@ -234,9 +177,10 @@ def createXmulti(df, timeWindow, station_id, zone_id, outputSize, save = False, 
             lo = pd.Series(scaledLoads)
             dfS[zone_name] = lo.values
 
-        scaledTemps = scalerInput.fit_transform(dfS["station_"+str(station_id)].tolist())
-        te = pd.Series(scaledTemps)
-        dfS["station_"+str(station_id)] = te.values
+        for station_name in stationColumns:
+            scaledTemps = scalerInput.fit_transform(dfS[station_name].tolist())
+            lo = pd.Series(scaledTemps)
+            dfS[station_name] = lo.values
 
     cacheIdent = str(timeWindow) + "_" + str(outputSize)
     filename = "rnnInputs/rnnInput"+str(cacheIdent)+".pd"
@@ -245,7 +189,7 @@ def createXmulti(df, timeWindow, station_id, zone_id, outputSize, save = False, 
         dfNew = pd.DataFrame(columns=columns)
         for i in range(0, len(dfS), 24):#len(df.index)
             if i >= timeWindow and i+outputSize < len(df):
-                row = createInputOutputRow(dfS, i, columns, zoneColumns, station_id, outputSize)
+                row = createInputOutputRow(dfS, i, columns, zoneColumns, stationColumns, outputSize)
                 dfNew = dfNew.append([row],ignore_index=True)
         #dfNew[featureList] = dfNew[0].apply(pd.Series)
 

@@ -44,15 +44,16 @@ class KerasModel():
         error = math.sqrt((sumZones / counter))
         return error
 
-    def getValidationInputOutput(self, df, station_id, timeWindow):
+    def getValidationInputOutput(self, df,  stationIDs, timeWindow):
         backcastWeeks = ["2005-3-5", "2005-6-19", "2005-9-9", "2005-12-24",
                                  "2006-2-12", "2006-5-24", "2006-8-1", "2006-11-21","2008-6-30"]
         columns = range(1, timeWindow+1)
         zoneIDs = range(1,21)
         zoneColumns = ["zone_" + str(i) for i in zoneIDs]
+        stationColumns = ["station" + str(i) for i in stationIDs]
         dfNew = pd.DataFrame(columns=columns)
 
-        dfS = df[zoneColumns+["zone_21"]+["station_"+str(station_id)]]
+        dfS = df[zoneColumns+stationColumns+["zone_21"]]
         dfS = dfS.fillna(0)
         scalerInput = MinMaxScaler(feature_range=(0, 1))
         scalerOutput = MinMaxScaler(feature_range=(0, 1))
@@ -64,19 +65,20 @@ class KerasModel():
             lo = pd.Series(scaledLoads)
             dfS[zone_name] = lo.values
 
+        for station_name in stationColumns:
+            scaledTemps = scalerInput.fit_transform(dfS[station_name].tolist())
+            lo = pd.Series(scaledTemps)
+            dfS[station_name] = lo.values
+
         #Eigene Transformation for Zone 21
         scaledLoads = scalerOutputZone21.fit_transform(dfS["zone_21"].tolist())
         lo = pd.Series(scaledLoads)
         dfS["zone_21"] = lo.values
 
-        scaledTemps = scalerInput.fit_transform(dfS["station_"+str(station_id)].tolist())
-        te = pd.Series(scaledTemps)
-        dfS["station_"+str(station_id)] = te.values
-
         for date in backcastWeeks:
             mask = (df['date'] == date)
             i = df.loc[mask].index[0]+24
-            row = energyload_class.createInputOutputRow(dfS, i, columns, zoneColumns, station_id, 7*24, True)
+            row = energyload_class.createInputOutputRow(dfS, i, columns, zoneColumns, stationColumns, 7*24, True)
             dfNew = dfNew.append([row],ignore_index=True)
 
         #dataExplore2.showDF(dfNew, False)
@@ -145,10 +147,11 @@ class KerasModel():
             inputSize = 2
             finalOutputSize = outputSize
 
-        df = energyload_class.init_dfs(True, False)
+        df = energyload_class.init_dfs(False, False)
 
     #    df['weekday'] = df['date'].dt.dayofweek
-        xInput, xOutput, scaler = energyload_class.createXmulti(df, timeWindow, stationID, zoneID, outputSize, save=True, isStandardized=True, embedAllLoads = embedAllLoads)
+        stationIDs = range(1,11)
+        xInput, xOutput, scaler = energyload_class.createXmulti(df, timeWindow, stationIDs, zoneID, outputSize, save=True, isStandardized=True, embedAllLoads = embedAllLoads)
         xInput = xInput.swapaxes(0,1)
 
         opt = keras.optimizers.SGD(lr=0.1, momentum=0.0, decay=0.0, nesterov=False)
@@ -160,7 +163,7 @@ class KerasModel():
         #model.add(SimpleRNN(50, input_length=timeWindow,  return_sequences=False))
         model.add(Dense(finalOutputSize))
         model.compile(loss='mean_squared_error', optimizer=optimizerObjects[optimizer])
-        testInput,testOutput,testScaler = self.getValidationInputOutput(df, stationID, timeWindow)
+        testInput,testOutput,testScaler = self.getValidationInputOutput(df, stationIDs, timeWindow)
         customCallback = KaggleTest(self, testInput,testOutput,testScaler)
         history = model.fit(xInput, xOutput, nb_epoch=epochSize, batch_size=batchSize, verbose=1, validation_split=0.3, callbacks=[customCallback])#callbacks=[early]
         historyTest = customCallback.getHistory()
