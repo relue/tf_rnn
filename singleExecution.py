@@ -17,9 +17,11 @@ with warnings.catch_warnings():
     import pandas as pd
 
     start_time = time.time()
-    modelOut = modelKeras.kerasModel(**data)
-    data['loss'] = modelOut.history['loss'][-1]
-    data['val_loss'] = modelOut.history['val_loss'][-1]
+    modelOut = modelKeras.KerasModel(**data)
+
+    data['loss'] = modelOut.results['loss'][-1]
+    data['val_loss'] = modelOut.results['val_loss'][-1]
+    data['test_loss'] = modelOut.results['test_loss'][-1]
     data['exec_time'] = (time.time() - start_time)
     columns = data.keys() + ['loss', 'val_loss','exec_time']
 

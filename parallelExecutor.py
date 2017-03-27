@@ -5,7 +5,7 @@ import subprocess
 import logging
 import os
 import time
-
+import random
 def createBatchFile(singleCommand, id):
      with open("sbatchConfig.sh", "rt") as fin:
         with open("batchScripts/script"+str(id)+".sh", "wt") as fout:
@@ -14,19 +14,20 @@ def createBatchFile(singleCommand, id):
 
 #createBatchFile("srun --cpus-per-task=1 --time=00:30:00 --mem=3110 ~/pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/singleExecution.py", 2)
 
-maxIters = 200000
+maxIters = 5000
 parameters = collections.OrderedDict((
-("learningRate", [0.001, 0.01, 0.05, 0.1, 0.2, 0.4, 0.7]),
+("learningRate", [0.001, 0.01, 0.05, 0.1, 0.2]),
 #("hiddenLayer"  , [1, 2, 3, 4]),
-("hiddenNodes" , [2, 4, 8, 16, 32, 62, 128,256]),
+("hiddenNodes" , [2, 4, 8, 16, 32, 50, 62, 128,256]),
 ("stationID" , [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]),
 ("optimizers" , ['adam', 'sgd']),
 ("timeWindow" , [1, 12, 24, 36, 48, 96]),
 ("batchSize" , [1,10,20,30]),
-("epochSize" , [100]),
+("epochSize" , [50]),
 #("activationFunction" , ["tanh", "sigmoid"])
 ))
 permMatrix = list(itertools.product(*parameters.values()))
+random.shuffle(permMatrix)
 iters = len(permMatrix)
 print "Anzahl der Permutationen:"+str(iters)
 log = open("parallelExecDetail.log", "w")

@@ -7,7 +7,7 @@ import numpy as np
 import energyload_class
 from time import *
 
-df = pd.read_pickle('rnnInput.pd')
+#df = pd.read_pickle('rnnInput.pd')
 
 class TestApp(Frame):
     """Basic test frame for the table"""
