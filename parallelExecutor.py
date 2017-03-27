@@ -48,7 +48,6 @@ for el in permMatrix:
         "optimizer" : el[keys.index("optimizers")],
         "batchSize" : el[keys.index("batchSize")],
         "epochSize" : el[keys.index("epochSize")],
-        "stationID" : el[keys.index("stationID")],
         "indexID" : permIndex
     }
     data_str=json.dumps(setting)
