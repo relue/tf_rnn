@@ -96,10 +96,10 @@ def initDataFrameHourly():
                                                              'station_8','station_9', 'station_10', 'station_11'])
     dfNewM2.rename(columns=c_names2, inplace=True)
 
-    dfNewM2['station_avg'] = dfNewM2['station_1'] / 12
+    dfNewM2['station_avg'] = dfNewM2['station_1'] / 11
     for i in range(1, 12):
-        dfNewM2['station_avg'] = dfNewM2['station_avg'] + dfNewM2['station_' + str(i)] / 12
-
+        dfNewM2['station_avg'] = dfNewM2['station_avg'] + dfNewM2['station_' + str(i)] / 11
+    dfNewM2['station_12'] = dfNewM2['station_avg']
     dfNewM2['zone_avg'] = dfNewM2['zone_1'] / 20
     for i in range(1, 21):
         dfNewM2['zone_avg'] = dfNewM2['zone_avg'] + dfNewM2['zone_' + str(i)] / 20
@@ -141,6 +141,17 @@ def getBatch(gInput, gOutput, i, batchSize, isMLP):
 
 def createInputOutputRow(dfS, i, columns, zoneColumns, stationColumns, outputSize, addSystemLevel = False):
     columnList = []
+    futureTemps = []
+    outputList = []
+    for o in range(0, outputSize):
+        timeRowOutput = dfS.ix[i+o]
+        #for station_name in stationColumns:
+            #futureTemps.append(dfS.ix[i+o][station_name])
+        for zone_name in zoneColumns:
+            outputList.append(timeRowOutput[zone_name])
+        if addSystemLevel:
+            outputList.append(timeRowOutput["zone_21"])
+
     for t in columns:
         tupleList = []
         timeRowInput = dfS.ix[i-t]
@@ -149,14 +160,8 @@ def createInputOutputRow(dfS, i, columns, zoneColumns, stationColumns, outputSiz
             tupleList.append(timeRowInput[zone_name])
         for station_name in stationColumns:
             tupleList.append(timeRowInput[station_name])
+        #tupleList += futureTemps
         columnList.append(tupleList)
-    outputList = []
-    for o in range(0, outputSize):
-        timeRowOutput = dfS.ix[i+o]
-        for zone_name in zoneColumns:
-            outputList.append(timeRowOutput[zone_name])
-        if addSystemLevel:
-            outputList.append(timeRowOutput["zone_21"])
     row=pd.Series(columnList+[outputList],columns+["output"])
     return row
 
@@ -165,7 +170,7 @@ def createXmulti(df, timeWindow, stationIDs, outputSize, save = False, isStandar
     zoneIDs = range(1,21)
 
     zoneColumns = ["zone_" + str(i) for i in zoneIDs]
-    stationColumns = ["station" + str(i) for i in stationIDs]
+    stationColumns = ["station_" + str(i) for i in stationIDs]
 
     dfS = df[zoneColumns+stationColumns]
     if isStandardized:
