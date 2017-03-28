@@ -23,6 +23,7 @@ for s in dirList:
     if name == "output":
         running.append(id)
     if "result" in s:
+       print dirName+s
        dfList.append(pd.read_pickle(dirName+s))
        results.append(id)
 
