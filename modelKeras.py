@@ -130,10 +130,11 @@ class KerasModel():
     def __init__(self, timeWindow = 24*2,
                    outputSize = 24*7,
                    noFillZero = False,
-                   useHolidays = True,
+                   useHoliday = True,
                    useWeekday = True,
                    learningRate = 0.001,
                    hiddenNodes = 40,
+                   hiddenLayers = 1,
                    batchSize = 1,
                    epochSize = 20,
                    indexID = 1,
@@ -154,7 +155,7 @@ class KerasModel():
         df = energyload_class.init_dfs(False, False)
 
     #
-        xInput, xOutput, scaler = energyload_class.createXmulti(df, timeWindow, stationIDs, outputSize, save=False, isStandardized=True, noFillZero=noFillZero, useHoliday=useHolidays, useWeekday=useWeekday)
+        xInput, xOutput, scaler = energyload_class.createXmulti(df, timeWindow, stationIDs, outputSize, save=False, isStandardized=True, noFillZero=noFillZero, useHoliday=useHoliday, useWeekday=useWeekday)
         xInput = xInput.swapaxes(0,1)
         inputSize = xInput.shape[2]
         opt = keras.optimizers.SGD(lr=0.1, momentum=0.0, decay=0.0, nesterov=False)
@@ -162,7 +163,12 @@ class KerasModel():
         #shapeInput = [rows, timeSteps, InputSize]
         model = Sequential()
         model.add(SimpleRNN(hiddenNodes, input_length=timeWindow, input_dim=inputSize,  return_sequences=True, go_backwards = True))
-        model.add(SimpleRNN(hiddenNodes, input_length=timeWindow,  return_sequences=False))
+        i = 1
+        for hdI in range(2,hiddenLayers+1):
+            returnSequence = True
+            if hdI == hiddenLayers:
+                returnSequence = False
+            model.add(SimpleRNN(hiddenNodes, input_length=timeWindow,  return_sequences=returnSequence))
         #model.add(SimpleRNN(50, input_length=timeWindow,  return_sequences=False))
         model.add(Dense(finalOutputSize))
         model.compile(loss='mean_squared_error', optimizer=optimizerObjects[optimizer])
