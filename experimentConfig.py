@@ -17,7 +17,7 @@ class Config():
         "batchSize": True,
         "hiddenNodes": True,
         "hiddenLayers": True,
-        "weightInit": True,
+        "weightInit": True
     }
     parametersAddtionalInput = collections.OrderedDict((
     ("learningRate", [0.001, 0.01, 0.05]),
@@ -44,4 +44,4 @@ class Config():
     #("activationFunction" , ["tanh", "sigmoid"])
     ))
 
-    fullParameters =
+
