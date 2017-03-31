@@ -6,19 +6,7 @@ import collections
     - Activation Function
 '''
 class Config():
-    parameterTypeDiscrete = {
-        "learningRate": False,
-        "DropoutProp": False,
-        "l1Penalty": False,
-        "activationFunction": True,
-        "hiddenNodes": True,
-        "optimizer": True,
-        "timeWindow": True,
-        "batchSize": True,
-        "hiddenNodes": True,
-        "hiddenLayers": True,
-        "weightInit": True
-    }
+
     parametersAddtionalInput = collections.OrderedDict((
     ("learningRate", [0.001, 0.01, 0.05]),
     #("hiddenLayer"  , [1, 2, 3, 4]),
@@ -43,5 +31,37 @@ class Config():
     ("epochSize" , [30]),
     #("activationFunction" , ["tanh", "sigmoid"])
     ))
+
+    parameterTypeDiscrete = {
+        "learningRate": False,
+        "DropoutProp": False,
+        "l1Penalty": False,
+        "activationFunction": True,
+        "hiddenNodes": True,
+        "optimizer": True,
+        "timeWindow": True,
+        "batchSize": True,
+        "hiddenLayers": True,
+        "weightInit": True
+    }
+
+    continousParameterBounds = {
+        "learningRate": (0,1),
+        "DropoutProp": (0,1),
+        "l1Penalty": (0,1)
+    }
+
+    discreteParameterRanges = {
+        "activationFunction": ["hypT", "Sig", "Relu"],
+        "hiddenNodes": range(10,1001),
+        "optimizer": ['adam', 'sgd', 'rms','ada', 'adadelta'],
+        "timeWindow": range(10,137),
+        "batchSize": range(1,101),
+        "hiddenLayers": range(1,11),
+        "weightInit": ["zero", "one", "normal", "glorot_uniform", "lecun_uniform", "glorot_normal"]
+    }
+
+    def generateRandom(self):
+        return 0
 
 
