@@ -44,11 +44,24 @@ def initDataFrame():
     dfNew.to_csv("all.csv")
     return dfNew
 
+def getHolidayDict():
+    dfHo = pd.read_csv('energy_load/Holiday_List.csv', sep=',')
+    dfHo = pd.melt(dfHo, id_vars='dayName', var_name='year', value_name='date')
+    dfHo = dfHo.dropna()
+    dfHo['date'] = dfHo['year']+ "-"+ dfHo['date']
+    dfHo['date'] = pd.to_datetime(dfHo['date'])
+    holidayList = dfHo['date'].tolist()
+    holidayDict = dict((el.date(),1) for el in holidayList)
+    return holidayDict
+
 def initDataFrameHourly():
     df = pd.read_csv('energy_load/Load_history.csv', thousands=',', dtype='float', na_values=[''])
     dfT = pd.read_csv('energy_load/temperature_history.csv', thousands=',', dtype='float', na_values=[''],sep=';')
     dfLoadS = pd.read_csv('energy_load/Load_solution.csv', dtype='float', sep=',')
     df = pd.concat([df, dfLoadS])
+
+
+
     #dataExplore2.showDF(df, False)
     for i in range(1, 25):
         dfT['c'+str(i)] = dfT['h'+str(i)].apply(convert_temp)
@@ -110,6 +123,13 @@ def initDataFrameHourly():
     dfNewM2['date'] = dfNewM2['date'].astype(str) + " " + dfNewM2['hour'].astype(str) + ":00"
     dfNewM2.sort_values(['date'], ascending=[True], inplace=True)
     dfNewM2 = dfNewM2.dropna(subset = ['zone_1'])
+    dfNewM2['date'] = pd.to_datetime(dfNewM2['date'])
+    # def alert(d,holidayDict):
+    #     if d['date'].date() in holidayDict:
+    #         return 1
+    #     else:
+    #         return 0
+    # dfNewM2['isHoliday'] = dfNewM2.apply((lambda x: alert(x, holidayDict)),  axis=1)
     #dataExplore2.showDF(dfNewM2, False)
     #dataExplore2.showDF(dfNewM2, False)
     dfNewM2.to_csv("allHours.csv")
@@ -139,10 +159,23 @@ def getBatch(gInput, gOutput, i, batchSize, isMLP):
         inputR = gInput[:,fromI:toI]
     return inputR, gOutput[fromI:toI]
 
-def createInputOutputRow(dfS, i, columns, zoneColumns, stationColumns, outputSize, addSystemLevel = False):
+def getHolidayVector(date, holidayDict):
+    holidayVector = []
+    for i in range(0,7):
+        nextDay = date + pd.DateOffset(i)
+        if nextDay.date() in holidayDict:
+            isIn = 1
+        else:
+            isIn = 0
+        holidayVector.append(isIn)
+    return holidayVector
+
+def createInputOutputRow(dfS, i, columns, zoneColumns, stationColumns, outputSize, holidayDict, addSystemLevel = False,
+                         noFillZero = True, useHoliday = True, useWeekday = True):
     columnList = []
     futureTemps = []
     outputList = []
+
     for o in range(0, outputSize):
         timeRowOutput = dfS.ix[i+o]
         #for station_name in stationColumns:
@@ -161,18 +194,38 @@ def createInputOutputRow(dfS, i, columns, zoneColumns, stationColumns, outputSiz
         for station_name in stationColumns:
             tupleList.append(timeRowInput[station_name])
         #tupleList += futureTemps
+
+        if t == 1 or noFillZero == True:
+            holidayVector = getHolidayVector(timeRowInput["date"], holidayDict)
+            weekDayVector = []
+            for d in range(0,7):
+                weekDayVector.append(timeRowInput[d])
+        else:
+            holidayVector = [0] * len(holidayVector)
+            weekDayVector = [0] * len(weekDayVector)
+
+        if useHoliday:
+            tupleList+=holidayVector
+
+        if useWeekday:
+            tupleList+=weekDayVector
+
         columnList.append(tupleList)
     row=pd.Series(columnList+[outputList],columns+["output"])
     return row
 
-def createXmulti(df, timeWindow, stationIDs, outputSize, save = False, isStandardized = False):
+def createXmulti(df, timeWindow, stationIDs, outputSize, save = False, isStandardized = False, noFillZero = False, useHoliday = True, useWeekday = True):
     columns = range(1, timeWindow+1)
     zoneIDs = range(1,21)
-
+    holidayDict = getHolidayDict()
     zoneColumns = ["zone_" + str(i) for i in zoneIDs]
     stationColumns = ["station_" + str(i) for i in stationIDs]
+    df['weekday'] = df['date'].dt.dayofweek
 
-    dfS = df[zoneColumns+stationColumns]
+    dfS = df[zoneColumns+stationColumns+["date","weekday"]]
+    dfDummy = pd.get_dummies(dfS['weekday'])
+    dfS = pd.concat([dfS, dfDummy], axis=1)
+    #dataExplore2.showDF(dfS, False)
     if isStandardized:
         scalerOutput = MinMaxScaler(feature_range=(0, 1))
         scalerInput = MinMaxScaler(feature_range=(0, 1))
@@ -187,14 +240,19 @@ def createXmulti(df, timeWindow, stationIDs, outputSize, save = False, isStandar
             lo = pd.Series(scaledTemps)
             dfS[station_name] = lo.values
 
-    cacheIdent = str(timeWindow) + "_" + str(outputSize)
+    cacheAdd = ""
+    cacheAdd += 'noFillZero' if noFillZero else ''
+    cacheAdd += 'useHoliday' if useHoliday else ''
+    cacheAdd += 'useWeekday' if useWeekday else ''
+
+    cacheIdent = str(timeWindow) + "_" + str(outputSize)+"_"+cacheAdd
     filename = "rnnInputs/rnnInput"+str(cacheIdent)+".pd"
     cacheExists = os.path.isfile(filename)
     if save or not(cacheExists):
         dfNew = pd.DataFrame(columns=columns)
         for i in range(0, len(dfS), 24):#len(df.index)
             if i >= timeWindow and i+outputSize < len(df):
-                row = createInputOutputRow(dfS, i, columns, zoneColumns, stationColumns, outputSize)
+                row = createInputOutputRow(dfS, i, columns, zoneColumns, stationColumns, outputSize, holidayDict, noFillZero=noFillZero, useHoliday=useHoliday, useWeekday=useWeekday)
                 dfNew = dfNew.append([row],ignore_index=True)
         #dfNew[featureList] = dfNew[0].apply(pd.Series)
 

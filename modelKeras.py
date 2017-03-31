@@ -11,6 +11,7 @@ from bokeh.models import Legend
 import dataExplore2
 import energyload_class
 import numpy as np
+np.random.seed(1337) # for reproducibility
 import keras
 from bokeh.plotting import figure, show, output_file
 from bokeh.models import Legend
@@ -44,7 +45,7 @@ class KerasModel():
         error = math.sqrt((sumZones / counter))
         return error
 
-    def getValidationInputOutput(self, df,  stationIDs, timeWindow):
+    def getValidationInputOutput(self, df,  stationIDs, timeWindow, noFillZero = False, useHoliday = True, useWeekday = True):
         backcastWeeks = ["2005-3-5", "2005-6-19", "2005-9-9", "2005-12-24",
                                  "2006-2-12", "2006-5-24", "2006-8-1", "2006-11-21","2008-6-30"]
         columns = range(1, timeWindow+1)
@@ -52,9 +53,12 @@ class KerasModel():
         zoneColumns = ["zone_" + str(i) for i in zoneIDs]
         stationColumns = ["station_" + str(i) for i in stationIDs]
         dfNew = pd.DataFrame(columns=columns)
-
-        dfS = df[zoneColumns+stationColumns+["zone_21"]]
+        df['weekday'] = df['date'].dt.dayofweek
+        dfS = df[zoneColumns+stationColumns+["zone_21"]+["date", "weekday"]]
         dfS = dfS.fillna(0)
+        dfDummy = pd.get_dummies(dfS['weekday'])
+        dfS = pd.concat([dfS, dfDummy], axis=1)
+        holidayDict = energyload_class.getHolidayDict()
         scalerInput = MinMaxScaler(feature_range=(0, 1))
         scalerOutput = MinMaxScaler(feature_range=(0, 1))
         scalerOutputZone21 = MinMaxScaler(feature_range=(0, 1))
@@ -78,7 +82,7 @@ class KerasModel():
         for date in backcastWeeks:
             mask = (df['date'] == date)
             i = df.loc[mask].index[0]+24
-            row = energyload_class.createInputOutputRow(dfS, i, columns, zoneColumns, stationColumns, 7*24, True)
+            row = energyload_class.createInputOutputRow(dfS, i, columns, zoneColumns, stationColumns, 7*24, holidayDict, addSystemLevel = True, noFillZero=noFillZero, useHoliday=useHoliday, useWeekday=useWeekday)
             dfNew = dfNew.append([row],ignore_index=True)
 
         #dataExplore2.showDF(dfNew, False)
@@ -123,12 +127,15 @@ class KerasModel():
                 sequenceLoads[zoneID].append(column)
         return sequenceLoads
 
-    def __init__(self, timeWindow = 24*7,
+    def __init__(self, timeWindow = 24*2,
                    outputSize = 24*7,
+                   noFillZero = False,
+                   useHolidays = True,
+                   useWeekday = True,
                    learningRate = 0.001,
-                   hiddenNodes = 20,
+                   hiddenNodes = 40,
                    batchSize = 1,
-                   epochSize = 15,
+                   epochSize = 20,
                    indexID = 1,
                    optimizer = "adam",
                    isShow = False,
@@ -141,21 +148,20 @@ class KerasModel():
             "ada" : keras.optimizers.Adagrad(lr=learningRate, epsilon=1e-08, decay=0.0)
         }
 
-        inputSize = len(stationIDs)+20
+        #inputSize = len(stationIDs)+20
         finalOutputSize = outputSize * 20
-
 
         df = energyload_class.init_dfs(False, False)
 
-    #    df['weekday'] = df['date'].dt.dayofweek
-        xInput, xOutput, scaler = energyload_class.createXmulti(df, timeWindow, stationIDs, outputSize, save=False, isStandardized=True)
+    #
+        xInput, xOutput, scaler = energyload_class.createXmulti(df, timeWindow, stationIDs, outputSize, save=False, isStandardized=True, noFillZero=noFillZero, useHoliday=useHolidays, useWeekday=useWeekday)
         xInput = xInput.swapaxes(0,1)
-
+        inputSize = xInput.shape[2]
         opt = keras.optimizers.SGD(lr=0.1, momentum=0.0, decay=0.0, nesterov=False)
         early = keras.callbacks.EarlyStopping(monitor='val_loss', min_delta=0, patience=10, verbose=1, mode='auto')
         #shapeInput = [rows, timeSteps, InputSize]
         model = Sequential()
-        model.add(SimpleRNN(hiddenNodes, input_length=timeWindow, input_dim=inputSize,  return_sequences=True, go_backwards = False))
+        model.add(SimpleRNN(hiddenNodes, input_length=timeWindow, input_dim=inputSize,  return_sequences=True, go_backwards = True))
         model.add(SimpleRNN(hiddenNodes, input_length=timeWindow,  return_sequences=False))
         #model.add(SimpleRNN(50, input_length=timeWindow,  return_sequences=False))
         model.add(Dense(finalOutputSize))
@@ -201,7 +207,6 @@ class KerasModel():
             #p = model.predict(xInput)
             #xOutputV = getSingleLoadPrediction(xOutput)
             #pV = getSingleLoadPrediction(p)
-
 
             zonePlots = {}
 

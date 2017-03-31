@@ -11,20 +11,11 @@ def createBatchFile(singleCommand, id):
         with open("batchScripts/script"+str(id)+".sh", "wt") as fout:
             for line in fin:
                 fout.write(line.replace('?job?', singleCommand))
-
+import experimentConfig
 #createBatchFile("srun --cpus-per-task=1 --time=00:30:00 --mem=3110 ~/pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/singleExecution.py", 2)
 
-maxIters = 100000
-parameters = collections.OrderedDict((
-("learningRate", [0.001, 0.01, 0.05, 0.1, 0.2]),
-#("hiddenLayer"  , [1, 2, 3, 4]),
-("hiddenNodes" , [2, 4, 8, 16, 32, 50, 62, 128,256]),
-("optimizers" , ['adam', 'sgd', 'rms','ada']),
-("timeWindow" , [1, 12, 24, 36, 48, 96, 144, 120, 168]),
-("batchSize" , [1,10, 100]),
-("epochSize" , [30]),
-#("activationFunction" , ["tanh", "sigmoid"])
-))
+maxIters =50000
+parameters = experimentConfig.Config.parametersAddtionalInput
 permMatrix = list(itertools.product(*parameters.values()))
 random.shuffle(permMatrix)
 iters = len(permMatrix)
@@ -41,15 +32,10 @@ command = ""
 
 for el in permMatrix:
     keys=parameters.keys()
-    setting = {
-        "learningRate" : el[keys.index("learningRate")],
-        "hiddenNodes" : el[keys.index("hiddenNodes")],
-        "timeWindow" : el[keys.index("timeWindow")],
-        "optimizer" : el[keys.index("optimizers")],
-        "batchSize" : el[keys.index("batchSize")],
-        "epochSize" : el[keys.index("epochSize")],
-        "indexID" : permIndex
-    }
+    setting = {}
+    for key in keys:
+        setting[key] = el[keys.index(key)]
+    setting["indexID"] = permIndex
     data_str=json.dumps(setting)
     createBatchFile("srun --cpus-per-task=1 --time=01:00:00 --mem=3110 ~/pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/singleExecution.py '"+data_str + "' ", permIndex)
     p = subprocess.Popen("sbatch batchScripts/script"+str(permIndex)+".sh",  stdout=log, stderr=log, shell=True)
