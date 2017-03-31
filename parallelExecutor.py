@@ -17,6 +17,7 @@ import experimentConfig
 maxIters =50000
 parameters = experimentConfig.Config.parametersAddtionalInput
 permMatrix = list(itertools.product(*parameters.values()))
+permMatrix = experimentConfig.Config.generateRandom()
 random.shuffle(permMatrix)
 iters = len(permMatrix)
 print "Anzahl der Permutationen:"+str(iters)

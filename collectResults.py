@@ -45,7 +45,7 @@ print errors
 print str(len(running))+' laufende Jobs'
 print str(len(results))+' abgeschlossene Jobs'
 print str(maxAwaiting)+ 'jobs geplant'
-collectName = len(results)+"_"+now.year+"_"+now.month+"_"+now.day+"_"+now.hour
+collectName = str(len(results))+"_"+str(now.year)+"_"+str(now.month)+"_"+str(now.day)+"_"+str(now.hour)
 pd.to_pickle("collectedResults/"+collectName)
 print "fehlende id's:"
 print missing
