@@ -130,7 +130,7 @@ class KerasModel():
     def __init__(self, timeWindow = 24*2,
                    outputSize = 24*7,
                    noFillZero = False,
-                   useHoliday = True,
+                   useHoliday = False,
                    useWeekday = True,
                    learningRate = 0.001,
                    hiddenNodes = 40,
