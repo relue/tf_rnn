@@ -9,15 +9,17 @@ class Config():
 
     parametersAddtionalInput = collections.OrderedDict((
     ("learningRate", [0.001, 0.01, 0.05]),
-    #("hiddenLayer"  , [1, 2, 3, 4]),
-    ("hiddenNodes" , [32, 50, 62, 128,256]),
-    ("optimizer" , ['adam']),
-    ("timeWindow" , [12, 24, 36]),
-    ("batchSize" , [1,10]),
-    ("epochSize" , [30]),
+    ("hiddenLayer"  , [1, 2, 3, 4]),
+    ("hiddenNodes" , [10, 32, 50, 128]),
+    ("optimizer" , ['adam','sgd']),
+    ("timeWindow" , [12, 24, 62,1,128]),
+    ("batchSize" , [1,10,30]),
+    ("epochSize" , [30,10]),
     ("useHoliday" , [True, False]),
-    ("useWeekday" , [True, False]),
-    ("noFillZero" , [True, False])
+    #("useWeekday" , [True, False]),
+    ("noFillZero" , [True, False]),
+    ("weightInit" , ["one", "glorot_uniform", "lecun_uniform", "glorot_normal"]),
+    ("stationIDs" , [1,2,3,6,7,8,9,10,12])
     #("activationFunction" , ["tanh", "sigmoid"])
     ))
 
