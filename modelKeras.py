@@ -175,7 +175,7 @@ class KerasModel():
         #model.add(SimpleRNN(50, input_length=timeWindow,  return_sequences=False))
         model.add(Dense(finalOutputSize))
         model.compile(loss='mean_squared_error', optimizer=optimizerObjects[optimizer])
-        testInput,testOutput,testScaler = self.getValidationInputOutput(df, stationIDs, timeWindow)
+        testInput,testOutput,testScaler = self.getValidationInputOutput(df, stationIDs, timeWindow, noFillZero = noFillZero, useHoliday = useHoliday, useWeekday = useWeekday)
         customCallback = KaggleTest(self, testInput,testOutput,testScaler)
         history = model.fit(xInput, xOutput, nb_epoch=epochSize, batch_size=batchSize, verbose=1, validation_split=0.3, callbacks=[customCallback])#callbacks=[early]
         historyTest = customCallback.getHistory()
