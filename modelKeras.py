@@ -162,10 +162,10 @@ class KerasModel():
         early = keras.callbacks.EarlyStopping(monitor='val_loss', min_delta=0, patience=10, verbose=1, mode='auto')
         #shapeInput = [rows, timeSteps, InputSize]
         model = Sequential()
-        model.add(SimpleRNN(hiddenNodes, input_length=timeWindow, input_dim=inputSize,  return_sequences=True, go_backwards = True))
+        returnSequence = True if hiddenLayers > 1 else False
+        model.add(SimpleRNN(hiddenNodes, input_length=timeWindow, input_dim=inputSize,  return_sequences=returnSequence, go_backwards = True))
         i = 1
         for hdI in range(2,hiddenLayers+1):
-            returnSequence = True
             if hdI == hiddenLayers:
                 returnSequence = False
             model.add(SimpleRNN(hiddenNodes, input_length=timeWindow,  return_sequences=returnSequence))
