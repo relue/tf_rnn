@@ -240,7 +240,7 @@ def createXmulti(df, timeWindow, stationIDs, outputSize, save = False, isStandar
             lo = pd.Series(scaledTemps)
             dfS[station_name] = lo.values
 
-    cacheAdd = ""
+    cacheAdd = "31032017"
     cacheAdd += 'noFillZero' if noFillZero else ''
     cacheAdd += 'useHoliday' if useHoliday else ''
     cacheAdd += 'useWeekday' if useWeekday else ''

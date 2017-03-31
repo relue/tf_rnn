@@ -37,7 +37,7 @@ for el in permMatrix:
         setting[key] = el[keys.index(key)]
     setting["indexID"] = permIndex
     data_str=json.dumps(setting)
-    createBatchFile("srun --cpus-per-task=1 --time=01:00:00 --mem=3110 ~/pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/singleExecution.py '"+data_str + "' ", permIndex)
+    createBatchFile("srun --cpus-per-task=1 --time=01:00:00 --mem=3110 ~/pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/singleExecution.py '"+data_str + "' 0", permIndex)
     p = subprocess.Popen("sbatch batchScripts/script"+str(permIndex)+".sh",  stdout=log, stderr=log, shell=True)
     #time.sleep(1)
     permIndex += 1
