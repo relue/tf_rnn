@@ -135,10 +135,10 @@ class KerasModel():
                    useHoliday = False,
                    useWeekday = True,
                    learningRate = 0.001,
-                   l1Penalty = 0.01,
-                   DropoutProp=0.05,
-                   hiddenNodes = 40,
-                   hiddenLayers = 1,
+                   l1Penalty = 0.001,
+                   DropoutProp=0.2,
+                   hiddenNodes = 60,
+                   hiddenLayers = 2,
                    batchSize = 1,
                    epochSize = 20,
                    earlyStopping = False,
@@ -168,22 +168,26 @@ class KerasModel():
         xInput = xInput.swapaxes(0,1)
         inputSize = xInput.shape[2]
         opt = keras.optimizers.SGD(lr=0.1, momentum=0.0, decay=0.0, nesterov=False)
-        early = keras.callbacks.EarlyStopping(monitor='val_loss', min_delta=0, patience=20, verbose=1, mode='auto')
+        early = keras.callbacks.EarlyStopping(monitor='val_loss', min_delta=0, patience=10, verbose=1, mode='auto')
         #shapeInput = [rows, timeSteps, InputSize]
         model = Sequential()
         returnSequence = True if hiddenLayers > 1 else False
         cellObj = "SimpleRNN" if cellType == "rnn" else "LSTM"
         print 'model.add('+cellObj+'(hiddenNodes, input_length=timeWindow, input_dim=inputSize, recurrent_regularizer=regularizers.l1(l1Penalty), ' \
                                    'return_sequences=returnSequence, go_backwards = True, init=weightInit, activation=activationFunction))'
-        eval('model.add('+cellObj+'(hiddenNodes, input_length=timeWindow, input_dim=inputSize, recurrent_regularizer=regularizers.l1(l1Penalty), '
-                                  'return_sequences=returnSequence, go_backwards = True, init=weightInit, activation=activationFunction))')
+        #eval('model.add('+cellObj+'(hiddenNodes, input_length=timeWindow, input_dim=inputSize, recurrent_regularizer=regularizers.l1(l1Penalty), '
+        #                          'return_sequences=returnSequence, go_backwards = True, init=weightInit, activation=activationFunction))')
+        model.add(SimpleRNN(hiddenNodes, input_length=timeWindow, input_dim=inputSize, kernel_regularizer=regularizers.l1(l1Penalty),
+                            return_sequences=returnSequence, go_backwards = True, init=weightInit, activation=activationFunction))
         i = 1
         model.add(Dropout(DropoutProp))
         for hdI in range(2,hiddenLayers+1):
             if hdI == hiddenLayers:
                 returnSequence = False
-            eval('model.add('+cellObj+'(hiddenNodes, input_length=timeWindow,  return_sequences=returnSequence, recurrent_regularizer=regularizers.l1(l1Penalty),'
-                     ' init=weightInit, activation=activationFunction))')
+            #eval('model.add('+cellObj+'(hiddenNodes, input_length=timeWindow,  return_sequences=returnSequence, recurrent_regularizer=regularizers.l1(l1Penalty),
+            # init=weightInit, activation=activationFunction))')
+            model.add(SimpleRNN(hiddenNodes, return_sequences=returnSequence, kernel_regularizer=regularizers.l1(l1Penalty),
+            init=weightInit, activation=activationFunction))
             model.add(Dropout(DropoutProp))
         #model.add(SimpleRNN(50, input_length=timeWindow,  return_sequences=False))
         model.add(Dense(finalOutputSize, kernel_regularizer=regularizers.l1(l1Penalty)))
@@ -194,7 +198,7 @@ class KerasModel():
         callbacks = []
         callbacks.append(customCallback)
         if not earlyStopping:
-            epochSize = 100
+            epochSize = 50
             callbacks.append(early)
         history = model.fit(xInput, xOutput, nb_epoch=epochSize, batch_size=batchSize, verbose=1, validation_split=0.3, callbacks=callbacks)#callbacks=[early]
         historyTest = customCallback.getHistory()

@@ -42,8 +42,8 @@ class Config():
 
     continousParameterBounds = {
         "learningRate": (0,0.7),
-        "DropoutProp": (0.3,0.9),
-        "l1Penalty": (0,0.3)
+        "DropoutProp": (0.0,0.3),
+        "l1Penalty": (0.0001,0.01)
     }
 
     discreteParameterRanges = {
