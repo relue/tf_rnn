@@ -9,7 +9,7 @@ from keras.layers import LSTM,SimpleRNN
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import mean_squared_error
 from bokeh.models import Legend
-import dataExplore2
+#import dataExplore2
 import energyload_class
 import numpy as np
 np.random.seed(1337) # for reproducibility
@@ -271,4 +271,4 @@ class KerasModel():
             if isShow:
                 show(ap)
 
-#KerasModel(isShow= True, createHTML= True)
+KerasModel(isShow= True, createHTML= True)
