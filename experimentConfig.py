@@ -15,6 +15,7 @@ class Config():
     ("timeWindow" , [12, 24, 62,1,128]),
     ("batchSize" , [1,10,30]),
     ("epochSize" , [30,10]),
+    ("earlyStopping", [True, False]),
     ("useHoliday" , [True, False]),
     #("useWeekday" , [True, False]),
     ("noFillZero" , [True, False]),

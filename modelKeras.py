@@ -136,7 +136,8 @@ class KerasModel():
                    hiddenNodes = 40,
                    hiddenLayers = 1,
                    batchSize = 1,
-                   epochSize = 20,
+                   epochSize = 100,
+                   earlyStopping = False,
                    indexID = 1,
                    optimizer = "adam",
                    isShow = False,
@@ -177,7 +178,11 @@ class KerasModel():
         model.compile(loss='mean_squared_error', optimizer=optimizerObjects[optimizer])
         testInput,testOutput,testScaler = self.getValidationInputOutput(df, stationIDs, timeWindow, noFillZero = noFillZero, useHoliday = useHoliday, useWeekday = useWeekday)
         customCallback = KaggleTest(self, testInput,testOutput,testScaler)
-        history = model.fit(xInput, xOutput, nb_epoch=epochSize, batch_size=batchSize, verbose=1, validation_split=0.3, callbacks=[customCallback])#callbacks=[early]
+        callbacks = [].append(customCallback)
+        if earlyStopping:
+            callbacks.append(early)
+
+        history = model.fit(xInput, xOutput, nb_epoch=epochSize, batch_size=batchSize, verbose=1, validation_split=0.3, callbacks=callbacks)#callbacks=[early]
         historyTest = customCallback.getHistory()
         self.results["loss"] = history.history['loss']
         self.results["val_loss"] = history.history['val_loss']
@@ -252,4 +257,4 @@ class KerasModel():
             if isShow:
                 show(ap)
 
-#KerasModel(isShow= True, createHTML= True)
+KerasModel(isShow= True, createHTML= True)
