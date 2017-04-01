@@ -22,7 +22,7 @@ for s in dirList:
     id = int(id)
     if name == "error":
         size = os.stat(dirName+s).st_size
-        if size > 3330:
+        if size > 32769:
             errors.append(id)
     if name == "output":
         running.append(id)

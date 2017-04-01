@@ -259,4 +259,4 @@ class KerasModel():
             if isShow:
                 show(ap)
 
-KerasModel(isShow= True, createHTML= True)
+#KerasModel(isShow= True, createHTML= True)
