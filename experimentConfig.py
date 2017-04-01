@@ -41,7 +41,7 @@ class Config():
     }
 
     continousParameterBounds = {
-        "learningRate": (0,1),
+        "learningRate": (0,0.7),
         "DropoutProp": (0.3,0.9),
         "l1Penalty": (0,0.3)
     }
@@ -52,7 +52,7 @@ class Config():
         "optimizer": ['adam', 'sgd', 'rms','ada', 'adadelta'],
         "timeWindow": range(10,137),
         "batchSize": range(1,101),
-        "hiddenLayers": range(1,11),
+        "hiddenLayers": range(1,5),
         "weightInit": ["zero", "one", "normal", "glorot_uniform", "lecun_uniform", "glorot_normal"],
         "earlyStopping": [True, False],
     }
