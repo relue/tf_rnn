@@ -9,7 +9,7 @@ class Config():
 
     parametersAddtionalInput = collections.OrderedDict((
     ("learningRate", [0.001, 0.01, 0.05]),
-    ("hiddenLayer"  , [1, 2, 3, 4]),
+    ("hiddenLayers"  , [1, 2, 3, 4]),
     ("hiddenNodes" , [10, 32, 50, 128]),
     ("optimizer" , ['adam','sgd']),
     ("timeWindow" , [12, 24, 62,1,128]),
