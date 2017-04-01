@@ -173,13 +173,13 @@ class KerasModel():
         model = Sequential()
         returnSequence = True if hiddenLayers > 1 else False
         cellObj = "SimpleRNN" if cellType == "rnn" else "LSTM"
-        eval('model.add('+cellObj+'(hiddenNodes, input_length=timeWindow, input_dim=inputSize, kernel_regularizer=regularizers.l1(l1Penalty), '
+        eval('model.add('+cellObj+'(hiddenNodes, input_length=timeWindow, input_dim=inputSize, recurrent_regularizer=regularizers.l1(l1Penalty), '
                                   'return_sequences=returnSequence, go_backwards = True, init=weightInit, activation=activationFunction))')
         i = 1
         for hdI in range(2,hiddenLayers+1):
             if hdI == hiddenLayers:
                 returnSequence = False
-                eval('model.add('+cellObj+'(hiddenNodes, input_length=timeWindow,  return_sequences=returnSequence, kernel_regularizer=regularizers.l1(l1Penalty),'
+                eval('model.add('+cellObj+'(hiddenNodes, input_length=timeWindow,  return_sequences=returnSequence, recurrent_regularizer=regularizers.l1(l1Penalty),'
                      ' init=weightInit, activation=activationFunction))')
         #model.add(SimpleRNN(50, input_length=timeWindow,  return_sequences=False))
         model.add(Dense(finalOutputSize, kernel_regularizer=regularizers.l1(l1Penalty)))
