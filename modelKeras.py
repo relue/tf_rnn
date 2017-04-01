@@ -133,6 +133,8 @@ class KerasModel():
                    useHoliday = False,
                    useWeekday = True,
                    learningRate = 0.001,
+                   l1Penalty = 0.01,
+                   DropoutProp=0.01,
                    hiddenNodes = 40,
                    hiddenLayers = 1,
                    batchSize = 1,
@@ -163,7 +165,7 @@ class KerasModel():
         xInput = xInput.swapaxes(0,1)
         inputSize = xInput.shape[2]
         opt = keras.optimizers.SGD(lr=0.1, momentum=0.0, decay=0.0, nesterov=False)
-        early = keras.callbacks.EarlyStopping(monitor='val_loss', min_delta=0, patience=10, verbose=1, mode='auto')
+        early = keras.callbacks.EarlyStopping(monitor='val_loss', min_delta=0, patience=20, verbose=1, mode='auto')
         #shapeInput = [rows, timeSteps, InputSize]
         model = Sequential()
         returnSequence = True if hiddenLayers > 1 else False
@@ -172,7 +174,7 @@ class KerasModel():
         for hdI in range(2,hiddenLayers+1):
             if hdI == hiddenLayers:
                 returnSequence = False
-            model.add(SimpleRNN(hiddenNodes, input_length=timeWindow,  return_sequences=returnSequence))
+            model.add(SimpleRNN(hiddenNodes, input_length=timeWindow,  return_sequences=returnSequence, init=weightInit, activation=activation))
         #model.add(SimpleRNN(50, input_length=timeWindow,  return_sequences=False))
         model.add(Dense(finalOutputSize))
         model.compile(loss='mean_squared_error', optimizer=optimizerObjects[optimizer])
@@ -180,8 +182,8 @@ class KerasModel():
         customCallback = KaggleTest(self, testInput,testOutput,testScaler)
         callbacks = [].append(customCallback)
         if earlyStopping:
+            epochSize = 150
             callbacks.append(early)
-
         history = model.fit(xInput, xOutput, nb_epoch=epochSize, batch_size=batchSize, verbose=1, validation_split=0.3, callbacks=callbacks)#callbacks=[early]
         historyTest = customCallback.getHistory()
         self.results["loss"] = history.history['loss']

@@ -1,5 +1,5 @@
 import collections
-
+import random
 '''Umszusetzen:
     - Dropout
     - L1 Penalty
@@ -64,7 +64,14 @@ class Config():
         "weightInit": ["zero", "one", "normal", "glorot_uniform", "lecun_uniform", "glorot_normal"]
     }
 
-    def generateRandom(self):
-        return 0
+    def generateRandomVektor(self, parameterList):
+        dict = {}
+        for parameterName in parameterList:
+            if self.parameterTypeDiscrete[parameterName]:
+                value = random.choice(self.discreteParameterRanges[parameterName])
+            else:
+                value = random.uniform(self.continousParameterBounds[parameterName][0], self.continousParameterBounds[parameterName][1])
+            dict[parameterName] = value
+        return dict
 
 

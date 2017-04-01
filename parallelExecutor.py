@@ -12,12 +12,28 @@ def createBatchFile(singleCommand, id):
             for line in fin:
                 fout.write(line.replace('?job?', singleCommand))
 import experimentConfig
-#createBatchFile("srun --cpus-per-task=1 --time=00:30:00 --mem=3110 ~/pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/singleExecution.py", 2)
+
+isRandomSearch = True
+if isRandomSearch:
+    c = experimentConfig.Config()
+    randVecDef = [
+            "learningRate",
+            "DropoutProp",
+            "l1Penalty",
+            "activationFunction",
+            "hiddenNodes",
+            "optimizer",
+            "timeWindow",
+            "batchSize",
+            "hiddenLayers",
+            "weightInit"
+    ]
+    maxRandomTrials = 50
 
 maxIters = 10
 parameters = experimentConfig.Config.parametersAddtionalInput
 permMatrix = list(itertools.product(*parameters.values()))
-#permMatrix = experimentConfig.Config.generateRandom()
+
 random.shuffle(permMatrix)
 iters = len(permMatrix)
 print "Anzahl der Permutationen:"+str(iters)
@@ -31,21 +47,31 @@ for filename in os.listdir("batchScripts/"):
 preCommand = "export PYTHONWARNINGS='ignore' && source ~/pythonProjects/tf_rnn/preInit.sh && "
 command = ""
 
-for el in permMatrix:
-    keys=parameters.keys()
-    setting = {}
-    for key in keys:
-        setting[key] = el[keys.index(key)]
+def executeConfig(setting, permIndex):
     setting["indexID"] = permIndex
-    data_str=json.dumps(setting)
-    createBatchFile("srun --cpus-per-task=1 --time=01:00:00 --mem=3110 ~/pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/singleExecution.py '"+data_str + "' 0", permIndex)
-    p = subprocess.Popen("sbatch batchScripts/script"+str(permIndex)+".sh",  stdout=log, stderr=log, shell=True)
-    #time.sleep(1)
-    permIndex += 1
-    if permIndex >= maxIters:
-        break
+    data_str = json.dumps(setting)
+    createBatchFile(
+        "srun --cpus-per-task=1 --time=01:00:00 --mem=3110 ~/pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/singleExecution.py '" + data_str + "' 0",
+        permIndex)
+    p = subprocess.Popen("sbatch batchScripts/script" + str(permIndex) + ".sh", stdout=log, stderr=log, shell=True)
+if isRandomSearch:
+    for permIndex in range(1,maxRandomTrials):
+        setting = c.generateRandomVektor(randVecDef)
+        executeConfig(setting, permIndex)
 
-    print 'permIndex:'+str(permIndex)
+else:
+    for el in permMatrix:
+        keys=parameters.keys()
+        setting = {}
+        for key in keys:
+            setting[key] = el[keys.index(key)]
+        executeConfig(setting,permIndex)
+
+        permIndex += 1
+        if permIndex >= maxIters:
+            break
+
+
 
 while 1:
     time.sleep(10)
