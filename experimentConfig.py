@@ -37,24 +37,28 @@ class Config():
         "batchSize": True,
         "hiddenLayers": True,
         "earlyStopping": True,
-        "weightInit": True
+        "weightInit": True,
+        "useHoliday": True,
+        "useWeekday": True
     }
 
     continousParameterBounds = {
-        "learningRate": (0,0.7),
+        "learningRate": (0,0.1),
         "DropoutProp": (0.0,0.3),
         "l1Penalty": (0.0001,0.01)
     }
 
     discreteParameterRanges = {
         "activationFunction": ["tanh", "sigmoid", "relu"],
-        "hiddenNodes": range(10,1001),
+        "hiddenNodes": range(10,500),
         "optimizer": ['adam', 'sgd', 'rms','ada', 'adadelta'],
         "timeWindow": range(10,137),
         "batchSize": range(1,101),
         "hiddenLayers": range(1,5),
         "weightInit": ["zero", "one", "normal", "glorot_uniform", "lecun_uniform", "glorot_normal"],
         "earlyStopping": [True, False],
+        "useHoliday": [True, False],
+        "useWeekday": [True, False]
     }
 
     def generateRandomVektor(self, parameterList):

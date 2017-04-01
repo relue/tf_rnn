@@ -135,7 +135,7 @@ class KerasModel():
                    useHoliday = False,
                    useWeekday = True,
                    learningRate = 0.001,
-                   l1Penalty = 0.001,
+                   l1Penalty = 0.0001,
                    DropoutProp=0.2,
                    hiddenNodes = 60,
                    hiddenLayers = 2,
