@@ -2,6 +2,7 @@ import numpy
 import matplotlib.pyplot as plt
 import pandas as pd
 import math
+from keras import regularizers
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.layers import LSTM,SimpleRNN
@@ -140,7 +141,7 @@ class KerasModel():
                    hiddenLayers = 1,
                    batchSize = 1,
                    epochSize = 20,
-                   earlyStopping = True,
+                   earlyStopping = False,
                    indexID = 1,
                    optimizer = "adam",
                    isShow = False,
@@ -171,14 +172,17 @@ class KerasModel():
         #shapeInput = [rows, timeSteps, InputSize]
         model = Sequential()
         returnSequence = True if hiddenLayers > 1 else False
-        model.add(SimpleRNN(hiddenNodes, input_length=timeWindow, input_dim=inputSize,  return_sequences=returnSequence, go_backwards = True, init=weightInit, activation=activationFunction))
+        cellObj = "SimpleRNN" if cellType == "rnn" else "LSTM"
+        eval('model.add('+cellObj+'(hiddenNodes, input_length=timeWindow, input_dim=inputSize, kernel_regularizer=regularizers.l1(l1Penalty), '
+                                  'return_sequences=returnSequence, go_backwards = True, init=weightInit, activation=activationFunction))')
         i = 1
         for hdI in range(2,hiddenLayers+1):
             if hdI == hiddenLayers:
                 returnSequence = False
-            model.add(SimpleRNN(hiddenNodes, input_length=timeWindow,  return_sequences=returnSequence, init=weightInit, activation=activationFunction))
+                eval('model.add('+cellObj+'(hiddenNodes, input_length=timeWindow,  return_sequences=returnSequence, kernel_regularizer=regularizers.l1(l1Penalty),'
+                     ' init=weightInit, activation=activationFunction))')
         #model.add(SimpleRNN(50, input_length=timeWindow,  return_sequences=False))
-        model.add(Dense(finalOutputSize))
+        model.add(Dense(finalOutputSize, kernel_regularizer=regularizers.l1(l1Penalty)))
         model.compile(loss='mean_squared_error', optimizer=optimizerObjects[optimizer])
         testInput,testOutput,testScaler = self.getValidationInputOutput(df, stationIDs, timeWindow, noFillZero = noFillZero, useHoliday = useHoliday, useWeekday = useWeekday)
         customCallback = KaggleTest(self, testInput,testOutput,testScaler)
