@@ -128,6 +128,7 @@ class KerasModel():
         return sequenceLoads
 
     def __init__(self, timeWindow = 24*2,
+                   cellType = "rnn",
                    outputSize = 24*7,
                    noFillZero = False,
                    useHoliday = False,
@@ -146,6 +147,7 @@ class KerasModel():
                    stationIDs = [12],
                    weightInit = "lecun_uniform",
                    activationFunction = "tanh",
+                   standardizationType = "minMax",
                    createHTML = False):
         optimizerObjects = {
             "sgd" : keras.optimizers.SGD(lr=learningRate, momentum=0.0, decay=0.0, nesterov=False),
@@ -180,7 +182,8 @@ class KerasModel():
         model.compile(loss='mean_squared_error', optimizer=optimizerObjects[optimizer])
         testInput,testOutput,testScaler = self.getValidationInputOutput(df, stationIDs, timeWindow, noFillZero = noFillZero, useHoliday = useHoliday, useWeekday = useWeekday)
         customCallback = KaggleTest(self, testInput,testOutput,testScaler)
-        callbacks = [].append(customCallback)
+        callbacks = []
+        callbacks.append(customCallback)
         if not earlyStopping:
             epochSize = 100
             callbacks.append(early)

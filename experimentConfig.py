@@ -20,7 +20,9 @@ class Config():
     #("useWeekday" , [True, False]),
     ("noFillZero" , [True, False]),
     ("weightInit" , ["one", "glorot_uniform", "lecun_uniform", "glorot_normal"]),
-    ("stationIDs" , [[1],[2],[3],[5],[6],[7],[8],[9],[12]])
+    ("stationIDs" , [[1],[2],[3],[5],[6],[7],[8],[9],[12]]),
+    ("cellType", ["lstm", "rnn"]),
+    ("standardizationType",["zScore", "minMax"])
     #("activationFunction" , ["tanh", "sigmoid"])
     ))
 
@@ -40,8 +42,8 @@ class Config():
 
     continousParameterBounds = {
         "learningRate": (0,1),
-        "DropoutProp": (0,1),
-        "l1Penalty": (0,1)
+        "DropoutProp": (0.3,0.9),
+        "l1Penalty": (0,0.3)
     }
 
     discreteParameterRanges = {
