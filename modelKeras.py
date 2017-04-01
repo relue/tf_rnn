@@ -177,8 +177,7 @@ class KerasModel():
                                    'return_sequences=returnSequence, go_backwards = True, init=weightInit, activation=activationFunction))'
         #eval('model.add('+cellObj+'(hiddenNodes, input_length=timeWindow, input_dim=inputSize, recurrent_regularizer=regularizers.l1(l1Penalty), '
         #                          'return_sequences=returnSequence, go_backwards = True, init=weightInit, activation=activationFunction))')
-        model.add(SimpleRNN(hiddenNodes, input_length=timeWindow, input_dim=inputSize, kernel_regularizer=regularizers.l1(l1Penalty),
-                            return_sequences=returnSequence, go_backwards = True, init=weightInit, activation=activationFunction))
+        model.add(SimpleRNN(hiddenNodes, input_length=timeWindow, input_dim=inputSize, return_sequences=returnSequence, go_backwards = True, init=weightInit, activation=activationFunction))
         i = 1
         model.add(Dropout(DropoutProp))
         for hdI in range(2,hiddenLayers+1):
@@ -186,8 +185,7 @@ class KerasModel():
                 returnSequence = False
             #eval('model.add('+cellObj+'(hiddenNodes, input_length=timeWindow,  return_sequences=returnSequence, recurrent_regularizer=regularizers.l1(l1Penalty),
             # init=weightInit, activation=activationFunction))')
-            model.add(SimpleRNN(hiddenNodes, return_sequences=returnSequence, kernel_regularizer=regularizers.l1(l1Penalty),
-            init=weightInit, activation=activationFunction))
+            model.add(SimpleRNN(hiddenNodes, return_sequences=returnSequence, init=weightInit, activation=activationFunction))
             model.add(Dropout(DropoutProp))
         #model.add(SimpleRNN(50, input_length=timeWindow,  return_sequences=False))
         model.add(Dense(finalOutputSize, kernel_regularizer=regularizers.l1(l1Penalty)))
@@ -275,4 +273,4 @@ class KerasModel():
             if isShow:
                 show(ap)
 
-KerasModel(isShow= True, createHTML= True)
+#KerasModel(isShow= True, createHTML= True)
