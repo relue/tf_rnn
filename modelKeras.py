@@ -135,8 +135,8 @@ class KerasModel():
                    useHoliday = False,
                    useWeekday = True,
                    learningRate = 0.001,
-                   l1Penalty = 0.0001,
-                   DropoutProp=0.2,
+                   l1Penalty = 0.0000,
+                   DropoutProp=0.01,
                    hiddenNodes = 60,
                    hiddenLayers = 2,
                    batchSize = 1,
@@ -185,10 +185,10 @@ class KerasModel():
                 returnSequence = False
             #eval('model.add('+cellObj+'(hiddenNodes, input_length=timeWindow,  return_sequences=returnSequence, recurrent_regularizer=regularizers.l1(l1Penalty),
             # init=weightInit, activation=activationFunction))')
-            model.add(SimpleRNN(hiddenNodes, return_sequences=returnSequence, init=weightInit, activation=activationFunction))
+            model.add(SimpleRNN(hiddenNodes, input_length=timeWindow, return_sequences=returnSequence, init=weightInit, activation=activationFunction))
             model.add(Dropout(DropoutProp))
         #model.add(SimpleRNN(50, input_length=timeWindow,  return_sequences=False))
-        model.add(Dense(finalOutputSize, kernel_regularizer=regularizers.l1(l1Penalty)))
+        model.add(Dense(finalOutputSize))#, kernel_regularizer=regularizers.l1(l1Penalty)
 
         model.compile(loss='mean_squared_error', optimizer=optimizerObjects[optimizer])
         testInput,testOutput,testScaler = self.getValidationInputOutput(df, stationIDs, timeWindow, noFillZero = noFillZero, useHoliday = useHoliday, useWeekday = useWeekday)
