@@ -145,7 +145,7 @@ class KerasModel():
                    isShow = False,
                    stationIDs = [12],
                    weightInit = "lecun_uniform",
-                   activation = "tanh",
+                   activationFunction = "tanh",
                    createHTML = False):
         optimizerObjects = {
             "sgd" : keras.optimizers.SGD(lr=learningRate, momentum=0.0, decay=0.0, nesterov=False),
@@ -169,12 +169,12 @@ class KerasModel():
         #shapeInput = [rows, timeSteps, InputSize]
         model = Sequential()
         returnSequence = True if hiddenLayers > 1 else False
-        model.add(SimpleRNN(hiddenNodes, input_length=timeWindow, input_dim=inputSize,  return_sequences=returnSequence, go_backwards = True, init=weightInit, activation=activation))
+        model.add(SimpleRNN(hiddenNodes, input_length=timeWindow, input_dim=inputSize,  return_sequences=returnSequence, go_backwards = True, init=weightInit, activation=activationFunction))
         i = 1
         for hdI in range(2,hiddenLayers+1):
             if hdI == hiddenLayers:
                 returnSequence = False
-            model.add(SimpleRNN(hiddenNodes, input_length=timeWindow,  return_sequences=returnSequence, init=weightInit, activation=activation))
+            model.add(SimpleRNN(hiddenNodes, input_length=timeWindow,  return_sequences=returnSequence, init=weightInit, activation=activationFunction))
         #model.add(SimpleRNN(50, input_length=timeWindow,  return_sequences=False))
         model.add(Dense(finalOutputSize))
         model.compile(loss='mean_squared_error', optimizer=optimizerObjects[optimizer])
