@@ -27,7 +27,9 @@ if isRandomSearch:
             "batchSize",
             "hiddenLayers",
             "weightInit",
-       #     "earlyStopping"
+            "earlyStopping",
+            "useHoliday",
+            "useWeekday"
     ]
     maxRandomTrials = 50
 
