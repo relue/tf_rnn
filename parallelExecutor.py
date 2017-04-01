@@ -14,7 +14,7 @@ def createBatchFile(singleCommand, id):
 import experimentConfig
 #createBatchFile("srun --cpus-per-task=1 --time=00:30:00 --mem=3110 ~/pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/singleExecution.py", 2)
 
-maxIters =5000
+maxIters = 1
 parameters = experimentConfig.Config.parametersAddtionalInput
 permMatrix = list(itertools.product(*parameters.values()))
 #permMatrix = experimentConfig.Config.generateRandom()
