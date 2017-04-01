@@ -19,7 +19,7 @@ class Config():
     #("useWeekday" , [True, False]),
     ("noFillZero" , [True, False]),
     ("weightInit" , ["one", "glorot_uniform", "lecun_uniform", "glorot_normal"]),
-    ("stationIDs" , [1,2,3,6,7,8,9,10,12])
+    ("stationIDs" , [[1],[2],[3],[5],[6],[7],[8],[9],[12]])
     #("activationFunction" , ["tanh", "sigmoid"])
     ))
 

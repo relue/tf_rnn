@@ -244,6 +244,7 @@ def createXmulti(df, timeWindow, stationIDs, outputSize, save = False, isStandar
     cacheAdd += 'noFillZero' if noFillZero else ''
     cacheAdd += 'useHoliday' if useHoliday else ''
     cacheAdd += 'useWeekday' if useWeekday else ''
+    cacheAdd += 'Temp'.join(stationIDs)
 
     cacheIdent = str(timeWindow) + "_" + str(outputSize)+"_"+cacheAdd
     filename = "rnnInputs/rnnInput"+str(cacheIdent)+".pd"
