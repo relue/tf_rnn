@@ -31,7 +31,7 @@ if isRandomSearch:
             "useHoliday",
             "useWeekday"
     ]
-    maxRandomTrials = 50
+    maxRandomTrials = 200000
 
 maxIters = 10
 parameters = experimentConfig.Config.parametersAddtionalInput
