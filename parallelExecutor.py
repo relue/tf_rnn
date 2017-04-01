@@ -26,7 +26,8 @@ if isRandomSearch:
             "timeWindow",
             "batchSize",
             "hiddenLayers",
-            "weightInit"
+            "weightInit",
+       #     "earlyStopping"
     ]
     maxRandomTrials = 50
 

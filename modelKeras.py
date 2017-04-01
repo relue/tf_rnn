@@ -138,8 +138,8 @@ class KerasModel():
                    hiddenNodes = 40,
                    hiddenLayers = 1,
                    batchSize = 1,
-                   epochSize = 100,
-                   earlyStopping = False,
+                   epochSize = 20,
+                   earlyStopping = True,
                    indexID = 1,
                    optimizer = "adam",
                    isShow = False,
@@ -181,8 +181,8 @@ class KerasModel():
         testInput,testOutput,testScaler = self.getValidationInputOutput(df, stationIDs, timeWindow, noFillZero = noFillZero, useHoliday = useHoliday, useWeekday = useWeekday)
         customCallback = KaggleTest(self, testInput,testOutput,testScaler)
         callbacks = [].append(customCallback)
-        if earlyStopping:
-            epochSize = 150
+        if not earlyStopping:
+            epochSize = 100
             callbacks.append(early)
         history = model.fit(xInput, xOutput, nb_epoch=epochSize, batch_size=batchSize, verbose=1, validation_split=0.3, callbacks=callbacks)#callbacks=[early]
         historyTest = customCallback.getHistory()
