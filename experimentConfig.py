@@ -54,7 +54,7 @@ class Config():
         "activationFunction": ["tanh", "sigmoid", "relu"],
         "hiddenNodes": range(10,300),
         "optimizer": ['adam', 'sgd', 'rms','ada', 'adadelta'],
-        "timeWindow": range(10,137),
+        "timeWindow": range(10,199),
         "batchSize": range(1,101),
         "hiddenLayers": range(1,5),
         "weightInit": ["zero", "one", "normal", "glorot_uniform", "lecun_uniform", "glorot_normal"],

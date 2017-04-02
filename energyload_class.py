@@ -215,7 +215,8 @@ def createInputOutputRow(dfS, i, columns, zoneColumns, stationColumns, outputSiz
     return row
 
 def createXmulti(df, timeWindow, stationIDs, outputSize, save = False, isStandardized = False, noFillZero = False, useHoliday = True, useWeekday = True):
-    columns = range(1, timeWindow+1)
+    maxTimeWindow = 200
+    columns = range(1, maxTimeWindow+1)
     zoneIDs = range(1,21)
     holidayDict = getHolidayDict()
     zoneColumns = ["zone_" + str(i) for i in zoneIDs]
@@ -252,8 +253,8 @@ def createXmulti(df, timeWindow, stationIDs, outputSize, save = False, isStandar
     if save or not(cacheExists):
         dfNew = pd.DataFrame(columns=columns)
         for i in range(0, len(dfS), 24):#len(df.index)
-            if i >= timeWindow and i+outputSize < len(df):
-                row = createInputOutputRow(dfS, i, columns, zoneColumns, stationColumns, outputSize, holidayDict, noFillZero=noFillZero, useHoliday=useHoliday, useWeekday=useWeekday)
+            if i >= maxTimeWindow and i+outputSize < len(df):
+                row = createInputOutputRow(dfS, i, range(1, maxTimeWindow+1), zoneColumns, stationColumns, outputSize, holidayDict, noFillZero=noFillZero, useHoliday=useHoliday, useWeekday=useWeekday)
                 dfNew = dfNew.append([row],ignore_index=True)
         #dfNew[featureList] = dfNew[0].apply(pd.Series)
 
@@ -262,13 +263,12 @@ def createXmulti(df, timeWindow, stationIDs, outputSize, save = False, isStandar
     else:
         dfNew = pd.read_pickle(filename)
         #dataExplore2.showDF(dfNew, False)
-
-
-
-    tfOutput = np.asarray(dfNew["output"].tolist())
+    finalColumns = range(1,timeWindow+1)
+    dfTimewindow = dfNew[finalColumns + ["output"]]
+    tfOutput = np.asarray(dfTimewindow["output"].tolist())
     tfInput = []
-    for t in columns:
-        tfInput.append(dfNew[t].tolist())
+    for t in finalColumns:
+        tfInput.append(dfTimewindow[t].tolist())
     #[t, rows, inputs]
 
     tfInput= np.asarray(tfInput)
