@@ -52,7 +52,7 @@ class Config():
 
     discreteParameterRanges = {
         "activationFunction": ["tanh", "sigmoid", "relu"],
-        "hiddenNodes": range(10,500),
+        "hiddenNodes": range(10,300),
         "optimizer": ['adam', 'sgd', 'rms','ada', 'adadelta'],
         "timeWindow": range(10,137),
         "batchSize": range(1,101),

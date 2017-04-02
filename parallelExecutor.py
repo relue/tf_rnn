@@ -62,6 +62,7 @@ if isRandomSearch:
     for permIndex in range(1,maxRandomTrials):
         setting = c.generateRandomVektor(randVecDef)
         executeConfig(setting, permIndex)
+        print 'exeCute'+str(permIndex)
 
 else:
     for el in permMatrix:
