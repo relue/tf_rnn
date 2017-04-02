@@ -10,8 +10,9 @@ def createBatchFile(singleCommand,parameters, id):
      with open("sbatchConfig.sh", "rt") as fin:
         with open("batchScripts/script"+str(id)+".sh", "wt") as fout:
             for line in fin:
-                fout.write(line.replace('?job?', singleCommand))
-                fout.write(line.replace('?jobname?', parameters))
+                line = line.replace('?job?', singleCommand)
+                line = line.replace('?jobname?', parameters)
+                fout.write(line)
 import experimentConfig
 
 isRandomSearch = True
@@ -31,7 +32,7 @@ if isRandomSearch:
             "earlyStopping",
             "noFillZero",
     ]
-    maxRandomTrials = 100
+    maxRandomTrials = 1
 
 maxIters = 10
 parameters = experimentConfig.Config.parametersAddtionalInput
