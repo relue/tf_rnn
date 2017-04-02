@@ -32,7 +32,7 @@ if isRandomSearch:
             "earlyStopping",
             "noFillZero",
     ]
-    maxRandomTrials = 1
+    maxRandomTrials = 100
 
 maxIters = 10
 parameters = experimentConfig.Config.parametersAddtionalInput
