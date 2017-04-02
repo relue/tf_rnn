@@ -25,7 +25,7 @@ if isRandomSearch:
             "activationFunction",
             "hiddenNodes",
             "optimizer",
-            "timeWindow",
+            #"timeWindow",
             "batchSize",
             "hiddenLayers",
             "weightInit",
