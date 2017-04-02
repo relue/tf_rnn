@@ -247,7 +247,7 @@ def createXmulti(df, timeWindow, stationIDs, outputSize, save = False, isStandar
     cacheAdd += 'useWeekday' if useWeekday else ''
     cacheAdd += 'Temp'.join(str(e) for e in stationIDs)
 
-    cacheIdent = str(timeWindow) + "_" + str(outputSize)+"_"+cacheAdd
+    cacheIdent ="_" + str(outputSize)+"_"+cacheAdd
     filename = "rnnInputs/rnnInput"+str(cacheIdent)+".pd"
     cacheExists = os.path.isfile(filename)
     if save or not(cacheExists):
