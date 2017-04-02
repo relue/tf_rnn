@@ -6,11 +6,12 @@ import logging
 import os
 import time
 import random
-def createBatchFile(singleCommand, id):
+def createBatchFile(singleCommand,parameters, id):
      with open("sbatchConfig.sh", "rt") as fin:
         with open("batchScripts/script"+str(id)+".sh", "wt") as fout:
             for line in fin:
                 fout.write(line.replace('?job?', singleCommand))
+                fout.write(line.replace('?jobname?', parameters))
 import experimentConfig
 
 isRandomSearch = True
@@ -54,7 +55,7 @@ def executeConfig(setting, permIndex):
     data_str = json.dumps(setting)
     createBatchFile(
             "srun --cpus-per-task=1 --time=01:00:00 --mem=3110 ~/pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/singleExecution.py '" + data_str + "' 0",
-        permIndex)
+        data_str,permIndex)
     p = subprocess.Popen("sbatch batchScripts/script" + str(permIndex) + ".sh", stdout=log, stderr=log, shell=True)
 if isRandomSearch:
     for permIndex in range(1,maxRandomTrials):
