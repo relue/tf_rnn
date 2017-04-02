@@ -28,10 +28,9 @@ if isRandomSearch:
             "hiddenLayers",
             "weightInit",
             "earlyStopping",
-            "useHoliday",
-            "useWeekday"
+            "noFillZero",
     ]
-    maxRandomTrials = 200000
+    maxRandomTrials = 100
 
 maxIters = 10
 parameters = experimentConfig.Config.parametersAddtionalInput
@@ -54,7 +53,7 @@ def executeConfig(setting, permIndex):
     setting["indexID"] = permIndex
     data_str = json.dumps(setting)
     createBatchFile(
-        "srun --cpus-per-task=1 --time=01:00:00 --mem=3110 ~/pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/singleExecution.py '" + data_str + "' 0",
+            "srun --cpus-per-task=1 --time=01:00:00 --mem=3110 ~/pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/singleExecution.py '" + data_str + "' 0",
         permIndex)
     p = subprocess.Popen("sbatch batchScripts/script" + str(permIndex) + ".sh", stdout=log, stderr=log, shell=True)
 if isRandomSearch:

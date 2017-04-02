@@ -132,7 +132,7 @@ class KerasModel():
                    cellType = "rnn",
                    outputSize = 24*7,
                    noFillZero = False,
-                   useHoliday = False,
+                   useHoliday = True,
                    useWeekday = True,
                    learningRate = 0.001,
                    l1Penalty = 0.0000,
