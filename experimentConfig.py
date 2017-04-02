@@ -39,7 +39,9 @@ class Config():
         "earlyStopping": True,
         "weightInit": True,
         "useHoliday": True,
-        "useWeekday": True
+        "useWeekday": True,
+        "noFillZero": True,
+        "stationIDs":True
     }
 
     continousParameterBounds = {
@@ -58,7 +60,9 @@ class Config():
         "weightInit": ["zero", "one", "normal", "glorot_uniform", "lecun_uniform", "glorot_normal"],
         "earlyStopping": [True, False],
         "useHoliday": [True, False],
-        "useWeekday": [True, False]
+        "useWeekday": [True, False],
+        "noFillZero": [True, False],
+        "stationIDs": range(1,13),
     }
 
     def generateRandomVektor(self, parameterList):
