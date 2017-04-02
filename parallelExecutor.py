@@ -25,14 +25,14 @@ if isRandomSearch:
             "activationFunction",
             "hiddenNodes",
             "optimizer",
-            #"timeWindow",
+            "timeWindow",
             "batchSize",
             "hiddenLayers",
             "weightInit",
             "earlyStopping",
             "noFillZero",
     ]
-    maxRandomTrials = 10000
+    maxRandomTrials = 300000
 
 maxIters = 10
 parameters = experimentConfig.Config.parametersAddtionalInput

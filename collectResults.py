@@ -33,7 +33,7 @@ for s in dirList:
            results.append(id)
 
 result = pd.concat(dfList)
-result = result.sort_values(['val_loss'], ascending=[True])
+result = result.sort_values(['test_loss'], ascending=[True])
 
 maxAwaiting = max(running)
 for i in range(0, int(maxAwaiting)):
