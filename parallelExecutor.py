@@ -11,7 +11,7 @@ def createBatchFile(singleCommand,parameters, id):
         with open("batchScripts/script"+str(id)+".sh", "wt") as fout:
             for line in fin:
                 line = line.replace('?job?', singleCommand)
-                line = line.replace('?jobname?', str(id))
+               # line = line.replace('?jobname?', str(id))
                 fout.write(line)
 import experimentConfig
 
@@ -63,6 +63,7 @@ if isRandomSearch:
         setting = c.generateRandomVektor(randVecDef)
         executeConfig(setting, permIndex)
         print 'exeCute'+str(permIndex)
+        time.sleep(0.2)
 
 else:
     for el in permMatrix:
