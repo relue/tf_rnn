@@ -10,7 +10,13 @@ from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import mean_squared_error
 from bokeh.models import Legend
 #import dataExplore2
-import energyload_class
+import imp
+import os
+dir_path = os.path.dirname(os.path.realpath(__file__))
+#import energyload_class
+energyload_class = imp.load_source('energyload_class', dir_path +'/energyload_class.py')
+callback = imp.load_source('callback',  dir_path +'/callback.py')
+
 import numpy as np
 np.random.seed(1337) # for reproducibility
 import keras
@@ -18,7 +24,7 @@ from bokeh.plotting import figure, show, output_file
 from bokeh.models import Legend
 from bokeh.io import output_file, show, vplot, gridplot
 import itertools
-from callback import KaggleTest
+
 
 class KerasModel():
     results = {}
@@ -192,7 +198,7 @@ class KerasModel():
 
         model.compile(loss='mean_squared_error', optimizer=optimizerObjects[optimizer])
         testInput,testOutput,testScaler = self.getValidationInputOutput(df, stationIDs, timeWindow, noFillZero = noFillZero, useHoliday = useHoliday, useWeekday = useWeekday)
-        customCallback = KaggleTest(self, testInput,testOutput,testScaler)
+        customCallback = callback.KaggleTest(self, testInput,testOutput,testScaler)
         callbacks = []
         callbacks.append(customCallback)
         if not earlyStopping:
