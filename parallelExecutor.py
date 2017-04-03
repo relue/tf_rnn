@@ -32,7 +32,7 @@ if isRandomSearch:
             "earlyStopping",
             "noFillZero",
     ]
-    maxRandomTrials = 30
+    maxRandomTrials = 30000
 
 maxIters = 10
 parameters = experimentConfig.Config.parametersAddtionalInput
@@ -63,7 +63,7 @@ if isRandomSearch:
         setting = c.generateRandomVektor(randVecDef)
         executeConfig(setting, permIndex)
         print 'exeCute'+str(permIndex)
-        time.sleep(0.6)
+        time.sleep(1)
 
 else:
     for el in permMatrix:
