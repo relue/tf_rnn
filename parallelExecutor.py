@@ -63,7 +63,7 @@ if isRandomSearch:
         setting = c.generateRandomVektor(randVecDef)
         executeConfig(setting, permIndex)
         print 'exeCute'+str(permIndex)
-        time.sleep(0.2)
+        time.sleep(0.6)
 
 else:
     for el in permMatrix:

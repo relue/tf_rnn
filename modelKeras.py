@@ -135,7 +135,7 @@ class KerasModel():
                    useHoliday = True,
                    useWeekday = True,
                    learningRate = 0.001,
-                   l1Penalty = 0.0000,
+                   l1Penalty = 0.00001,
                    DropoutProp=0.01,
                    hiddenNodes = 60,
                    hiddenLayers = 2,
@@ -144,11 +144,11 @@ class KerasModel():
                    earlyStopping = False,
                    indexID = 1,
                    optimizer = "adam",
-                   isShow = False,
                    stationIDs = [12],
                    weightInit = "lecun_uniform",
                    activationFunction = "tanh",
                    standardizationType = "minMax",
+                   isShow = False,
                    createHTML = False):
         optimizerObjects = {
             "sgd" : keras.optimizers.SGD(lr=learningRate, momentum=0.0, decay=0.0, nesterov=False),
@@ -175,20 +175,20 @@ class KerasModel():
         cellObj = "SimpleRNN" if cellType == "rnn" else "LSTM"
         print 'model.add('+cellObj+'(hiddenNodes, input_length=timeWindow, input_dim=inputSize, recurrent_regularizer=regularizers.l1(l1Penalty), ' \
                                    'return_sequences=returnSequence, go_backwards = True, init=weightInit, activation=activationFunction))'
-        #eval('model.add('+cellObj+'(hiddenNodes, input_length=timeWindow, input_dim=inputSize, recurrent_regularizer=regularizers.l1(l1Penalty), '
-        #                          'return_sequences=returnSequence, go_backwards = True, init=weightInit, activation=activationFunction))')
-        model.add(SimpleRNN(hiddenNodes, input_length=timeWindow, input_dim=inputSize, return_sequences=returnSequence, go_backwards = True, init=weightInit, activation=activationFunction))
+        eval('model.add('+cellObj+'(hiddenNodes, input_length=timeWindow, input_dim=inputSize, '\
+                                  'return_sequences=returnSequence, go_backwards = True, init=weightInit, activation=activationFunction))')
+#        model.add(LSTM(hiddenNodes, input_length=timeWindow, input_dim=inputSize, return_sequences=returnSequence, go_backwards = True, init=weightInit, activation=activationFunction))
         i = 1
         model.add(Dropout(DropoutProp))
         for hdI in range(2,hiddenLayers+1):
             if hdI == hiddenLayers:
                 returnSequence = False
-            #eval('model.add('+cellObj+'(hiddenNodes, input_length=timeWindow,  return_sequences=returnSequence, recurrent_regularizer=regularizers.l1(l1Penalty),
-            # init=weightInit, activation=activationFunction))')
-            model.add(SimpleRNN(hiddenNodes, input_length=timeWindow, return_sequences=returnSequence, init=weightInit, activation=activationFunction))
+            eval('model.add('+cellObj+'(hiddenNodes, input_length=timeWindow,  return_sequences=returnSequence, '\
+             'init=weightInit, activation=activationFunction))')
+            #model.add(LSTM(hiddenNodes, input_length=timeWindow, return_sequences=returnSequence, init=weightInit, activation=activationFunction))
             model.add(Dropout(DropoutProp))
         #model.add(SimpleRNN(50, input_length=timeWindow,  return_sequences=False))
-        model.add(Dense(finalOutputSize))#, kernel_regularizer=regularizers.l1(l1Penalty)
+        model.add(Dense(finalOutputSize, W_regularizer=regularizers.l1(l1Penalty)))#, kernel_regularizer=regularizers.l1(l1Penalty)
 
         model.compile(loss='mean_squared_error', optimizer=optimizerObjects[optimizer])
         testInput,testOutput,testScaler = self.getValidationInputOutput(df, stationIDs, timeWindow, noFillZero = noFillZero, useHoliday = useHoliday, useWeekday = useWeekday)
@@ -198,7 +198,7 @@ class KerasModel():
         if not earlyStopping:
             epochSize = 50
             callbacks.append(early)
-        history = model.fit(xInput, xOutput, nb_epoch=epochSize, batch_size=batchSize, verbose=1, validation_split=0.3, callbacks=callbacks)#callbacks=[early]
+        history = model.fit(xInput, xOutput, nb_epoch=epochSize, batch_size=batchSize, verbose=1, validation_split=0.1, callbacks=callbacks)#callbacks=[early]
         historyTest = customCallback.getHistory()
         self.results["loss"] = history.history['loss']
         self.results["val_loss"] = history.history['val_loss']
@@ -273,4 +273,4 @@ class KerasModel():
             if isShow:
                 show(ap)
 
-KerasModel(isShow= True, createHTML= True)
+#KerasModel(isShow= True, createHTML= True)
