@@ -1,0 +1,289 @@
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: No module named HyperoptObjective
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: No module named HyperoptObjective
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: No module named HyperoptObjective
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: No module named HyperoptObjective
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: No module named HyperoptObjective
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: No module named HyperoptObjective
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: No module named HyperoptObjective
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: No module named HyperoptObjective
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: No module named HyperoptObjective
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: No module named HyperoptObjective
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: No module named HyperoptObjective
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: No module named HyperoptObjective
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: No module named HyperoptObjective
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: No module named HyperoptObjective
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: No module named HyperoptObjective
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: No module named HyperoptObjective
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: No module named HyperoptObjective
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: No module named HyperoptObjective
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: No module named HyperoptObjective
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: No module named HyperoptObjective
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: No module named HyperoptObjective
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: No module named HyperoptObjective
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: No module named HyperoptObjective
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: No module named HyperoptObjective
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: No module named HyperoptObjective
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'objectiveF'
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'objectiveF'
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'objectiveF'
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'objectiveF'
+INFO (hyperopt.mongoexp): job exception: a float is required
+INFO (hyperopt.mongoexp): job exception: a float is required
+INFO (hyperopt.mongoexp): job exception: a float is required
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'objective'
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'objective'
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'objective'
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'objective'
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'objective'
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'objective'
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'objective'
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'objective'
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'objective'
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'objective'
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'objective'
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'objective'
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'objective'
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'objective'
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'objective'
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'objective'
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'objective'
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'objective'
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'objective'
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'objective'
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'objective'
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'objective'
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'objective'
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'objective'
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'objective'
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'objective'
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'objective'
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: No module named HyperoptObjective
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: No module named HyperoptObjective
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: No module named HyperoptObjective
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: No module named HyperoptObjective
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: No module named HyperoptObjective
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: No module named HyperoptObjective
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: No module named HyperoptObjective
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: No module named HyperoptObjective
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'objective'
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'objective'
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'objective'
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'objective'
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'objective'
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'objective'
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'objective'
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'objective'
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'minMe'
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'minMe'
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'minMe'
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'minMe'
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'minMe'
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'minMe'
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'minMe'
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'minMe'
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'minMe'
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'minMe'
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'minMe'
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'minMe'
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'minMe'
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'minMe'
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'minMe'
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'minMe'
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'minMe'
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'minMe'
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'minMe'
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: 'module' object has no attribute 'minMe'
+INFO (hyperopt.mongoexp): job exception: No module named modelKeras
+INFO (hyperopt.mongoexp): job exception: No module named modelKeras
+INFO (hyperopt.mongoexp): job exception: No module named modelKeras
+INFO (hyperopt.mongoexp): job exception: No module named modelKeras
+INFO (hyperopt.mongoexp): job exception: No module named modelKeras
+INFO (hyperopt.mongoexp): job exception: global name 'modelKeras' is not defined
+INFO (hyperopt.mongoexp): job exception: global name 'modelKeras' is not defined
+INFO (hyperopt.mongoexp): job exception: global name 'modelKeras' is not defined
+INFO (hyperopt.mongoexp): job exception: global name 'modelKeras' is not defined
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: No module named HyperoptObjective
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: No module named HyperoptObjective
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: No module named HyperoptObjective
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: No module named HyperoptObjective
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: No module named HyperoptObjective
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: No module named HyperoptObjective
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: No module named HyperoptObjective
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: No module named HyperoptObjective
+INFO (hyperopt.mongoexp): Error while unpickling. Try installing dill via "pip install dill" for enhanced pickling support.
+INFO (hyperopt.mongoexp): job exception: No module named HyperoptObjective
+INFO (hyperopt.mongoexp): job exception: No module named modelKeras
+INFO (hyperopt.mongoexp): job exception: No module named modelKeras
+INFO (hyperopt.mongoexp): job exception: No module named modelKeras
+INFO (hyperopt.mongoexp): job exception: No module named modelKeras
+INFO (hyperopt.mongoexp): job exception: No module named modelKeras
+INFO (hyperopt.mongoexp): job exception: No module named modelKeras
+INFO (hyperopt.mongoexp): job exception: No module named modelKeras
+INFO (hyperopt.mongoexp): job exception: No module named modelKeras
+INFO (hyperopt.mongoexp): job exception: No module named modelKeras
+INFO (hyperopt.mongoexp): job exception: No module named modelKeras
+INFO (hyperopt.mongoexp): job exception: No module named machinery
+INFO (hyperopt.mongoexp): job exception: No module named machinery
+INFO (hyperopt.mongoexp): job exception: No module named machinery
+INFO (hyperopt.mongoexp): job exception: No module named machinery
+INFO (hyperopt.mongoexp): job exception: No module named energyload_class
+INFO (hyperopt.mongoexp): job exception: No module named energyload_class
+INFO (hyperopt.mongoexp): Caught signal 2, shutting down.
+INFO (hyperopt.mongoexp): job exception: No module named energyload_class
+INFO (hyperopt.mongoexp): job exception: No module named energyload_class
+INFO (hyperopt.mongoexp): job exception: No module named energyload_class
+INFO (hyperopt.mongoexp): job exception: No module named energyload_class
+INFO (hyperopt.mongoexp): Caught signal 2, shutting down.
+ERROR (bokeh.util.dependencies): Failed to import optional module `IPython`
+Traceback (most recent call last):
+  File "/usr/local/lib/python2.7/dist-packages/bokeh/util/dependencies.py", line 24, in import_optional
+    return import_module(mod_name)
+  File "/usr/lib/python2.7/importlib/__init__.py", line 37, in import_module
+    __import__(name)
+  File "/usr/local/lib/python2.7/dist-packages/IPython/__init__.py", line 49, in <module>
+    from .terminal.embed import embed
+  File "/usr/local/lib/python2.7/dist-packages/IPython/terminal/embed.py", line 17, in <module>
+    from IPython.core.interactiveshell import DummyMod, InteractiveShell
+  File "/usr/local/lib/python2.7/dist-packages/IPython/core/interactiveshell.py", line 52, in <module>
+    from IPython.core.history import HistoryManager
+  File "/usr/local/lib/python2.7/dist-packages/IPython/core/history.py", line 13, in <module>
+    import sqlite3
+  File "/usr/lib/python2.7/sqlite3/__init__.py", line 24, in <module>
+    from dbapi2 import *
+  File "/usr/lib/python2.7/sqlite3/dbapi2.py", line 24, in <module>
+    import collections
+  File "/usr/local/lib/python2.7/dist-packages/hyperopt/mongoexp.py", line 1182, in sighandler_shutdown
+    raise Shutdown(signum)
+Shutdown: 2
+INFO (hyperopt.mongoexp): job exception: No module named energyload_class
+INFO (hyperopt.mongoexp): job exception: No module named callback
+INFO (hyperopt.mongoexp): Caught signal 2, shutting down.
+INFO (hyperopt.mongoexp): job exception: 2
+INFO (hyperopt.mongoexp): Caught signal 15, shutting down.
+INFO (hyperopt.mongoexp): job exception: KerasModel constructor argument after ** must be a mapping, not float
+INFO (hyperopt.mongoexp): job exception: KerasModel constructor argument after ** must be a mapping, not float
+INFO (hyperopt.mongoexp): Caught signal 2, shutting down.
+INFO (hyperopt.mongoexp): Caught signal 15, shutting down.
+INFO (hyperopt.mongoexp): job exception: 15
+INFO (hyperopt.mongoexp): job exception: 
+INFO (hyperopt.mongoexp): job exception: File allHours.csv does not exist
+INFO (hyperopt.mongoexp): Caught signal 2, shutting down.
+INFO (hyperopt.mongoexp): Caught signal 15, shutting down.
+INFO (hyperopt.mongoexp): job exception: 15
+INFO (hyperopt.mongoexp): job exception: File allHours.csv does not exist
+INFO (hyperopt.mongoexp): job exception: File allHours.csv does not exist
+INFO (hyperopt.mongoexp): job exception: File allHours.csv does not exist
+INFO (hyperopt.mongoexp): job exception: File allHours.csv does not exist
+INFO (hyperopt.mongoexp): job exception: File allHours.csv does not exist
+INFO (hyperopt.mongoexp): job exception: File allHours.csv does not exist
+INFO (hyperopt.mongoexp): Caught signal 2, shutting down.
+INFO (hyperopt.mongoexp): Caught signal 15, shutting down.
+INFO (hyperopt.mongoexp): job exception: 15
+INFO (hyperopt.mongoexp): job exception: __init__() got an unexpected keyword argument 'activationFunction1'
+INFO (hyperopt.mongoexp): Caught signal 2, shutting down.
+INFO (hyperopt.mongoexp): Caught signal 2, shutting down.
+INFO (hyperopt.mongoexp): job exception: 2
+INFO (hyperopt.mongoexp): job exception: ('switch argument was', <class 'hyperopt.pyll.base.GarbageCollected'>)
+INFO (hyperopt.mongoexp): Caught signal 2, shutting down.
+INFO (hyperopt.mongoexp): Caught signal 2, shutting down.
+INFO (hyperopt.mongoexp): job exception: __init__() got an unexpected keyword argument 'activationFunction1'

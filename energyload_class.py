@@ -18,13 +18,15 @@ from bokeh.models.widgets import DataTable, DateFormatter, TableColumn, Dropdown
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import mean_squared_error
 import os.path
+import os
+dir_path = os.path.dirname(os.path.realpath(__file__))
 
 def convert_temp(source_temp=None):
    return (source_temp - 32.0) * (5.0/9.0)
 
 def initDataFrame():
-    df = pd.read_csv('energy_load/Load_history.csv', thousands=',', dtype='float', na_values=[''])
-    dfT = pd.read_csv('energy_load/temperature_history.csv', thousands=',', dtype='float', na_values=[''],sep=';')
+    df = pd.read_csv(dir_path+'/energy_load/Load_history.csv', thousands=',', dtype='float', na_values=[''])
+    dfT = pd.read_csv(dir_path+'/energy_load/temperature_history.csv', thousands=',', dtype='float', na_values=[''],sep=';')
 
     for i in range(1, 25):
         dfT['c'+str(i)] = dfT['h'+str(i)].apply(convert_temp)
@@ -45,7 +47,7 @@ def initDataFrame():
     return dfNew
 
 def getHolidayDict():
-    dfHo = pd.read_csv('energy_load/Holiday_List.csv', sep=',')
+    dfHo = pd.read_csv(dir_path+'/energy_load/Holiday_List.csv', sep=',')
     dfHo = pd.melt(dfHo, id_vars='dayName', var_name='year', value_name='date')
     dfHo = dfHo.dropna()
     dfHo['date'] = dfHo['year']+ "-"+ dfHo['date']
@@ -55,9 +57,9 @@ def getHolidayDict():
     return holidayDict
 
 def initDataFrameHourly():
-    df = pd.read_csv('energy_load/Load_history.csv', thousands=',', dtype='float', na_values=[''])
-    dfT = pd.read_csv('energy_load/temperature_history.csv', thousands=',', dtype='float', na_values=[''],sep=';')
-    dfLoadS = pd.read_csv('energy_load/Load_solution.csv', dtype='float', sep=',')
+    df = pd.read_csv(dir_path+'/energy_load/Load_history.csv', thousands=',', dtype='float', na_values=[''])
+    dfT = pd.read_csv(dir_path+'/energy_load/temperature_history.csv', thousands=',', dtype='float', na_values=[''],sep=';')
+    dfLoadS = pd.read_csv(dir_path+'/energy_load/Load_solution.csv', dtype='float', sep=',')
     df = pd.concat([df, dfLoadS])
 
 
@@ -132,7 +134,7 @@ def initDataFrameHourly():
     # dfNewM2['isHoliday'] = dfNewM2.apply((lambda x: alert(x, holidayDict)),  axis=1)
     #dataExplore2.showDF(dfNewM2, False)
     #dataExplore2.showDF(dfNewM2, False)
-    dfNewM2.to_csv("allHours.csv")
+    dfNewM2.to_csv(dir_path+"/allHours.csv")
     return dfNewM2
 
 def init_dfs(create = False, all = True):
@@ -142,10 +144,10 @@ def init_dfs(create = False, all = True):
         dfHourly['date'] = pd.to_datetime(dfHourly['date'])
         return dfHourly
     else:
-        dfHourly = pd.read_csv('allHours.csv', na_values=[''])
+        dfHourly = pd.read_csv(dir_path+'/allHours.csv', na_values=[''])
         dfHourly['date'] = pd.to_datetime(dfHourly['date'])
         if all:
-            df = pd.read_csv('all.csv', na_values=[''])
+            df = pd.read_csv(dir_path+'/all.csv', na_values=[''])
             return df, dfHourly
         else:
             return dfHourly
@@ -248,7 +250,7 @@ def createXmulti(df, timeWindow, stationIDs, outputSize, save = False, isStandar
     cacheAdd += 'Temp'.join(str(e) for e in stationIDs)
 
     cacheIdent ="_" + str(outputSize)+"_"+cacheAdd
-    filename = "rnnInputs/rnnInput"+str(cacheIdent)+".pd"
+    filename = dir_path+"/rnnInputs/rnnInput"+str(cacheIdent)+".pd"
     cacheExists = os.path.isfile(filename)
     if save or not(cacheExists):
         dfNew = pd.DataFrame(columns=columns)
