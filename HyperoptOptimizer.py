@@ -35,7 +35,10 @@ def objective(x):
     print x
     from hyperopt import  STATUS_OK
     import imp
-    modelKeras = imp.load_source('modelKeras', '/home/dev/PycharmProjects/untitled/tf_rnn/modelKeras.py')
+    import os.path
+    import os
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    modelKeras = imp.load_source('modelKeras', dir_path+'/modelKeras.py')
     modelOut = modelKeras.KerasModel(**x)
     data = {}
     data['loss'] = modelOut.results['loss'][-1]
