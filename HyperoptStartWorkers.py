@@ -22,7 +22,7 @@ ip = '172.24.32.17'
 workerCount = 1000
 log = open("hyperoptStartWorker.log", "w")
 
-createBatchFile("srun --cpus-per-task=1 --time=01:00:00 --mem=3110 ~/pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/HyperoptWorkerWrapper.py")
+createBatchFile("srun ~/pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/HyperoptWorkerWrapper.py")
 
 for i in range(1, workerCount):
 
