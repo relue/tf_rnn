@@ -62,6 +62,6 @@ space =  {
     }
 
 #print hyperopt.pyll.stochastic.sample(space)
-trials = MongoTrials('mongo://localhost:27017/foo_db/jobs', exp_key='rnn8')
-best = fmin(fn=objective, space=space, trials=trials, algo=hyperopt.rand.suggest, max_evals=5000, verbose=2)
+trials = MongoTrials('mongo://localhost:27017/foo_db/jobs', exp_key='rnn9')
+best = fmin(fn=objective, space=space, trials=trials, algo=hyperopt.rand.suggest, max_evals=100000, verbose=2)
 print best
