@@ -39,7 +39,7 @@ def objective(x):
     import os
     dir_path = "dirpath"+os.path.dirname(os.path.realpath(__file__))
     print dir_path
-    modelKeras = imp.load_source('modelKeras', dir_path+'/modelKeras.py')
+    modelKeras = imp.load_source('modelKeras', '/home/s2071275/pythonProjects/tf_rnn/modelKeras.py')
     modelOut = modelKeras.KerasModel(**x)
     data = {}
     data['loss'] = modelOut.results['loss'][-1]
