@@ -24,7 +24,7 @@ log = open("hyperoptStartWorker.log", "w")
 
 for i in range(1, workerCount):
     createBatchFile(
-            "srun --cpus-per-task=1 --time=01:00:00 --mem=3110 /pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/HyperoptWorkerWrapper.py")
+            "srun --cpus-per-task=1 --time=01:00:00 --mem=3110 ~/pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/HyperoptWorkerWrapper.py")
     p = subprocess.Popen("sbatch batchScripts/hyperOptScript.sh", stdout=log, stderr=log, shell=True)
 
 while 1:
