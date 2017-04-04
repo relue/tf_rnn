@@ -19,7 +19,7 @@ for filename in os.listdir("batchScripts/"):
     os.remove("batchScripts/"+filename)
 
 ip = '172.24.32.17'
-workerCount = 10
+workerCount = 1000
 log = open("hyperoptWorker.log", "w")
 workerCommand= 'hyperopt-mongo-worker --mongo='+ip+':27017/foo_db --poll-interval=0.1'
 print workerCommand
