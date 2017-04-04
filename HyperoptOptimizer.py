@@ -30,16 +30,18 @@ continousParameterBounds = {
 
 #{\"optimizer\": \"adam\", \"hiddenNodes\": 2, \"timeWindow\": 1, \"batchSize\": 1, \"indexID\": 2, \"learningRate\": 0.001, \"epochSize\": 10}
 import sys
+import os.path
+import os
+dir_path = os.path.dirname(os.path.realpath(__file__))
+
 
 def objective(x):
-    print x
+    path = x["dirPath"]
+    del x["dirPath"]
     from hyperopt import  STATUS_OK
     import imp
-    import os.path
-    import os
-    dir_path = "dirpath"+os.path.dirname(os.path.realpath(__file__))
-    print dir_path
-    modelKeras = imp.load_source('modelKeras', '/home/s2071275/pythonProjects/tf_rnn/modelKeras.py')
+
+    modelKeras = imp.load_source('modelKeras', path+'/modelKeras.py')
     modelOut = modelKeras.KerasModel(**x)
     data = {}
     data['loss'] = modelOut.results['loss'][-1]
@@ -49,19 +51,28 @@ def objective(x):
     data = dict(x.items() + data.items())
     return data
 
-def minMe (x):
-    import math
-    return math.sin(x)
-
 space =  {
-        'activationFunction': hp.choice('activationFunction', ["tanh", "sigmoid", "relu"]),
-        'learningRate': hp.uniform('learningRate', 0, 0.4),
         'earlyStopping': True,
-        'epochSize' : 1
-
+        'epochSize' : 1,
+        "learningRate": hp.uniform('learningRate', 0 , 0.4),
+        "DropoutProp": hp.uniform('DropoutProp', 0.4, 0.8),
+        "l1Penalty": hp.uniform('l1Penalty',0.0001, 0.01),
+        "activationFunction": hp.choice('activationFunction',["tanh", "sigmoid", "relu"]),
+        "hiddenNodes": hp.choice('hiddenNodes', range(10,300)),
+        "optimizer": hp.choice('optimizer', ['adam', 'sgd', 'rms','ada', 'adadelta']),
+        "timeWindow": hp.choice('timeWindow', range(10,199)),
+        "batchSize": hp.choice('batchSize', range(1,101)),
+        "hiddenLayers": hp.choice('hiddenLayers', range(1,5)),
+        "weightInit": hp.choice('weightInit', ["zero", "one", "normal", "glorot_uniform", "lecun_uniform", "glorot_normal"]),
+        "earlyStopping": hp.choice('earlyStopping', [True, False]),
+        "useHoliday": hp.choice('useHoliday', [True, False]),
+        "useWeekday": hp.choice('useWeekday', [True, False]),
+        "noFillZero": hp.choice('noFillZero', [True, False]),
+        "stationIDs": [hp.choice('stationIDs', range(1,13))],
+        "dirPath": dir_path
     }
 
 #print hyperopt.pyll.stochastic.sample(space)
-trials = MongoTrials('mongo://localhost:27017/foo_db/jobs', exp_key='rnn9')
-best = fmin(fn=objective, space=space, trials=trials, algo=hyperopt.rand.suggest, max_evals=100000, verbose=2)
+trials = MongoTrials('mongo://localhost:27017/foo_db/jobs', exp_key='finalFun')
+best = fmin(fn=objective, space=space, trials=trials, algo=hyperopt.rand.suggest, max_evals=200000, verbose=2)
 print best
