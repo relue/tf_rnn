@@ -19,7 +19,7 @@ for filename in os.listdir("batchScripts/"):
     os.remove("batchScripts/"+filename)
 
 ip = '172.24.32.17'
-workerCount = 1000
+workerCount = 100
 log = open("hyperoptStartWorker.log", "w")
 
 for i in range(1, workerCount):
