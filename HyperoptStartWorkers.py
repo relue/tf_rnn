@@ -19,17 +19,16 @@ for filename in os.listdir("batchScripts/"):
     os.remove("batchScripts/"+filename)
 
 ip = '172.24.32.17'
-workerCount = 1000
-log = open("hyperoptWorker.log", "w")
-workerCommand= 'hyperopt-mongo-worker --mongo='+ip+':27017/foo_db --poll-interval=0.1'
-print workerCommand
+workerCount = 10
+log = open("hyperoptStartWorker.log", "w")
+
 for i in range(1, workerCount):
     createBatchFile(
-            "srun --cpus-per-task=1 --time=01:00:00 --mem=3110 "+workerCommand)
+            "srun --cpus-per-task=1 --time=01:00:00 --mem=3110 /pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/HyperoptWorkerWrapper.py")
     p = subprocess.Popen("sbatch batchScripts/hyperOptScript.sh", stdout=log, stderr=log, shell=True)
 
 while 1:
     time.sleep(10)
-    p= subprocess.Popen("cat hyperoptWorker.log", stdout=subprocess.PIPE, stderr=None, shell=True)
+    p= subprocess.Popen("cat hyperoptStartWorker.log", stdout=subprocess.PIPE, stderr=None, shell=True)
     result = p.communicate()[0]
     print result
