@@ -9,6 +9,8 @@ data["isShow"] = True
 data["createHTML"] = True
 data["cellType"] = "rnn"
 data["timeWindow"] = 33
+data["earlyStopping"] = True
+data["epochSize"] = 1
 
 
 import numpy as np

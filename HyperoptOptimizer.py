@@ -34,6 +34,7 @@ import sys
 
 def objective(x):
     print x
+    from hyperopt import  STATUS_OK
     import imp
     modelKeras = imp.load_source('modelKeras', '/home/dev/PycharmProjects/untitled/tf_rnn/modelKeras.py')
     modelOut = modelKeras.KerasModel(**x)
@@ -41,20 +42,23 @@ def objective(x):
     data['loss'] = modelOut.results['loss'][-1]
     data['val_loss'] = modelOut.results['val_loss'][-1]
     data['test_loss'] = modelOut.results['test_loss'][-1]
-
-    return 2
+    data['status'] = STATUS_OK
+    data = dict(x.items() + data.items())
+    return data
 
 def minMe (x):
     import math
     return math.sin(x)
 
 space =  {
-        'activationFunction1': hp.choice('activationFunction1', ["tanh", "sigmoid", "relu"]),
+        'activationFunction': hp.choice('activationFunction', ["tanh", "sigmoid", "relu"]),
         'learningRate': hp.uniform('learningRate', 0, 0.4),
+        'earlyStopping': True,
+        'epochSize' : 1
 
     }
 
 #print hyperopt.pyll.stochastic.sample(space)
-trials = MongoTrials('mongo://localhost:27017/foo_db/jobs', exp_key='rnn4')
-best = fmin(fn=objective, space=space, trials=trials, algo=hyperopt.rand.suggest, max_evals=10, verbose=1)
+trials = MongoTrials('mongo://localhost:27017/foo_db/jobs', exp_key='rnn6')
+best = fmin(fn=objective, space=space, trials=trials, algo=hyperopt.rand.suggest, max_evals=5, verbose=2)
 print best
