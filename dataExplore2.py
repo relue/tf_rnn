@@ -32,3 +32,7 @@ def showDF(df, breakIt = False):
     if breakIt:
         exit()
 
+import sys
+pickle = sys.argv[1]
+df = pd.read_pickle(pickle)
+showDF(df)

@@ -137,15 +137,15 @@ class KerasModel():
     def __init__(self, timeWindow = 24*2,
                    cellType = "rnn",
                    outputSize = 24*7,
-                   noFillZero = False,
+                   noFillZero = True,
                    useHoliday = True,
                    useWeekday = True,
                    learningRate = 0.001,
-                   l1Penalty = 0.00001,
+                   l1Penalty = 0.000001,
                    DropoutProp=0.01,
-                   hiddenNodes = 60,
+                   hiddenNodes = 30,
                    hiddenLayers = 2,
-                   batchSize = 1,
+                   batchSize = 10,
                    epochSize = 20,
                    earlyStopping = False,
                    indexID = 1,
@@ -201,7 +201,7 @@ class KerasModel():
         customCallback = callback.KaggleTest(self, testInput,testOutput,testScaler)
         callbacks = []
         callbacks.append(customCallback)
-        if not earlyStopping:
+        if earlyStopping == False:
             epochSize = 50
             callbacks.append(early)
         history = model.fit(xInput, xOutput, nb_epoch=epochSize, batch_size=batchSize, verbose=1, validation_split=0.1, callbacks=callbacks)#callbacks=[early]
