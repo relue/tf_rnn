@@ -19,7 +19,7 @@ for filename in os.listdir("batchScripts/"):
     os.remove("batchScripts/"+filename)
 
 ip = '172.24.32.17'
-workerCount = 1000
+workerCount = 5000
 log = open("hyperoptStartWorker.log", "w")
 
 createBatchFile("srun ~/pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/HyperoptWorkerWrapper.py")
@@ -29,8 +29,4 @@ for i in range(1, workerCount):
     p = subprocess.Popen("sbatch batchScripts/hyperOptScript.sh", stdout=log, stderr=log, shell=True)
 
 p = subprocess.Popen("source ../env/bin/activate; python HyperoptOptimizer.py ", stdout=log, stderr=log, shell=True)
-while 1:
-    time.sleep(10)
-    p= subprocess.Popen("cat hyperoptStartWorker.log", stdout=subprocess.PIPE, stderr=None, shell=True)
-    result = p.communicate()[0]
-    print result
+
