@@ -43,7 +43,7 @@ iters = len(permMatrix)
 print "Anzahl der Permutationen:"+str(iters)
 log = open("parallelExecDetail.log", "w")
 permIndex = 0
-p = subprocess.Popen("scancel -u s2071275",  stdout=log, stderr=log, shell=True)
+#p = subprocess.Popen("scancel -u s2071275",  stdout=log, stderr=log, shell=True)
 for filename in os.listdir("jobResults/"):
     os.remove("jobResults/"+filename)
 for filename in os.listdir("batchScripts/"):
