@@ -251,6 +251,7 @@ def createXmulti(df, timeWindow, stationIDs, outputSize, save = False, isStandar
 
     cacheIdent ="_" + str(outputSize)+"_"+cacheAdd
     filename = dir_path+"/rnnInputs/rnnInput"+str(cacheIdent)+".pd"
+    print ("search File:"+filename)
     cacheExists = os.path.isfile(filename)
     if save or not(cacheExists):
         dfNew = pd.DataFrame(columns=columns)
