@@ -35,4 +35,7 @@ def showDF(df, breakIt = False):
 import sys
 pickle = sys.argv[1]
 df = pd.read_pickle(pickle)
-showDF(df)
+if sys.argv[2] == "1":
+    showDF(df)
+if sys.argv[2] == "0":
+    print df
