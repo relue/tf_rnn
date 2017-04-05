@@ -10,9 +10,7 @@ data["createHTML"] = True
 data["earlyStopping"] = True
 data["epochSize"] = 15
 
-
 import numpy as np
 import pandas as pd
-
 
 modelOut = modelKeras.KerasModel(**data)
