@@ -22,16 +22,12 @@ s.connect(("8.8.8.8", 80))
 ip=s.getsockname()[0]
 s.close()
 
-import socket
-print(socket.gethostbyname(socket.gethostname()))
-print "the Ip is:"+ip
 workerCount = 10
 log = open("logs/hyperoptStartWorker.log", "w")
-
+logDB = open("logs/mongo.log", "w")
 createBatchFile("srun ~/pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/HyperoptWorkerWrapper.py "+ip)
-'''
+p = subprocess.Popen("startm", stdout=logDB, stderr=logDB, shell=True)
 for i in range(1, workerCount):
     p = subprocess.Popen("sbatch batchScripts/hyperOptScript.sh", stdout=log, stderr=log, shell=True)
 
 p = subprocess.Popen("source ../env/bin/activate; python HyperoptOptimizer.py ", stdout=log, stderr=log, shell=True)
-'''
