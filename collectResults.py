@@ -6,8 +6,6 @@ import datetime
 now = datetime.datetime.now()
 
 dirName= "jobResults/"
-
-
 dirList = os.listdir(dirName)
 dirList.sort()
 first = True

@@ -15,18 +15,22 @@ def createBatchFile(singleCommand):
                 fout.write(line)
 import experimentConfig
 
-for filename in os.listdir("batchScripts/"):
-    os.remove("batchScripts/"+filename)
+
+import socket
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+s.connect(("8.8.8.8", 80))
+ip=s.getsockname()[0]
+s.close()
 
 ip = '172.24.32.17'
-workerCount = 100
-log = open("hyperoptStartWorker.log", "w")
+print "the Ip is:"+ip
+workerCount = 10
+log = open("logs/hyperoptStartWorker.log", "w")
 
-createBatchFile("srun ~/pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/HyperoptWorkerWrapper.py")
-
+createBatchFile("srun ~/pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/HyperoptWorkerWrapper.py "+ip)
+'''
 for i in range(1, workerCount):
-
     p = subprocess.Popen("sbatch batchScripts/hyperOptScript.sh", stdout=log, stderr=log, shell=True)
 
 p = subprocess.Popen("source ../env/bin/activate; python HyperoptOptimizer.py ", stdout=log, stderr=log, shell=True)
-
+'''
