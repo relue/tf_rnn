@@ -22,7 +22,8 @@ s.connect(("8.8.8.8", 80))
 ip=s.getsockname()[0]
 s.close()
 
-ip = '172.24.32.17'
+import socket
+print(socket.gethostbyname(socket.gethostname()))
 print "the Ip is:"+ip
 workerCount = 10
 log = open("logs/hyperoptStartWorker.log", "w")
