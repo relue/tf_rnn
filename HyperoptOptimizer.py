@@ -71,8 +71,8 @@ space =  {
         "stationIDs": [hp.choice('stationIDs', range(1,13))],
         "dirPath": dir_path
     }
-
+ip = sys.argv[1]
 #print hyperopt.pyll.stochastic.sample(space)
-trials = MongoTrials('mongo://localhost:27017/foo_db/jobs', exp_key='finalFun')
+trials = MongoTrials('mongo://'+ip+':27017/foo_db/jobs', exp_key='finalFun')
 best = fmin(fn=objective, space=space, trials=trials, algo=hyperopt.rand.suggest, max_evals=200000, verbose=2)
 print best
