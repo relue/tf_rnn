@@ -25,7 +25,7 @@ s.close()
 workerCount = 2000
 log = open("logs/hyperoptStartWorker.log", "w")
 logDB = open("logs/mongo.log", "w")
-createBatchFile("srun ~/pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/HyperoptWorkerWrapper.py "+ip)
+createBatchFile("srun --time=02:00:00 ~/pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/HyperoptWorkerWrapper.py "+ip)
 p = subprocess.Popen("mongod --dbpath ~/mongo/mongodb/mongodb-linux-x86_64-3.4.2/data/db", stdout=logDB, stderr=logDB, shell=True)
 for i in range(1, workerCount):
     p = subprocess.Popen("sbatch batchScripts/hyperOptScript.sh", stdout=log, stderr=log, shell=True)
