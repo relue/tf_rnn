@@ -31,3 +31,5 @@ for i in range(1, workerCount):
     p = subprocess.Popen("sbatch batchScripts/hyperOptScript.sh", stdout=log, stderr=log, shell=True)
 
 p = subprocess.Popen("source ../env/bin/activate; python HyperoptOptimizer.py ", stdout=log, stderr=log, shell=True)
+while 1:
+    hold=1
