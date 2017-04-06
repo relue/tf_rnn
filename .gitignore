@@ -13,3 +13,4 @@ rnnInput.pd
 *.html
 *.log
 batchScripts/
+logs/
