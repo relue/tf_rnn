@@ -22,7 +22,7 @@ s.connect(("8.8.8.8", 80))
 ip=s.getsockname()[0]
 s.close()
 
-workerCount = 10
+workerCount = 2000
 log = open("logs/hyperoptStartWorker.log", "w")
 logDB = open("logs/mongo.log", "w")
 createBatchFile("srun ~/pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/HyperoptWorkerWrapper.py "+ip)
