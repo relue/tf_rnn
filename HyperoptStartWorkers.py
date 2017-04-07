@@ -6,12 +6,12 @@ import logging
 import os
 import time
 import random
+
 def createBatchFile(singleCommand):
-     with open("sbatchConfig.sh", "rt") as fin:
-        with open("batchScripts/hyperOptScript.sh", "wt") as fout:
+    with open("hyperOptScript.sh", "rt") as fin:
+        with open("hyperOptScriptExecute.sh", "wt") as fout:
             for line in fin:
                 line = line.replace('?job?', singleCommand)
-               # line = line.replace('?jobname?', str(id))
                 fout.write(line)
 import experimentConfig
 
@@ -22,7 +22,7 @@ s.connect(("8.8.8.8", 80))
 ip=s.getsockname()[0]
 s.close()
 
-workerCount = 2000
+workerCount = 10
 log = open("logs/hyperoptStartWorker.log", "w")
 logDB = open("logs/mongo.log", "w")
 createBatchFile("srun --time=02:00:00 ~/pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/HyperoptWorkerWrapper.py "+ip)
