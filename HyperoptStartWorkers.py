@@ -22,10 +22,10 @@ s.connect(("8.8.8.8", 80))
 ip=s.getsockname()[0]
 s.close()
 
-workerCount = 10
+workerCount = 500
 log = open("logs/hyperoptStartWorker.log", "w")
 logDB = open("logs/mongo.log", "w")
-createBatchFile("srun --time=02:00:00 sh ~/pythonProjects/tf_rnn/HyperoptWorkerWrapper.sh "+ip)
+createBatchFile("srun --time=02:00:00 --mem=10000 sh ~/pythonProjects/tf_rnn/HyperoptWorkerWrapper.sh "+ip)
 startDB = "mongod --dbpath ~/mongo/mongodb/mongodb-linux-x86_64-3.4.2/data/db"
 startOptimizer = "source ../env/bin/activate; python HyperoptOptimizer.py "+ip
 
