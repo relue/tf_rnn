@@ -30,7 +30,7 @@ p = subprocess.Popen("mongod --dbpath ~/mongo/mongodb/mongodb-linux-x86_64-3.4.2
 p = subprocess.Popen("source ../env/bin/activate; python HyperoptOptimizer.py "+ip, stdout=log, stderr=log, shell=True)
 
 for i in range(1, workerCount):
-    p = subprocess.Popen("sbatch batchScripts/hyperOptScript.sh", stdout=log, stderr=log, shell=True)
+    p = subprocess.Popen("sbatch batchScripts/hyperOptScriptExecute.sh", stdout=log, stderr=log, shell=True)
     time.sleep(0.3)
 
 while 1:
