@@ -77,8 +77,6 @@ else:
         if permIndex >= maxIters:
             break
 
-
-
 while 1:
     time.sleep(10)
     p= subprocess.Popen("cat parallelExecDetail.log", stdout=subprocess.PIPE, stderr=None, shell=True)
