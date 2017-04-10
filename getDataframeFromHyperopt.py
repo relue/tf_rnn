@@ -14,7 +14,16 @@ for row in trials.results:
     if resultRow['status'] == "ok":
         finished.append(resultRow)
 
+
 dfF = pd.DataFrame(finished)
+
+measures = ["loss", "val_loss","test_loss"]
+columns = list(dfF)
+for m in measures:
+    columns.remove(m)
+newAlign = measures+columns
+dfF = dfF[newAlign]
+dfF = dfF.sort_values(['test_loss'], ascending=[True])
 print str(len(finished))+' results collected'
 print dfF
 
