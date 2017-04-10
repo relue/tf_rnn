@@ -2,7 +2,6 @@
 bokehPlots/
 jobResults/
 rnnInputs/
-
 all.csv
 allHours.csv
 rnnInputs
