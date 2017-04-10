@@ -14,11 +14,11 @@ def createBatchFile(singleCommand):
 workerCount = 20000
 ip=sys.argv[1]
 
-createBatchFile("srun --time=02:00:00 --mem=10000 sh ~/pythonProjects/tf_rnn/HyperoptWorkerWrapper.sh "+ip)
+createBatchFile("srun --time=02:00:00 --mem=2000 sh ~/pythonProjects/tf_rnn/HyperoptWorkerWrapper.sh "+ip)
 
 for i in range(1, workerCount):
     p = subprocess.Popen("sbatch hyperOptScriptExecute.sh", stdout=log, stderr=log, shell=True)
-    time.sleep(0.3)
+    time.sleep(0.5)
 
 while 1:
     hold=1
