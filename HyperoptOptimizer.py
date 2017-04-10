@@ -78,3 +78,4 @@ ip = sys.argv[1]
 trials = MongoTrials('mongo://'+ip+':27017/foo_db/jobs', exp_key='finalFun')
 best = fmin(fn=objective, space=space, trials=trials, algo=hyperopt.rand.suggest, max_evals=200000, verbose=999)
 print best
+trials.get
