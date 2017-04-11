@@ -2,7 +2,7 @@ import subprocess
 import time
 import sys
 
-log = open("logs/hyperoptStartWorker.log", "w")
+log = open("logs/startWorker.log", "w")
 
 def createBatchFile(singleCommand):
     with open("hyperOptScript.sh", "rt") as fin:

@@ -14,7 +14,7 @@ s.connect(("8.8.8.8", 80))
 ip=s.getsockname()[0]
 s.close()
 
-log = open("logs/hyperoptStartWorker.log", "w")
+log = open("logs/main.log", "w")
 logDB = open("logs/mongo.log", "w")
 
 
