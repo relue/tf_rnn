@@ -27,7 +27,7 @@ createBatchFileGPU("srun --gres=gpu:1 --time=02:00:00 --mem=6000 sh ~/pythonProj
 for i in range(1, workerCount):
     p = subprocess.Popen("sbatch hyperOptScriptExecute.sh", stdout=log, stderr=log, shell=True)
     p = subprocess.Popen("sbatch hyperOptScriptExecuteGPU.sh", stdout=log, stderr=log, shell=True)
-    time.sleep(0.5)
+    time.sleep(0.7)
 
 while 1:
     hold=1
