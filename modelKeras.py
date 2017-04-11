@@ -158,10 +158,10 @@ class KerasModel():
                    createHTML = False):
         optimizerObjects = {
             "sgd" : keras.optimizers.SGD(lr=learningRate, momentum=0.0, decay=0.0, nesterov=False),
-            "adam" : keras.optimizers.Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=0.0),# empfohlen learning rate default
+            "adam" : keras.optimizers.Adam(lr=learningRate, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=0.0),# empfohlen learning rate default
             "rms" : keras.optimizers.RMSprop(lr=learningRate, rho=0.9, epsilon=1e-08, decay=0.0),
-            "ada" : keras.optimizers.Adagrad(lr=0.01, epsilon=1e-08, decay=0.0), # empfohlen learning rate default
-            "adadelta": keras.optimizers.Adadelta(lr=1.0, rho=0.95, epsilon=1e-08, decay=0.0) # empfohlen learning rate default
+            "ada" : keras.optimizers.Adagrad(lr=learningRate, epsilon=1e-08, decay=0.0), # empfohlen learning rate default
+            "adadelta": keras.optimizers.Adadelta(lr=learningRate, rho=0.95, epsilon=1e-08, decay=0.0) # empfohlen learning rate default
         }
 
         #inputSize = len(stationIDs)+20
