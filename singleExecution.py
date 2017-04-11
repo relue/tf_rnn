@@ -13,11 +13,11 @@ import warnings
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
     import modelKeras
-    import time
+
     import logging
     import numpy as np
     import pandas as pd
-
+    import time
     start_time = time.time()
     modelOut = modelKeras.KerasModel(**data)
 
