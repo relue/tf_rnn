@@ -49,22 +49,24 @@ def objective(x):
     data['loss'] = modelOut.results['loss'][-1]
     data['val_loss'] = modelOut.results['val_loss'][-1]
     data['test_loss'] = modelOut.results['test_loss'][-1]
+    data['exec_time'] = modelOut.results['exec_time']
     data['status'] = STATUS_OK
     data = dict(x.items() + data.items())
     return data
 
 space =  {
-        'earlyStopping': True,
-        'epochSize' : 8,
+        'earlyStopping': [True],
+        'standardizationType': ["minmax", "zscore"],
+        'epochSize' : hp.uniform('learningRate', 1 , 50),
         "learningRate": hp.uniform('learningRate', 0 , 1),
-        "DropoutProp": hp.uniform('DropoutProp', 0.01, 0.99),
-        "l1Penalty": hp.uniform('l1Penalty',0.0001, 0.01),
+        "DropoutProp": hp.uniform('DropoutProp', 0.0001, 0.99),
+        "l1Penalty": hp.uniform('l1Penalty',0.0001, 0.99),
         "activationFunction": hp.choice('activationFunction',["tanh", "sigmoid", "relu"]),
         "hiddenNodes": hp.choice('hiddenNodes', range(10,300)),
         "optimizer": hp.choice('optimizer', ['adam', 'sgd', 'rms','ada', 'adadelta']),
-        "timeWindow": hp.choice('timeWindow', range(10,199)),
+        "timeWindow": hp.choice('timeWindow', range(1,336)),
         "batchSize": hp.choice('batchSize', range(1,101)),
-        "hiddenLayers": hp.choice('hiddenLayers', range(1,5)),
+        "hiddenLayers": hp.choice('hiddenLayers', range(1,10)),
         "weightInit": hp.choice('weightInit', ["zero", "one", "normal", "glorot_uniform", "lecun_uniform", "glorot_normal"]),
         "useHoliday": hp.choice('useHoliday', [True, False]),
         "useWeekday": hp.choice('useWeekday', [True, False]),

@@ -6,7 +6,7 @@ from keras import regularizers
 from keras.models import Sequential
 from keras.layers import Dense, Dropout
 from keras.layers import LSTM,SimpleRNN
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from sklearn.metrics import mean_squared_error
 from bokeh.models import Legend
 #import dataExplore2
@@ -24,6 +24,8 @@ from bokeh.plotting import figure, show, output_file
 from bokeh.models import Legend
 from bokeh.io import output_file, show, vplot, gridplot
 import itertools
+import time
+
 
 
 class KerasModel():
@@ -52,7 +54,7 @@ class KerasModel():
         error = math.sqrt((sumZones / counter))
         return error
 
-    def getValidationInputOutput(self, df,  stationIDs, timeWindow, noFillZero = False, useHoliday = True, useWeekday = True):
+    def getValidationInputOutput(self, df,  stationIDs, timeWindow, scalerOutput, scalerInput, noFillZero = False, useHoliday = True, useWeekday = True, standardizationType="minmax"):
         backcastWeeks = ["2005-3-5", "2005-6-19", "2005-9-9", "2005-12-24",
                                  "2006-2-12", "2006-5-24", "2006-8-1", "2006-11-21","2008-6-30"]
         columns = range(1, timeWindow+1)
@@ -66,25 +68,18 @@ class KerasModel():
         dfDummy = pd.get_dummies(dfS['weekday'])
         dfS = pd.concat([dfS, dfDummy], axis=1)
         holidayDict = energyload_class.getHolidayDict()
-        scalerInput = MinMaxScaler(feature_range=(0, 1))
-        scalerOutput = MinMaxScaler(feature_range=(0, 1))
-        scalerOutputZone21 = MinMaxScaler(feature_range=(0, 1))
+
 
         #dataExplore2.showDF(df, False)
         for zone_name in zoneColumns:
-            scaledLoads = scalerOutput.fit_transform(dfS[zone_name].tolist())
+            scaledLoads = scalerOutput[zone_name].transform(dfS[zone_name].tolist())
             lo = pd.Series(scaledLoads)
             dfS[zone_name] = lo.values
 
         for station_name in stationColumns:
-            scaledTemps = scalerInput.fit_transform(dfS[station_name].tolist())
+            scaledTemps = scalerInput[station_name].transform(dfS[station_name].tolist())
             lo = pd.Series(scaledTemps)
             dfS[station_name] = lo.values
-
-        #Eigene Transformation for Zone 21
-        scaledLoads = scalerOutputZone21.fit_transform(dfS["zone_21"].tolist())
-        lo = pd.Series(scaledLoads)
-        dfS["zone_21"] = lo.values
 
         for date in backcastWeeks:
             mask = (df['date'] == date)
@@ -101,24 +96,22 @@ class KerasModel():
 
         tfInput = tfInput.swapaxes(0,1)
 
-        zoneIDs = zoneIDs+[21]
-        xOutputV = self.getSingleLoadPrediction(tfOutput, zoneIDs)
+        zoneIDs = zoneIDs
+        zoneIDs21= zoneIDs+[21]
+        xOutputV = self.getSingleLoadPrediction(tfOutput, zoneIDs21)
         for zoneID in zoneIDs:
-            if zoneID == 21:
-                xOutputV[zoneID] = scalerOutputZone21.inverse_transform(xOutputV[zoneID])
-            else:
-                xOutputV[zoneID] = scalerOutput.inverse_transform(xOutputV[zoneID])
+            xOutputV[zoneID] = scalerOutput["zone_"+str(zoneID)].inverse_transform(xOutputV[zoneID])
 
-        return tfInput, xOutputV, scalerOutput
+        return tfInput, xOutputV
 
     def getTestError(self, model, testInput, testOutput, testScalerOutput):
         zoneIDs = range(1,21)
         testPrediction = model.predict(testInput)
-        testPrediction = testScalerOutput.inverse_transform(testPrediction)
         pV = self.getSingleLoadPrediction(testPrediction, zoneIDs)
         pVList = []
         for zoneID in zoneIDs:
-                pVList.append(np.asarray(pV[zoneID]))
+            pV[zoneID] = testScalerOutput["zone_"+str(zoneID)].inverse_transform(pV[zoneID])
+            pVList.append(np.asarray(pV[zoneID]))
         pV[21] = np.sum(pVList, axis=0)
         finalTestError = self.calculateKaggleScore(testOutput, pV)
         return finalTestError, pV, testOutput
@@ -134,7 +127,7 @@ class KerasModel():
                 sequenceLoads[zoneID].append(column)
         return sequenceLoads
 
-    def __init__(self, timeWindow = 24*2,
+    def __init__(self, timeWindow = 24*7,
                    cellType = "rnn",
                    outputSize = 24*7,
                    noFillZero = True,
@@ -142,10 +135,10 @@ class KerasModel():
                    useWeekday = True,
                    learningRate = 0.001,
                    l1Penalty = 0.000001,
-                   DropoutProp=0.01,
+                   DropoutProp=0.001,
                    hiddenNodes = 30,
-                   hiddenLayers = 2,
-                   batchSize = 10,
+                   hiddenLayers = 1,
+                   batchSize = 1,
                    epochSize = 20,
                    earlyStopping = False,
                    indexID = 1,
@@ -153,15 +146,15 @@ class KerasModel():
                    stationIDs = [12],
                    weightInit = "lecun_uniform",
                    activationFunction = "tanh",
-                   standardizationType = "minMax",
+                   standardizationType = "minmax",
                    isShow = False,
                    createHTML = False):
         optimizerObjects = {
-            "sgd" : keras.optimizers.SGD(lr=learningRate, momentum=0.0, decay=0.0, nesterov=False),
-            "adam" : keras.optimizers.Adam(lr=learningRate, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=0.0),# empfohlen learning rate default
-            "rms" : keras.optimizers.RMSprop(lr=learningRate, rho=0.9, epsilon=1e-08, decay=0.0),
-            "ada" : keras.optimizers.Adagrad(lr=learningRate, epsilon=1e-08, decay=0.0), # empfohlen learning rate default
-            "adadelta": keras.optimizers.Adadelta(lr=learningRate, rho=0.95, epsilon=1e-08, decay=0.0) # empfohlen learning rate default
+            "sgd" : keras.optimizers.SGD(lr=learningRate, momentum=0.0, decay=0.0, nesterov=False, clipvalue=10),
+            "adam" : keras.optimizers.Adam(lr=learningRate, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=0.0, clipvalue=10),# empfohlen learning rate default
+            "rms" : keras.optimizers.RMSprop(lr=learningRate, rho=0.9, epsilon=1e-08, decay=0.0, clipvalue=10),
+            "ada" : keras.optimizers.Adagrad(lr=learningRate, epsilon=1e-08, decay=0.0, clipvalue=10), # empfohlen learning rate default
+            "adadelta": keras.optimizers.Adadelta(lr=learningRate, rho=0.95, epsilon=1e-08, decay=0.0, clipvalue=10) # empfohlen learning rate default
         }
 
         #inputSize = len(stationIDs)+20
@@ -170,12 +163,13 @@ class KerasModel():
         df = energyload_class.init_dfs(False, False)
 
     #
-        xInput, xOutput, scaler = energyload_class.createXmulti(df, timeWindow, stationIDs, outputSize, save=False, isStandardized=True, noFillZero=noFillZero, useHoliday=useHoliday, useWeekday=useWeekday)
+        xInput, xOutput, scalerOutput, scalerInput = energyload_class.createXmulti(df, timeWindow, stationIDs, outputSize, save=False, isStandardized=True, noFillZero=noFillZero, useHoliday=useHoliday, useWeekday=useWeekday, standardizationType=standardizationType)
         xInput = xInput.swapaxes(0,1)
         inputSize = xInput.shape[2]
         opt = keras.optimizers.SGD(lr=0.1, momentum=0.0, decay=0.0, nesterov=False)
         early = keras.callbacks.EarlyStopping(monitor='val_loss', min_delta=0, patience=10, verbose=1, mode='auto')
         #shapeInput = [rows, timeSteps, InputSize]
+        start_time = time.time()
         model = Sequential()
         returnSequence = True if hiddenLayers > 1 else False
         cellObj = "SimpleRNN" if cellType == "rnn" else "LSTM"
@@ -197,8 +191,8 @@ class KerasModel():
         model.add(Dense(finalOutputSize, W_regularizer=regularizers.l1(l1Penalty)))#, kernel_regularizer=regularizers.l1(l1Penalty)
 
         model.compile(loss='mean_squared_error', optimizer=optimizerObjects[optimizer])
-        testInput,testOutput,testScaler = self.getValidationInputOutput(df, stationIDs, timeWindow, noFillZero = noFillZero, useHoliday = useHoliday, useWeekday = useWeekday)
-        customCallback = callback.KaggleTest(self, testInput,testOutput,testScaler)
+        testInput,testOutput = self.getValidationInputOutput(df, stationIDs, timeWindow, scalerOutput, scalerInput, noFillZero = noFillZero, useHoliday = useHoliday, useWeekday = useWeekday, standardizationType = standardizationType)
+        customCallback = callback.KaggleTest(self, testInput,testOutput,scalerOutput)
         callbacks = []
         callbacks.append(customCallback)
         if earlyStopping == False:
@@ -209,7 +203,8 @@ class KerasModel():
         self.results["loss"] = history.history['loss']
         self.results["val_loss"] = history.history['val_loss']
         self.results["test_loss"] = historyTest
-        finalTestError, pV, xOutputV = self.getTestError(model, testInput,testOutput,testScaler)
+        self.results["exec_time"] = (time.time() - start_time)
+        finalTestError, pV, xOutputV = self.getTestError(model, testInput,testOutput,scalerOutput)
         print "final Test Error: "+str(finalTestError)
         if createHTML:
             p3 = figure(width=1000, height=500,toolbar_location="left")

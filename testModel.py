@@ -8,7 +8,8 @@ data["indexID"] = 1
 data["isShow"] = True
 data["createHTML"] = True
 data["earlyStopping"] = True
-data["epochSize"] = 15
+data["epochSize"] = 8
+data["standardizationType"] = "minmax"
 
 import numpy as np
 import pandas as pd
