@@ -11,7 +11,7 @@ def createBatchFile(singleCommand):
                 line = line.replace('?job?', singleCommand)
                 fout.write(line)
 
-workerCount = 2000
+workerCount = 1000
 ip=sys.argv[1]
 
 createBatchFile("srun --time=02:00:00 --mem=2000 sh ~/pythonProjects/tf_rnn/HyperoptWorkerWrapper.sh "+ip)

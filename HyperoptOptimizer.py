@@ -55,9 +55,9 @@ def objective(x):
 
 space =  {
         'earlyStopping': True,
-        'epochSize' : 1,
-        "learningRate": hp.uniform('learningRate', 0 , 0.4),
-        "DropoutProp": hp.uniform('DropoutProp', 0.4, 0.8),
+        'epochSize' : 8,
+        "learningRate": hp.uniform('learningRate', 0 , 1),
+        "DropoutProp": hp.uniform('DropoutProp', 0.01, 0.99),
         "l1Penalty": hp.uniform('l1Penalty',0.0001, 0.01),
         "activationFunction": hp.choice('activationFunction',["tanh", "sigmoid", "relu"]),
         "hiddenNodes": hp.choice('hiddenNodes', range(10,300)),
@@ -66,11 +66,9 @@ space =  {
         "batchSize": hp.choice('batchSize', range(1,101)),
         "hiddenLayers": hp.choice('hiddenLayers', range(1,5)),
         "weightInit": hp.choice('weightInit', ["zero", "one", "normal", "glorot_uniform", "lecun_uniform", "glorot_normal"]),
-        "earlyStopping": hp.choice('earlyStopping', [True, False]),
         "useHoliday": hp.choice('useHoliday', [True, False]),
         "useWeekday": hp.choice('useWeekday', [True, False]),
-        "noFillZero": hp.choice('noFillZero', [True, False]),
-        "stationIDs": [hp.choice('stationIDs', range(1,13))],
+        "stationIDs": [12],
         "dirPath": dir_path
     }
 ip = sys.argv[1]
