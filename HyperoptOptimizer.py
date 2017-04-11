@@ -57,7 +57,7 @@ def objective(x):
 space =  {
         'earlyStopping': [True],
         'standardizationType': ["minmax", "zscore"],
-        'epochSize' : hp.uniform('learningRate', 1 , 50),
+        'epochSize' : hp.uniform('epochSize', 1 , 50),
         "learningRate": hp.uniform('learningRate', 0 , 1),
         "DropoutProp": hp.uniform('DropoutProp', 0.0001, 0.99),
         "l1Penalty": hp.uniform('l1Penalty',0.0001, 0.99),
@@ -75,7 +75,6 @@ space =  {
     }
 ip = sys.argv[1]
 #print hyperopt.pyll.stochastic.sample(space)
-trials = MongoTrials('mongo://'+ip+':27017/foo_db/jobs', exp_key='finalFun')
+trials = MongoTrials('mongo://'+ip+':27017/foo_db/jobs', exp_key='finalAlpha')
 best = fmin(fn=objective, space=space, trials=trials, algo=hyperopt.rand.suggest, max_evals=200000, verbose=999)
 print best
-trials.get
