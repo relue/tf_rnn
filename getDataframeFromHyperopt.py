@@ -26,5 +26,5 @@ dfF = dfF[newAlign]
 dfF = dfF.sort_values(['test_loss'], ascending=[True])
 print str(len(finished))+' results collected'
 print dfF
-dfF.to_pickle("randomSearch.pd")
+dfF.to_pickle("randomSearchResults.pd")
 
