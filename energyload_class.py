@@ -238,8 +238,8 @@ def createXmulti(df, timeWindow, stationIDs, outputSize, save = False, isStandar
                 scalerOutput[zone_name] = MinMaxScaler(feature_range=(0, 1))
             else:
                 scalerOutput[zone_name] = StandardScaler()
-            scaledLoads = scalerOutput[zone_name].fit_transform(dfS[zone_name].tolist())
-            lo = pd.Series(scaledLoads)
+            scaledLoads = scalerOutput[zone_name].fit_transform(np.asarray(dfS[zone_name].tolist()).reshape(-1,1))
+            lo = pd.Series(scaledLoads.reshape(-1))
             dfS[zone_name] = lo.values
 
         for station_name in stationColumns:
@@ -247,8 +247,8 @@ def createXmulti(df, timeWindow, stationIDs, outputSize, save = False, isStandar
                 scalerInput[station_name] = MinMaxScaler(feature_range=(0, 1))
             else:
                 scalerInput[station_name] = StandardScaler()
-            scaledTemps = scalerInput[station_name].fit_transform(dfS[station_name].tolist())
-            lo = pd.Series(scaledTemps)
+            scaledTemps = scalerInput[station_name].fit_transform(np.asarray(dfS[station_name].tolist()).reshape(-1,1))
+            lo = pd.Series(scaledTemps.reshape(-1))
             dfS[station_name] = lo.values
 
     cacheAdd = "98042017"

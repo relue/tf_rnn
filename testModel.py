@@ -8,7 +8,7 @@ data["indexID"] = 1
 data["isShow"] = True
 data["createHTML"] = True
 data["earlyStopping"] = True
-data["epochSize"] = 8
+data["epochSize"] = 2
 data["standardizationType"] = "zscore"
 
 import numpy as np
