@@ -33,7 +33,7 @@ p = subprocess.Popen("sbatch hyperOptScriptMain.sh", stdout=log, stderr=log, she
 start_time = time.time()
 while 1:
     exec_time = time.time()-start_time
-    if exec_time > 60:
+    if exec_time > 1800:
         os.killpg(os.getpgid(pMongo.pid), signal.SIGTERM)
         os.killpg(os.getpgid(pOpti.pid), signal.SIGTERM)
         pMongo = subprocess.Popen(startDB, stdout=logDB, stderr=logDB, shell=True, preexec_fn=os.setsid)
