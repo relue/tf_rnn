@@ -7,7 +7,8 @@ import pandas as pd
 import sys
 
 ip= sys.argv[1]
-trials = MongoTrials('mongo://'+ip+':27017/foo_db/jobs', exp_key='finalFun')
+#finalFun
+trials = MongoTrials('mongo://'+ip+':27017/foo_db/jobs', exp_key='finalAlpha')
 finished = []
 for row in trials.results:
     resultRow = row.to_dict()

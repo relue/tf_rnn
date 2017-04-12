@@ -1,6 +1,10 @@
 import subprocess
 import time
 import socket
+import os
+import signal
+import subprocess
+
 
 def createBatchFile(singleCommand):
     with open("hyperOptScript.sh", "rt") as fin:
@@ -22,8 +26,18 @@ startOptimizer = "source ../env/bin/activate; python HyperoptOptimizer.py "+ip
 
 createBatchFile("srun --time=12:00:00 --mem=10000 ~/pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/hyperoptSpamWorkers.py "+ip)
 
-p = subprocess.Popen(startDB, stdout=logDB, stderr=logDB, shell=True)
-p = subprocess.Popen(startOptimizer, stdout=log, stderr=log, shell=True)
+pMongo = subprocess.Popen(startDB, stdout=logDB, stderr=logDB, shell=True, preexec_fn=os.setsid)
+pOpti = subprocess.Popen(startOptimizer, stdout=log, stderr=log, shell=True, preexec_fn=os.setsid)
 p = subprocess.Popen("sbatch hyperOptScriptMain.sh", stdout=log, stderr=log, shell=True)
+
+start_time = time.time()
 while 1:
-    hold=1
+    exec_time = time.time()-start_time
+    if exec_time > 60:
+        os.killpg(os.getpgid(pMongo.pid), signal.SIGTERM)
+        os.killpg(os.getpgid(pOpti.pid), signal.SIGTERM)
+        pMongo = subprocess.Popen(startDB, stdout=logDB, stderr=logDB, shell=True, preexec_fn=os.setsid)
+        pOpti = subprocess.Popen(startOptimizer, stdout=log, stderr=log, shell=True, preexec_fn=os.setsid)
+        start_time = time.time()
+    time.sleep(60)
+
