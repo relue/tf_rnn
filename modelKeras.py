@@ -50,6 +50,7 @@ class KerasModel():
                 for hour in range(len(xOutputV[zoneID][valWeek])):
                     sumZones += ((xOutputV[zoneID][valWeek][hour] - pV[zoneID][valWeek][hour]) ** 2)*finalWeight
                     counter += 1*finalWeight
+            #print "zone"+str(zoneID)+" "+str(math.sqrt((sumZones / counter)))
 
         error = math.sqrt((sumZones / counter))
         return error
@@ -69,16 +70,14 @@ class KerasModel():
         dfS = pd.concat([dfS, dfDummy], axis=1)
         holidayDict = energyload_class.getHolidayDict()
 
-
-        #dataExplore2.showDF(df, False)
         for zone_name in zoneColumns:
-            scaledLoads = scalerOutput[zone_name].transform(dfS[zone_name].tolist())
-            lo = pd.Series(scaledLoads)
+            scaledLoads = scalerOutput[zone_name].fit_transform(np.asarray(dfS[zone_name].tolist()).reshape(-1,1))
+            lo = pd.Series(scaledLoads.reshape(-1))
             dfS[zone_name] = lo.values
 
         for station_name in stationColumns:
-            scaledTemps = scalerInput[station_name].transform(dfS[station_name].tolist())
-            lo = pd.Series(scaledTemps)
+            scaledTemps = scalerInput[station_name].fit_transform(np.asarray(dfS[station_name].tolist()).reshape(-1,1))
+            lo = pd.Series(scaledTemps.reshape(-1))
             dfS[station_name] = lo.values
 
         for date in backcastWeeks:
@@ -209,11 +208,12 @@ class KerasModel():
             prediction = model.predict(input)
             pV = self.getSingleLoadPrediction(prediction, zoneIDs)
             outputV = self.getSingleLoadPrediction(output, zoneIDs)
+            errorList = []
             for zoneID in zoneIDs:
                 pV[zoneID] = scalerOutput["zone_"+str(zoneID)].inverse_transform(pV[zoneID])
                 outputV[zoneID] = scalerOutput["zone_"+str(zoneID)].inverse_transform(outputV[zoneID])
-
-            error = np.mean(pV - outputV)
+                errorList.append(np.mean((pV[zoneID] - outputV[zoneID]) ** 2))
+            error = np.mean(errorList)** 0.5
             return error
         error = calulateModelError(model, xInput, xOutput, scalerOutput)
         print "Addtional Error: "+str(error)
