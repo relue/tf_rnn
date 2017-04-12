@@ -9,7 +9,7 @@ data["isShow"] = True
 data["createHTML"] = True
 data["earlyStopping"] = True
 data["epochSize"] = 8
-data["standardizationType"] = "minmax"
+data["standardizationType"] = "zscore"
 
 import numpy as np
 import pandas as pd

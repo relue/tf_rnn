@@ -37,6 +37,7 @@ while 1:
     if exec_time > 1800:
         os.killpg(os.getpgid(pMongo.pid), signal.SIGTERM)
         os.killpg(os.getpgid(pOpti.pid), signal.SIGTERM)
+        time.sleep(30)
         pMongo = subprocess.Popen(startDB, stdout=logDB, stderr=logDB, shell=True, preexec_fn=os.setsid)
         pOpti = subprocess.Popen(startOptimizer, stdout=log, stderr=log, shell=True, preexec_fn=os.setsid)
         start_time = time.time()
