@@ -173,8 +173,7 @@ class KerasModel():
         model = Sequential()
         returnSequence = True if hiddenLayers > 1 else False
         cellObj = "SimpleRNN" if cellType == "rnn" else "LSTM"
-        print 'model.add('+cellObj+'(hiddenNodes, input_length=timeWindow, input_dim=inputSize, recurrent_regularizer=regularizers.l1(l1Penalty), ' \
-                                   'return_sequences=returnSequence, go_backwards = True, init=weightInit, activation=activationFunction))'
+
         eval('model.add('+cellObj+'(hiddenNodes, input_length=timeWindow, input_dim=inputSize, '\
                                   'return_sequences=returnSequence, go_backwards = True, init=weightInit, activation=activationFunction))')
 #        model.add(LSTM(hiddenNodes, input_length=timeWindow, input_dim=inputSize, return_sequences=returnSequence, go_backwards = True, init=weightInit, activation=activationFunction))
@@ -205,6 +204,19 @@ class KerasModel():
         self.results["test_loss"] = historyTest
         self.results["exec_time"] = (time.time() - start_time)
         finalTestError, pV, xOutputV = self.getTestError(model, testInput,testOutput,scalerOutput)
+        def calulateModelError(model, input, output, scalerOutput):
+            zoneIDs = range(1,21)
+            prediction = model.predict(input)
+            pV = self.getSingleLoadPrediction(prediction, zoneIDs)
+            outputV = self.getSingleLoadPrediction(output, zoneIDs)
+            for zoneID in zoneIDs:
+                pV[zoneID] = scalerOutput["zone_"+str(zoneID)].inverse_transform(pV[zoneID])
+                outputV[zoneID] = scalerOutput["zone_"+str(zoneID)].inverse_transform(outputV[zoneID])
+
+            error = np.mean(pV - outputV)
+            return error
+        error = calulateModelError(model, xInput, xOutput, scalerOutput)
+        print "Addtional Error: "+str(error)
         print "final Test Error: "+str(finalTestError)
         if createHTML:
             p3 = figure(width=1000, height=500,toolbar_location="left")
