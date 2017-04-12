@@ -18,7 +18,7 @@ def createBatchFileGPU(singleCommand):
                 line = line.replace('?job?', singleCommand)
                 fout.write(line)
 
-workerCount = 10000
+workerCount = 1000
 ip=sys.argv[1]
 
 createBatchFile("srun --ntasks=1 --time=01:00:00 --mem=3900 sh ~/pythonProjects/tf_rnn/HyperoptWorkerWrapper.sh "+ip)
