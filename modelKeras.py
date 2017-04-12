@@ -140,7 +140,7 @@ class KerasModel():
                    hiddenLayers = 1,
                    batchSize = 1,
                    epochSize = 20,
-                   earlyStopping = False,
+                   earlyStopping = True,
                    indexID = 1,
                    optimizer = "adam",
                    stationIDs = [12],

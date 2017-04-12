@@ -55,9 +55,8 @@ def objective(x):
     return data
 
 space =  {
-        'earlyStopping': [True],
-        'standardizationType': ["minmax", "zscore"],
-        'epochSize' : hp.uniform('epochSize', 1 , 50),
+        'standardizationType': hp.choice('standardizationType', ["minmax", "zscore"]),
+        'epochSize' : hp.choice('epochSize', range(1,20)),
         "learningRate": hp.uniform('learningRate', 0 , 1),
         "DropoutProp": hp.uniform('DropoutProp', 0.0001, 0.99),
         "l1Penalty": hp.uniform('l1Penalty',0.0001, 0.99),
@@ -70,7 +69,6 @@ space =  {
         "weightInit": hp.choice('weightInit', ["zero", "one", "normal", "glorot_uniform", "lecun_uniform", "glorot_normal"]),
         "useHoliday": hp.choice('useHoliday', [True, False]),
         "useWeekday": hp.choice('useWeekday', [True, False]),
-        "stationIDs": [12],
         "dirPath": dir_path
     }
 ip = sys.argv[1]
