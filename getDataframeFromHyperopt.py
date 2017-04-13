@@ -30,6 +30,6 @@ print str(len(finished))+' results collected'
 print dfF
 dfF.to_pickle("randomSearchResults.pd")
 if len(sys.argv) > 1:
-    if sys.argv[1] == 1:
+    if sys.argv[1] == "1":
         dataExplore2.showDF(dfF, False)
 
