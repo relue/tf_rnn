@@ -27,7 +27,8 @@ def createBatchFileGPU(singleCommand, com2):
                 fout.write(line)
 
 workerCount = 5000
-ip=sys.argv[1]
+#ip=sys.argv[1]
+ip="127"
 comLong = "srun --ntasks=1 --time=12:00:00 --mem=10000 sh ~/pythonProjects/tf_rnn/HyperoptWorkerWrapper.sh "+ip
 comFast = "srun --ntasks=1 --time=01:00:00 --mem=10000 sh ~/pythonProjects/tf_rnn/HyperoptWorkerWrapper.sh "+ip
 createBatchFile(comLong,comFast)
@@ -42,10 +43,10 @@ for i in range(1, workerCount):
     p = subprocess.Popen("sbatch hyperOptScriptExecuteGPUFill.sh", stdout=log, stderr=log, shell=True)
 
 
-    if workerCount > 200:
-        st = 0.4
+    if workerCount > 100:
+        st = 0.5
     else:
-        st = 3
+        st = 4
 
     time.sleep(st)
 
