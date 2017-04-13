@@ -116,7 +116,7 @@ class KerasModel():
             finalTestError = self.calculateKaggleScore(testOutput, pV)
         except ValueError:
             print "scaler out of bounds"
-            finalTestError = math.nan
+            finalTestError = np.nan
 
         return finalTestError, pV, testOutput
 
@@ -246,7 +246,7 @@ class KerasModel():
             except ValueError:
                 print "scaler out of bounds"
                 for d in errors:
-                    errors[d] = math.nan
+                    errors[d] = numpy.nan
             return errors
 
         def prepareCalculation(input,output, scaler, model):
