@@ -148,17 +148,18 @@ class KerasModel():
                    indexID = 1,
                    optimizer = "adam",
                    stationIDs = [12],
+                   validationPercentage = 0.15,
                    weightInit = "lecun_uniform",
                    activationFunction = "tanh",
                    standardizationType = "minmax",
                    isShow = False,
                    createHTML = False):
         optimizerObjects = {
-            "sgd" : keras.optimizers.SGD(lr=learningRate, momentum=0.0, decay=0.0, nesterov=False, clipvalue=10),
-            "adam" : keras.optimizers.Adam(lr=learningRate, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=0.0, clipvalue=10),# empfohlen learning rate default
-            "rms" : keras.optimizers.RMSprop(lr=learningRate, rho=0.9, epsilon=1e-08, decay=0.0, clipvalue=10),
-            "ada" : keras.optimizers.Adagrad(lr=learningRate, epsilon=1e-08, decay=0.0, clipvalue=10), # empfohlen learning rate default
-            "adadelta": keras.optimizers.Adadelta(lr=learningRate, rho=0.95, epsilon=1e-08, decay=0.0, clipvalue=10) # empfohlen learning rate default
+            "sgd" : keras.optimizers.SGD(lr=learningRate, momentum=0.0, decay=0.0, nesterov=False, clipvalue=100),
+            "adam" : keras.optimizers.Adam(lr=learningRate, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=0.0, clipvalue=100),# empfohlen learning rate default
+            "rms" : keras.optimizers.RMSprop(lr=learningRate, rho=0.9, epsilon=1e-08, decay=0.0, clipvalue=100),
+            "ada" : keras.optimizers.Adagrad(lr=learningRate, epsilon=1e-08, decay=0.0, clipvalue=100), # empfohlen learning rate default
+            "adadelta": keras.optimizers.Adadelta(lr=learningRate, rho=0.95, epsilon=1e-08, decay=0.0, clipvalue=100) # empfohlen learning rate default
         }
 
         #inputSize = len(stationIDs)+20
@@ -169,9 +170,19 @@ class KerasModel():
     #
         xInput, xOutput, scalerOutput, scalerInput = energyload_class.createXmulti(df, timeWindow, stationIDs, outputSize, save=False, isStandardized=True, noFillZero=noFillZero, useHoliday=useHoliday, useWeekday=useWeekday, standardizationType=standardizationType)
         xInput = xInput.swapaxes(0,1)
-        inputSize = xInput.shape[2]
+        def getTestSets(xInput, xOutput, percentage):
+            fromT = 0
+            last = xOutput.shape[0]-1
+            toT = int(math.ceil(last*(1-percentage)))
+            inputT = xInput[fromT:toT,:]
+            outputT = xOutput[fromT:toT,:]
+            inputV = xInput[toT+1:last,:]
+            outputV = xOutput[toT+1:last,:]
+            return inputT, outputT, inputV, outputV
+        inputT, outputT, inputV, outputV = getTestSets(xInput, xOutput, validationPercentage)
+        inputSize = inputT.shape[2]
         opt = keras.optimizers.SGD(lr=0.1, momentum=0.0, decay=0.0, nesterov=False)
-        early = keras.callbacks.EarlyStopping(monitor='val_loss', min_delta=0, patience=10, verbose=1, mode='auto')
+        early = keras.callbacks.EarlyStopping(monitor='loss', min_delta=0, patience=10, verbose=1, mode='auto')
         #shapeInput = [rows, timeSteps, InputSize]
         start_time = time.time()
         model = Sequential()
@@ -195,34 +206,88 @@ class KerasModel():
 
         model.compile(loss='mean_squared_error', optimizer=optimizerObjects[optimizer])
         testInput,testOutput = self.getValidationInputOutput(df, stationIDs, timeWindow, scalerOutput, scalerInput, noFillZero = noFillZero, useHoliday = useHoliday, useWeekday = useWeekday, standardizationType = standardizationType)
-        customCallback = callback.KaggleTest(self, testInput,testOutput,scalerOutput)
         callbacks = []
-        callbacks.append(customCallback)
+        if isShow:
+            customCallback = callback.KaggleTest(self, testInput,testOutput,scalerOutput)
+            callbacks.append(customCallback)
+            historyTest = customCallback.getHistory()
+
         if earlyStopping == False:
             epochSize = 50
             callbacks.append(early)
-        history = model.fit(xInput, xOutput, nb_epoch=epochSize, batch_size=batchSize, verbose=1, validation_split=0.1, callbacks=callbacks)#callbacks=[early]
-        historyTest = customCallback.getHistory()
-        self.results["loss"] = history.history['loss']
-        self.results["val_loss"] = history.history['val_loss']
-        self.results["test_loss"] = historyTest
-        self.results["exec_time"] = (time.time() - start_time)
-        finalTestError, pV, xOutputV = self.getTestError(model, testInput,testOutput,scalerOutput)
-        def calulateModelError(model, input, output, scalerOutput):
+        history = model.fit(inputT, outputT, nb_epoch=epochSize, batch_size=batchSize, verbose=1, callbacks=callbacks)#callbacks=[early]
+
+
+        def calulateModelErrors(xInput, xOutput, scalerOutput, model):
+            pV, outputV, predList ,outputList = prepareCalculation(xInput, xOutput, scalerOutput, model)
+            zoneIDs = range(1,21)
+            errorList = []
+            errors = {}
+
+            sumP = 0
+            sumOutput = 0
+            mapeList = []
+            try:
+                for zoneID in zoneIDs:
+                    errorList.append(np.mean((pV[zoneID] - outputV[zoneID]) ** 2))
+                    sumP += pV[zoneID]
+                    sumOutput += outputV[zoneID]
+
+                errors["rmse"] = np.mean(errorList)** 0.5
+                sumP = sum(sumP.reshape(-1))
+                sumOutput = sum(sumOutput.reshape(-1))
+                errors["diff"] = (sumP - sumOutput) / sumOutput
+
+                for i in range(len(predList)):
+                    if outputList[i] != 0:
+                        mapeList.append(np.abs((predList[i] - outputList[i]) / outputList[i]))
+
+                errors['mape'] = np.mean(mapeList)
+            except ValueError:
+                print "scaler out of bounds"
+                for d in errors:
+                    errors[d] = math.nan
+            return errors
+
+        def prepareCalculation(input,output, scaler, model):
             zoneIDs = range(1,21)
             prediction = model.predict(input)
             pV = self.getSingleLoadPrediction(prediction, zoneIDs)
             outputV = self.getSingleLoadPrediction(output, zoneIDs)
-            errorList = []
+            outputList = []
+            predList = []
             for zoneID in zoneIDs:
-                pV[zoneID] = scalerOutput["zone_"+str(zoneID)].inverse_transform(pV[zoneID])
-                outputV[zoneID] = scalerOutput["zone_"+str(zoneID)].inverse_transform(outputV[zoneID])
-                errorList.append(np.mean((pV[zoneID] - outputV[zoneID]) ** 2))
-            error = np.mean(errorList)** 0.5
-            return error
-        error = calulateModelError(model, xInput, xOutput, scalerOutput)
-        print "Addtional Error: "+str(error)
-        print "final Test Error: "+str(finalTestError)
+                pV[zoneID] = scaler["zone_"+str(zoneID)].inverse_transform(pV[zoneID])
+                outputV[zoneID] = scaler["zone_"+str(zoneID)].inverse_transform(outputV[zoneID])
+                outputList.append(outputV[zoneID].reshape(-1))
+                predList.append(pV[zoneID].reshape(-1))
+
+            outputList = np.asarray(outputList).reshape(-1)
+            predList = np.asarray(predList).reshape(-1)
+            return pV,outputV, predList ,outputList
+
+
+        finalTestError, pV, xOutputV = self.getTestError(model, testInput,testOutput,scalerOutput)
+
+
+        errorsTrain = calulateModelErrors(inputT, outputT, scalerOutput, model)
+        errorsVal = calulateModelErrors(inputV, outputV, scalerOutput, model)
+        self.results["train_netrmse"] = history.history['loss'][-1]
+        self.results["test_rmse"] = finalTestError
+        self.results["train_rmse"] = errorsTrain['rmse']
+        self.results["val_rmse"] = errorsVal['rmse']
+        self.results["train_mape"] = errorsTrain['mape']
+        self.results["val_mape"] = errorsVal['mape']
+        self.results["train_diff"] = errorsTrain['diff']
+        self.results["val_diff"] = errorsVal['diff']
+        self.results["exec_time"] = (time.time() - start_time)
+        print  self.results
+        for key in errorsTrain:
+            print key+" : "+str(errorsTrain[key])+"\n"
+        for key in errorsVal:
+            print key+" : "+str(errorsVal[key])+"\n"
+
+        print "kaggle:"+str(finalTestError)
         if createHTML:
             p3 = figure(width=1000, height=500,toolbar_location="left")
 

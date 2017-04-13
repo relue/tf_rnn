@@ -44,7 +44,7 @@ p1 = figure(width=1000, height=500, x_range = (defDict[paramName][0],defDict[par
 
 p1.xaxis.axis_label = paramName
 p1.yaxis.axis_label = "Loss "
-r31 = p1.circle(x, y, color="red", size=20, alpha=0.1)
+r31 = p1.circle(x, y, color="red", size=10, alpha=0.1)
 
 legend3 = Legend(legends=[
     (paramName+" and loss",   [r31])

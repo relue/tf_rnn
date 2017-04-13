@@ -46,10 +46,7 @@ def objective(x):
     modelKeras = imp.load_source('modelKeras', path+'/modelKeras.py')
     modelOut = modelKeras.KerasModel(**x)
     data = {}
-    data['loss'] = modelOut.results['loss'][-1]
-    data['val_loss'] = modelOut.results['val_loss'][-1]
-    data['test_loss'] = modelOut.results['test_loss'][-1]
-    data['exec_time'] = modelOut.results['exec_time']
+    data = modelOut.results
     data['status'] = STATUS_OK
     data = dict(x.items() + data.items())
     return data
@@ -73,6 +70,6 @@ space =  {
     }
 ip = sys.argv[1]
 #print hyperopt.pyll.stochastic.sample(space)
-trials = MongoTrials('mongo://'+ip+':27017/foo_db/jobs', exp_key='finalAlpha')
+trials = MongoTrials('mongo://'+ip+':27017/foo_db/jobs', exp_key='finalBeta')
 best = fmin(fn=objective, space=space, trials=trials, algo=hyperopt.rand.suggest, max_evals=200000, verbose=999)
 print best

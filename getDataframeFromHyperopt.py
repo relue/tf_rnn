@@ -5,10 +5,11 @@ import socket
 import numpy as np
 import pandas as pd
 import sys
-
-ip= sys.argv[1]
+with open('logs/ip.log', 'r') as f:
+    first_line = f.readline()
+ip= first_line
 #finalFun
-trials = MongoTrials('mongo://'+ip+':27017/foo_db/jobs', exp_key='finalAlpha')
+trials = MongoTrials('mongo://'+ip+':27017/foo_db/jobs', exp_key='finalBeta')
 finished = []
 for row in trials.results:
     resultRow = row.to_dict()
@@ -17,8 +18,7 @@ for row in trials.results:
 
 
 dfF = pd.DataFrame(finished)
-
-measures = ["loss", "val_loss","test_loss"]
+measures = ["train_netrmse", "test_rmse","train_rmse", "val_rmse", "train_mape", "val_mape","train_diff","val_diff"]
 columns = list(dfF)
 for m in measures:
     columns.remove(m)
