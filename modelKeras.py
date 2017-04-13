@@ -108,11 +108,16 @@ class KerasModel():
         testPrediction = model.predict(testInput)
         pV = self.getSingleLoadPrediction(testPrediction, zoneIDs)
         pVList = []
-        for zoneID in zoneIDs:
-            pV[zoneID] = testScalerOutput["zone_"+str(zoneID)].inverse_transform(pV[zoneID])
-            pVList.append(np.asarray(pV[zoneID]))
-        pV[21] = np.sum(pVList, axis=0)
-        finalTestError = self.calculateKaggleScore(testOutput, pV)
+        try:
+            for zoneID in zoneIDs:
+                pV[zoneID] = testScalerOutput["zone_"+str(zoneID)].inverse_transform(pV[zoneID])
+                pVList.append(np.asarray(pV[zoneID]))
+            pV[21] = np.sum(pVList, axis=0)
+            finalTestError = self.calculateKaggleScore(testOutput, pV)
+        except ValueError:
+            print "scaler out of bounds"
+            finalTestError = math.nan
+
         return finalTestError, pV, testOutput
 
     def getSingleLoadPrediction(self, outputArray, zoneIDs):
