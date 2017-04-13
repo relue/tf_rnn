@@ -18,9 +18,11 @@ s.connect(("8.8.8.8", 80))
 ip=s.getsockname()[0]
 s.close()
 
+
 log = open("logs/main.log", "w")
 logDB = open("logs/mongo.log", "w")
-
+ipLog = open("logs/ip.log", "w")
+ipLog.write(ip)
 startDB = "ulimit -u 3000 && mongod --dbpath ~/mongo/mongodb/mongodb-linux-x86_64-3.4.2/data/db"
 startOptimizer = "source ../env/bin/activate; python HyperoptOptimizer.py "+ip
 
