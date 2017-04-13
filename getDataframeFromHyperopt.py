@@ -29,6 +29,7 @@ dfF = dfF.sort_values(['val_rmse'], ascending=[True])
 print str(len(finished))+' results collected'
 print dfF
 dfF.to_pickle("randomSearchResults.pd")
-if sys.argv[1] == 1:
-    dataExplore2.showDF(dfF, False)
+if len(sys.argv) > 1:
+    if sys.argv[1] == 1:
+        dataExplore2.showDF(dfF, False)
 
