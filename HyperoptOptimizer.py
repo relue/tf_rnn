@@ -48,6 +48,7 @@ def objective(x):
     data = {}
     data = modelOut.results
     data['status'] = STATUS_OK
+    data['loss'] = data['val_rmse']
     data = dict(x.items() + data.items())
     return data
 
@@ -70,6 +71,6 @@ space =  {
     }
 ip = sys.argv[1]
 #print hyperopt.pyll.stochastic.sample(space)
-trials = MongoTrials('mongo://'+ip+':27017/foo_db/jobs', exp_key='finalBeta')
+trials = MongoTrials('mongo://'+ip+':27017/foo_db/jobs', exp_key='finalBeta1')
 best = fmin(fn=objective, space=space, trials=trials, algo=hyperopt.rand.suggest, max_evals=200000, verbose=999)
 print best
