@@ -10,7 +10,7 @@ with open('logs/ip.log', 'r') as f:
     first_line = f.readline()
 ip= first_line
 #finalFun
-trials = MongoTrials('mongo://'+ip+':27017/foo_db/jobs', exp_key='finalBeta1')
+trials = MongoTrials('mongo://'+ip+':27017/foo_db/jobs', exp_key='finalCountdown')
 finished = []
 for row in trials.results:
     resultRow = row.to_dict()
