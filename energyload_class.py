@@ -203,7 +203,7 @@ def createInputOutputRow(dfS, i, columns, zoneColumns, stationColumns, outputSiz
 
 def createXmulti(timeWindow, stationIDs, outputSize, save = False, isStandardized = False, noFillZero = False, useHoliday = True, useWeekday = True, standardizationType = "minmax"):
 
-    cacheAdd = "98042017"
+    cacheAdd = "97042017"
     cacheAdd += 'noFillZero' if noFillZero else ''
     cacheAdd += 'useHoliday' if useHoliday else ''
     cacheAdd += 'useWeekday' if useWeekday else ''
@@ -213,15 +213,16 @@ def createXmulti(timeWindow, stationIDs, outputSize, save = False, isStandardize
     temStr = 'Temp'.join(str(e) for e in stationIDs)
     cacheAdd += temStr
 
-    cacheIdent ="_" + str(outputSize)+"_"+cacheAdd
+    maxTimeWindow = (timeWindow // 32 +1) * 32
+    cacheIdent ="_" + str(maxTimeWindow)+"_"+cacheAdd
     filename = dir_path+"/rnnInputs/rnnInput"+str(cacheIdent)+".pd"
-    scalerCacheFile = standStr+temStr+"scalers.pickle"
+    scalerCacheFile = dir_path+"/rnnInputs/"+standStr+temStr+"scalers.pickle"
     cacheExists = os.path.isfile(filename)
     scalerExists = os.path.isfile(scalerCacheFile)
 
     if save or not(cacheExists) or not scalerExists:
         df = init_dfs(False, False)
-        maxTimeWindow = 338
+
         columns = range(1, maxTimeWindow+1)
         zoneIDs = range(1,21)
         holidayDict = getHolidayDict()
@@ -254,7 +255,6 @@ def createXmulti(timeWindow, stationIDs, outputSize, save = False, isStandardize
                 scaledTemps = scalerInput[station_name].fit_transform(np.asarray(dfS[station_name].tolist()).reshape(-1,1))
                 lo = pd.Series(scaledTemps.reshape(-1))
                 dfS[station_name] = lo.values
-
 
             scalerDict = {}
             scalerDict["scalerInput"] = scalerInput

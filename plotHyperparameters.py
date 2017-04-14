@@ -17,7 +17,7 @@ defDict = {
         "learningRate":  (0 , 1),
         "DropoutProp": (0.01, 0.99),
         "l1Penalty": (0.0001, 0.99),
-
+        "standardizationType": ["minmax", "zscore"],
         "activationFunction": ["tanh", "sigmoid", "relu"],
         "hiddenNodes": (10,300),
         "optimizer":  ['adam', 'sgd', 'rms','ada', 'adadelta'],
@@ -30,17 +30,17 @@ defDict = {
 }
 errorBounds = {
         "val_rmse":  (19000 , 100000),
-        "test_loss": (140000,300000),
+        "test_rmse": (140000,400000),
 
 }
-errorType = "val_rmse"
-paramName = "hiddenLayers"
+errorType = "test_rmse"
+paramName = "standardizationType"
 
 output_file('hyperparams.html')
 dfNew = pd.read_pickle("randomSearch.pd")
 x = dfNew[paramName].tolist()
 y = dfNew[errorType].tolist()
-p1 = figure(width=1000, height=500, x_range = (defDict[paramName][0],defDict[paramName][1]), y_range=(errorBounds[errorType][0],errorBounds[errorType][1]))
+p1 = figure(width=1000, height=500, y_range=(errorBounds[errorType][0],errorBounds[errorType][1]))#x_range = (defDict[paramName][0],defDict[paramName][1]),
 
 p1.xaxis.axis_label = paramName
 p1.yaxis.axis_label = "Loss "
