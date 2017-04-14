@@ -1,14 +1,11 @@
 import numpy
-import matplotlib.pyplot as plt
 import pandas as pd
 import math
 from keras import regularizers
 from keras.models import Sequential
 from keras.layers import Dense, Dropout
 from keras.layers import LSTM,SimpleRNN
-from sklearn.preprocessing import MinMaxScaler, StandardScaler
-from sklearn.metrics import mean_squared_error
-from bokeh.models import Legend
+
 #import dataExplore2
 import imp
 import os
@@ -25,6 +22,7 @@ from bokeh.models import Legend
 from bokeh.io import output_file, show, vplot, gridplot
 import itertools
 import time
+
 
 
 
@@ -55,7 +53,8 @@ class KerasModel():
         error = math.sqrt((sumZones / counter))
         return error
 
-    def getValidationInputOutput(self, df,  stationIDs, timeWindow, scalerOutput, scalerInput, noFillZero = False, useHoliday = True, useWeekday = True, standardizationType="minmax"):
+    def getValidationInputOutput(self, stationIDs, timeWindow, scalerOutput, scalerInput, noFillZero = False, useHoliday = True, useWeekday = True, standardizationType="minmax"):
+        df = energyload_class.init_dfs(False, False)
         backcastWeeks = ["2005-3-5", "2005-6-19", "2005-9-9", "2005-12-24",
                                  "2006-2-12", "2006-5-24", "2006-8-1", "2006-11-21","2008-6-30"]
         columns = range(1, timeWindow+1)
@@ -71,12 +70,12 @@ class KerasModel():
         holidayDict = energyload_class.getHolidayDict()
 
         for zone_name in zoneColumns:
-            scaledLoads = scalerOutput[zone_name].fit_transform(np.asarray(dfS[zone_name].tolist()).reshape(-1,1))
+            scaledLoads = scalerOutput[zone_name].transform(np.asarray(dfS[zone_name].tolist()).reshape(-1,1))
             lo = pd.Series(scaledLoads.reshape(-1))
             dfS[zone_name] = lo.values
 
         for station_name in stationColumns:
-            scaledTemps = scalerInput[station_name].fit_transform(np.asarray(dfS[station_name].tolist()).reshape(-1,1))
+            scaledTemps = scalerInput[station_name].transform(np.asarray(dfS[station_name].tolist()).reshape(-1,1))
             lo = pd.Series(scaledTemps.reshape(-1))
             dfS[station_name] = lo.values
 
@@ -141,7 +140,7 @@ class KerasModel():
                    l1Penalty = 0.000001,
                    DropoutProp=0.001,
                    hiddenNodes = 30,
-                   hiddenLayers = 1,
+                   hiddenLayers = 2,
                    batchSize = 1,
                    epochSize = 20,
                    earlyStopping = True,
@@ -164,12 +163,13 @@ class KerasModel():
 
         #inputSize = len(stationIDs)+20
         finalOutputSize = outputSize * 20
+        start_time = time.time()
 
-        df = energyload_class.init_dfs(False, False)
 
     #
-        xInput, xOutput, scalerOutput, scalerInput = energyload_class.createXmulti(df, timeWindow, stationIDs, outputSize, save=False, isStandardized=True, noFillZero=noFillZero, useHoliday=useHoliday, useWeekday=useWeekday, standardizationType=standardizationType)
+        xInput, xOutput, scalerOutput, scalerInput = energyload_class.createXmulti(timeWindow, stationIDs, outputSize, save=False, isStandardized=True, noFillZero=noFillZero, useHoliday=useHoliday, useWeekday=useWeekday, standardizationType=standardizationType)
         xInput = xInput.swapaxes(0,1)
+        print "test 1"+str((time.time() - start_time))
         def getTestSets(xInput, xOutput, percentage):
             fromT = 0
             last = xOutput.shape[0]-1
@@ -197,7 +197,7 @@ class KerasModel():
         for hdI in range(2,hiddenLayers+1):
             if hdI == hiddenLayers:
                 returnSequence = False
-            eval('model.add('+cellObj+'(hiddenNodes, input_length=timeWindow,  return_sequences=returnSequence, '\
+            eval('model.add('+cellObj+'(hiddenNodes, input_length=timeWindow, go_backwards = False, return_sequences=returnSequence, '\
              'init=weightInit, activation=activationFunction))')
             #model.add(LSTM(hiddenNodes, input_length=timeWindow, return_sequences=returnSequence, init=weightInit, activation=activationFunction))
             model.add(Dropout(DropoutProp))
@@ -205,7 +205,7 @@ class KerasModel():
         model.add(Dense(finalOutputSize, W_regularizer=regularizers.l1(l1Penalty)))#, kernel_regularizer=regularizers.l1(l1Penalty)
 
         model.compile(loss='mean_squared_error', optimizer=optimizerObjects[optimizer])
-        testInput,testOutput = self.getValidationInputOutput(df, stationIDs, timeWindow, scalerOutput, scalerInput, noFillZero = noFillZero, useHoliday = useHoliday, useWeekday = useWeekday, standardizationType = standardizationType)
+        testInput,testOutput = self.getValidationInputOutput(stationIDs, timeWindow, scalerOutput, scalerInput, noFillZero = noFillZero, useHoliday = useHoliday, useWeekday = useWeekday, standardizationType = standardizationType)
         callbacks = []
         if isShow:
             customCallback = callback.KaggleTest(self, testInput,testOutput,scalerOutput)
@@ -216,7 +216,7 @@ class KerasModel():
             epochSize = 50
             callbacks.append(early)
         history = model.fit(inputT, outputT, nb_epoch=epochSize, batch_size=batchSize, verbose=1, callbacks=callbacks)#callbacks=[early]
-
+        print "test 2"+str((time.time() - start_time))
 
         def calulateModelErrors(xInput, xOutput, scalerOutput, model):
             pV, outputV, predList ,outputList = prepareCalculation(xInput, xOutput, scalerOutput, model)
@@ -288,6 +288,7 @@ class KerasModel():
             print key+" : "+str(errorsVal[key])+"\n"
 
         print "kaggle:"+str(finalTestError)
+        print "test 3 "+str((time.time() - start_time))
         if createHTML:
             p3 = figure(width=1000, height=500,toolbar_location="left")
 
