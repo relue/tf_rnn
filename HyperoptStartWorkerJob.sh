@@ -1,6 +1,5 @@
 #!/bin/bash
 #SBATCH --output=logs/SlurmHyperoptStartWorkers.log
-#SBATCH --mem=50000
 #SBATCH --time=24:00:00
 #SBATCH --job-name=startJobs
 #SBATCH --ntasks=1
