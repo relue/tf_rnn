@@ -31,7 +31,6 @@ defDict = {
 errorBounds = {
         "val_rmse":  (19000 , 100000),
         "test_rmse": (140000,400000),
-
 }
 errorType = "test_rmse"
 paramName = "standardizationType"
@@ -52,6 +51,14 @@ legend3 = Legend(legends=[
 
 p1.add_layout(legend3, 'below')
 
-ap = gridplot([[p1]])
+from bokeh.charts import BoxPlot,Histogram, Scatter
+
+p = BoxPlot(dfNew, values='val_rmse', label='learningRate',title="MPG Summar", outliers=False)
+p2 = Histogram(dfNew['timeWindow'], title="MPG Distribution")
+p3 = Scatter(dfNew, x='timeWindow', y='val_rmse', title="HP vs MPG",
+            xlabel="Miles Per Gallon", ylabel="Horsepower")
+
+
+ap = gridplot([[p1], [p],[p2],[p3]])
 
 show(ap)

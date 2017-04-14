@@ -23,9 +23,6 @@ from bokeh.io import output_file, show, vplot, gridplot
 import itertools
 import time
 
-
-
-
 class KerasModel():
     results = {}
     def calculateKaggleScore(self, xOutputV, pV):

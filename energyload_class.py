@@ -4,6 +4,8 @@ from sklearn.preprocessing import MinMaxScaler,StandardScaler
 import os.path
 import os
 import cPickle as pickle
+import gzip
+
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
 def convert_temp(source_temp=None):
@@ -203,7 +205,7 @@ def createInputOutputRow(dfS, i, columns, zoneColumns, stationColumns, outputSiz
 
 def createXmulti(timeWindow, stationIDs, outputSize, save = False, isStandardized = False, noFillZero = False, useHoliday = True, useWeekday = True, standardizationType = "minmax"):
 
-    cacheAdd = "97042017"
+    cacheAdd = "934042017"
     cacheAdd += 'noFillZero' if noFillZero else ''
     cacheAdd += 'useHoliday' if useHoliday else ''
     cacheAdd += 'useWeekday' if useWeekday else ''
@@ -219,7 +221,7 @@ def createXmulti(timeWindow, stationIDs, outputSize, save = False, isStandardize
     scalerCacheFile = dir_path+"/rnnInputs/"+standStr+temStr+"scalers.pickle"
     cacheExists = os.path.isfile(filename)
     scalerExists = os.path.isfile(scalerCacheFile)
-
+    #save = 1
     if save or not(cacheExists) or not scalerExists:
         df = init_dfs(False, False)
 
@@ -269,10 +271,16 @@ def createXmulti(timeWindow, stationIDs, outputSize, save = False, isStandardize
                     dfNew = dfNew.append([row],ignore_index=True)
             #dfNew[featureList] = dfNew[0].apply(pd.Series)
 
+            #file = gzip.open(filename, 'wb')
+            #pickle.dump(dfNew, file, 1)
+            #file.close()
 
             dfNew.to_pickle(filename)
             #dataExplore2.showDF(dfNew, False)
     else:
+        #file = gzip.open(filename, 'rb')
+        #dfNew = pickle.load(file)
+        #file.close()
         dfNew = pd.read_pickle(filename)
         with open(scalerCacheFile, 'rb') as input:
             scalerDict = pickle.load(input)
