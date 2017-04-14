@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --output=logs/SlurmHyperoptStartWorkers.log
-#SBATCH --ntasks=1
 #SBATCH --mem=50000
-#SBATCH --time=12:00:00
+#SBATCH --time=24:00:00
 #SBATCH --job-name=startJobs
-srun --time=12:00:00 --mem=50000 ~/pythonProjects/env/bin/python2.7 -W ignore HyperoptStartWorkers.py
+#SBATCH --c 4
+srun --time=24:00:00 --c 4 --mem=50000 ~/pythonProjects/env/bin/python2.7 -W ignore HyperoptStartWorkers.py

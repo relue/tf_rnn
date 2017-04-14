@@ -1,24 +1,9 @@
 import pandas as pd
 import numpy as np
-from numpy import pi, arange, sin, linspace
-from bokeh.charts import Bar, output_file, show
-from bokeh.plotting import figure, show, output_file
-from bokeh.sampledata.autompg import autompg as df
-from bokeh.models import LinearAxis, Range1d
-from bokeh.models import Legend
-from bokeh.io import output_file, show, vplot, gridplot
-from bokeh.models import DatetimeTickFormatter
-from bokeh.models import PrintfTickFormatter
-from bokeh.charts import HeatMap, output_file, show, TimeSeries
-import itertools
-import calendar
-from bokeh.models import ColumnDataSource, CustomJS
-from bokeh.models.widgets import DataTable, DateFormatter, TableColumn, Dropdown
-#import dataExplore2
 from sklearn.preprocessing import MinMaxScaler,StandardScaler
-from sklearn.metrics import mean_squared_error
 import os.path
 import os
+import cPickle as pickle
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
 def convert_temp(source_temp=None):
@@ -216,65 +201,84 @@ def createInputOutputRow(dfS, i, columns, zoneColumns, stationColumns, outputSiz
     row=pd.Series(columnList+[outputList],columns+["output"])
     return row
 
-def createXmulti(df, timeWindow, stationIDs, outputSize, save = False, isStandardized = False, noFillZero = False, useHoliday = True, useWeekday = True, standardizationType = "minmax"):
-    maxTimeWindow = 338
-    columns = range(1, maxTimeWindow+1)
-    zoneIDs = range(1,21)
-    holidayDict = getHolidayDict()
-    zoneColumns = ["zone_" + str(i) for i in zoneIDs]
-    stationColumns = ["station_" + str(i) for i in stationIDs]
-    df['weekday'] = df['date'].dt.dayofweek
-
-    dfS = df[zoneColumns+stationColumns+["date","weekday", "zone_avg","station_avg"]]
-    dfDummy = pd.get_dummies(dfS['weekday'])
-    dfS = pd.concat([dfS, dfDummy], axis=1)
-    #dataExplore2.showDF(dfS, False)
-    if isStandardized:
-        scalerOutput = {}
-        scalerInput = {}
-
-        for zone_name in zoneColumns:
-            if standardizationType == "minmax":
-                scalerOutput[zone_name] = MinMaxScaler(feature_range=(0, 1))
-            else:
-                scalerOutput[zone_name] = StandardScaler()
-            scaledLoads = scalerOutput[zone_name].fit_transform(np.asarray(dfS[zone_name].tolist()).reshape(-1,1))
-            lo = pd.Series(scaledLoads.reshape(-1))
-            dfS[zone_name] = lo.values
-
-        for station_name in stationColumns:
-            if standardizationType == "minmax":
-                scalerInput[station_name] = MinMaxScaler(feature_range=(0, 1))
-            else:
-                scalerInput[station_name] = StandardScaler()
-            scaledTemps = scalerInput[station_name].fit_transform(np.asarray(dfS[station_name].tolist()).reshape(-1,1))
-            lo = pd.Series(scaledTemps.reshape(-1))
-            dfS[station_name] = lo.values
+def createXmulti(timeWindow, stationIDs, outputSize, save = False, isStandardized = False, noFillZero = False, useHoliday = True, useWeekday = True, standardizationType = "minmax"):
 
     cacheAdd = "98042017"
     cacheAdd += 'noFillZero' if noFillZero else ''
     cacheAdd += 'useHoliday' if useHoliday else ''
     cacheAdd += 'useWeekday' if useWeekday else ''
-    cacheAdd += 'minmax' if standardizationType == "minmax" else 'zscore'
+    standStr = 'minmax' if standardizationType == "minmax" else 'zscore'
+    cacheAdd += standStr
 
-    cacheAdd += 'Temp'.join(str(e) for e in stationIDs)
+    temStr = 'Temp'.join(str(e) for e in stationIDs)
+    cacheAdd += temStr
 
     cacheIdent ="_" + str(outputSize)+"_"+cacheAdd
     filename = dir_path+"/rnnInputs/rnnInput"+str(cacheIdent)+".pd"
-    print ("search File:"+filename)
+    scalerCacheFile = standStr+temStr+"scalers.pickle"
     cacheExists = os.path.isfile(filename)
-    if save or not(cacheExists):
-        dfNew = pd.DataFrame(columns=columns)
-        for i in range(0, len(dfS), 24):#len(df.index)
-            if i >= maxTimeWindow and i+outputSize < len(df):
-                row = createInputOutputRow(dfS, i, range(1, maxTimeWindow+1), zoneColumns, stationColumns, outputSize, holidayDict, noFillZero=noFillZero, useHoliday=useHoliday, useWeekday=useWeekday)
-                dfNew = dfNew.append([row],ignore_index=True)
-        #dfNew[featureList] = dfNew[0].apply(pd.Series)
+    scalerExists = os.path.isfile(scalerCacheFile)
 
-        dfNew.to_pickle(filename)
-        #dataExplore2.showDF(dfNew, False)
+    if save or not(cacheExists) or not scalerExists:
+        df = init_dfs(False, False)
+        maxTimeWindow = 338
+        columns = range(1, maxTimeWindow+1)
+        zoneIDs = range(1,21)
+        holidayDict = getHolidayDict()
+        zoneColumns = ["zone_" + str(i) for i in zoneIDs]
+        stationColumns = ["station_" + str(i) for i in stationIDs]
+        df['weekday'] = df['date'].dt.dayofweek
+
+        dfS = df[zoneColumns+stationColumns+["date","weekday", "zone_avg","station_avg"]]
+        dfDummy = pd.get_dummies(dfS['weekday'])
+        dfS = pd.concat([dfS, dfDummy], axis=1)
+        #dataExplore2.showDF(dfS, False)
+        if isStandardized:
+            scalerOutput = {}
+            scalerInput = {}
+
+            for zone_name in zoneColumns:
+                if standardizationType == "minmax":
+                    scalerOutput[zone_name] = MinMaxScaler(feature_range=(0, 1))
+                else:
+                    scalerOutput[zone_name] = StandardScaler()
+                scaledLoads = scalerOutput[zone_name].fit_transform(np.asarray(dfS[zone_name].tolist()).reshape(-1,1))
+                lo = pd.Series(scaledLoads.reshape(-1))
+                dfS[zone_name] = lo.values
+
+            for station_name in stationColumns:
+                if standardizationType == "minmax":
+                    scalerInput[station_name] = MinMaxScaler(feature_range=(0, 1))
+                else:
+                    scalerInput[station_name] = StandardScaler()
+                scaledTemps = scalerInput[station_name].fit_transform(np.asarray(dfS[station_name].tolist()).reshape(-1,1))
+                lo = pd.Series(scaledTemps.reshape(-1))
+                dfS[station_name] = lo.values
+
+
+            scalerDict = {}
+            scalerDict["scalerInput"] = scalerInput
+            scalerDict["scalerOutput"] = scalerOutput
+            with open(scalerCacheFile, 'wb') as output:
+                pickle.dump(scalerDict, output,-1)
+
+            dfNew = pd.DataFrame(columns=columns)
+            for i in range(0, len(dfS), 24):#len(df.index)
+                if i >= maxTimeWindow and i+outputSize < len(df):
+                    row = createInputOutputRow(dfS, i, range(1, maxTimeWindow+1), zoneColumns, stationColumns, outputSize, holidayDict, noFillZero=noFillZero, useHoliday=useHoliday, useWeekday=useWeekday)
+                    dfNew = dfNew.append([row],ignore_index=True)
+            #dfNew[featureList] = dfNew[0].apply(pd.Series)
+
+
+            dfNew.to_pickle(filename)
+            #dataExplore2.showDF(dfNew, False)
     else:
         dfNew = pd.read_pickle(filename)
+        with open(scalerCacheFile, 'rb') as input:
+            scalerDict = pickle.load(input)
+
+    scalerInput = scalerDict["scalerInput"]
+    scalerOutput= scalerDict["scalerOutput"]
         #dataExplore2.showDF(dfNew, False)
     finalColumns = range(1,timeWindow+1)
     dfTimewindow = dfNew[finalColumns + ["output"]]
