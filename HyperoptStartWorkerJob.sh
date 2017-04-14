@@ -3,5 +3,4 @@
 #SBATCH --mem=50000
 #SBATCH --time=24:00:00
 #SBATCH --job-name=startJobs
-#SBATCH --c 4
-srun --time=24:00:00 --c 4 --mem=50000 ~/pythonProjects/env/bin/python2.7 -W ignore HyperoptStartWorkers.py
+srun --time=24:00:00 --c=4 --mem=50000 ~/pythonProjects/env/bin/python2.7 -W ignore HyperoptStartWorkers.py
