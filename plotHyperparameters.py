@@ -16,7 +16,7 @@ from bokeh.models.widgets import DataTable, DateFormatter, TableColumn, Dropdown
 defDict = {
         "learningRate":  (0 , 1),
         "DropoutProp": (0.01, 0.99),
-        "l1Penalty": (0.0001, 0.01),
+        "l1Penalty": (0.0001, 0.99),
 
         "activationFunction": ["tanh", "sigmoid", "relu"],
         "hiddenNodes": (10,300),
@@ -29,12 +29,12 @@ defDict = {
         "useWeekday": [True, False],
 }
 errorBounds = {
-        "val_loss":  (0 , 1),
+        "val_rmse":  (25000 , 30000),
         "test_loss": (140000,300000),
 
 }
-errorType = "test_loss"
-paramName = "hiddenNodes"
+errorType = "val_rmse"
+paramName = "hiddenLayers"
 
 output_file('hyperparams.html')
 dfNew = pd.read_pickle("randomSearch.pd")
@@ -44,7 +44,7 @@ p1 = figure(width=1000, height=500, x_range = (defDict[paramName][0],defDict[par
 
 p1.xaxis.axis_label = paramName
 p1.yaxis.axis_label = "Loss "
-r31 = p1.circle(x, y, color="red", size=10, alpha=0.1)
+r31 = p1.circle(x, y, color="red", size=4, alpha=0.4)
 
 legend3 = Legend(legends=[
     (paramName+" and loss",   [r31])
