@@ -11,6 +11,7 @@ from bokeh.models import PrintfTickFormatter
 from bokeh.charts import HeatMap, output_file, show, TimeSeries
 import itertools
 import calendar
+import math
 from bokeh.models import ColumnDataSource, CustomJS
 from bokeh.models.widgets import DataTable, DateFormatter, TableColumn, Dropdown
 
@@ -35,14 +36,30 @@ errorBounds = {
         "val_rmse":  (19000 , 100000),
         "test_rmse": (140000,400000),
 }
-toPlot = ["learningRate", "hiddenLayers", "timeWindow", "hiddenNodes", "l1Penalty", "standardizationType", "activationFunction", "optimizer", "batchSize", "weightInit", "useHoliday", "useWeekday"]
+#toPlot = ["learningRate", "hiddenLayers", "timeWindow", "hiddenNodes", "l1Penalty", "standardizationType", "activationFunction", "optimizer", "batchSize", "weightInit", "useHoliday", "useWeekday"]
+toPlot = []
 c = experimentConfig.Config()
-errorType = "test_rmse"
+errorType = "val_rmse"
 
 dfNew = pd.read_pickle("randomSearch.pd")
 output_file('hyperparams.html')
 l_params = []
 
+dfNewPlain = dfNew.sort_index()
+minError = 999999999
+minList = []
+for row in dfNewPlain.itertuples():
+    if not math.isnan(row.val_rmse):
+        minError = min(row.val_rmse, minError)
+    minList.append(minError)
+dfNewPlain['min'] = minList
+
+pSearch = figure(width=500, height=500)
+pSearch.line(dfNewPlain.index, dfNewPlain['min'], color="red", line_width=0.5, line_alpha = 0.8)
+pSearch.xaxis.axis_label = "Runs"
+pSearch.yaxis.axis_label = "Minimum Error"
+
+l_params.append([pSearch, None])
 for paramName in toPlot:
     isDiscrete = c.parameterTypeDiscrete[paramName]
 
