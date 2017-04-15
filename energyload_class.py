@@ -222,6 +222,7 @@ def createXmulti(timeWindow, stationIDs, outputSize, save = False, isStandardize
     cacheExists = os.path.isfile(filename)
     scalerExists = os.path.isfile(scalerCacheFile)
     #save = 1
+    import sklearn.decomposition as deco
     if save or not(cacheExists) or not scalerExists:
         df = init_dfs(False, False)
 

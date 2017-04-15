@@ -127,7 +127,7 @@ class KerasModel():
                 sequenceLoads[zoneID].append(column)
         return sequenceLoads
 
-    def __init__(self, timeWindow = 24*7,
+    def __init__(self, timeWindow = 24*2,
                    cellType = "rnn",
                    outputSize = 24*7,
                    noFillZero = True,
