@@ -71,6 +71,8 @@ space =  {
     }
 ip = sys.argv[1]
 #print hyperopt.pyll.stochastic.sample(space)
-trials = MongoTrials('mongo://'+ip+':27017/foo_db/jobs', exp_key='finalCountdown')
-best = fmin(fn=objective, space=space, trials=trials, algo=hyperopt.rand.suggest, max_evals=200000, verbose=999)
+#finalCountdown random
+#finalCountdown_TPE tpe
+trials = MongoTrials('mongo://'+ip+':27017/foo_db/jobs', exp_key='finalCountdown_TPE')
+best = fmin(fn=objective, space=space, trials=trials, algo=hyperopt.tpe.suggest, max_evals=200000, verbose=999)
 print best
