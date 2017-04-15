@@ -13,7 +13,7 @@ data["epochSize"] = 11
 data["learningRate"] = 0.001
 data["standardizationType"] = "minmax"
 #data["stationIDs"] = [13,14,15]
-data["stationIDs"] = [12]
+data["stationIDs"] = [13]
 data["timeWindow"] = 7*24
 
 
