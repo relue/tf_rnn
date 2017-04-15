@@ -60,7 +60,8 @@ class KerasModel():
         stationColumns = ["station_" + str(i) for i in stationIDs]
         dfNew = pd.DataFrame(columns=columns)
         df['weekday'] = df['date'].dt.dayofweek
-        dfS = df[zoneColumns+stationColumns+["zone_21"]+["date", "weekday"]]
+        stationColumnsAll = ["station_" + str(i) for i in range(1,12)]
+        dfS = df[zoneColumns+stationColumnsAll+["zone_21","station_12"]+["date", "weekday"]]
         dfS = dfS.fillna(0)
         dfDummy = pd.get_dummies(dfS['weekday'])
         dfS = pd.concat([dfS, dfDummy], axis=1)
@@ -71,10 +72,18 @@ class KerasModel():
             lo = pd.Series(scaledLoads.reshape(-1))
             dfS[zone_name] = lo.values
 
-        for station_name in stationColumns:
+        for station_name in stationColumnsAll:
             scaledTemps = scalerInput[station_name].transform(np.asarray(dfS[station_name].tolist()).reshape(-1,1))
             lo = pd.Series(scaledTemps.reshape(-1))
             dfS[station_name] = lo.values
+
+        import sklearn.decomposition as deco
+        pca = deco.PCA(3) # n_components is the components number after reduction
+        dfPCA = dfS[stationColumnsAll]
+        x_r = pca.fit(dfPCA).transform(dfPCA)
+        dfS["station_13"] = x_r[:,0]
+        dfS["station_14"] = x_r[:,1]
+        dfS["station_15"] = x_r[:,2]
 
         for date in backcastWeeks:
             mask = (df['date'] == date)
@@ -127,7 +136,7 @@ class KerasModel():
                 sequenceLoads[zoneID].append(column)
         return sequenceLoads
 
-    def __init__(self, timeWindow = 24*2,
+    def __init__(self, timeWindow = 24*7,
                    cellType = "rnn",
                    outputSize = 24*7,
                    noFillZero = True,
@@ -137,7 +146,7 @@ class KerasModel():
                    l1Penalty = 0.000001,
                    DropoutProp=0.001,
                    hiddenNodes = 30,
-                   hiddenLayers = 2,
+                   hiddenLayers = 1,
                    batchSize = 1,
                    epochSize = 20,
                    earlyStopping = True,
