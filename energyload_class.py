@@ -222,7 +222,9 @@ def createXmulti(timeWindow, stationIDs, outputSize, save = False, isStandardize
     cacheExists = os.path.isfile(filename)
     scalerExists = os.path.isfile(scalerCacheFile)
     #save = 1
-    import sklearn.decomposition as deco
+
+
+
     if save or not(cacheExists) or not scalerExists:
         df = init_dfs(False, False)
 
@@ -233,7 +235,10 @@ def createXmulti(timeWindow, stationIDs, outputSize, save = False, isStandardize
         stationColumns = ["station_" + str(i) for i in stationIDs]
         df['weekday'] = df['date'].dt.dayofweek
 
-        dfS = df[zoneColumns+stationColumns+["date","weekday", "zone_avg","station_avg"]]
+        stationColumnsAll = ["station_" + str(i) for i in range(1,12)]
+
+
+        dfS = df[zoneColumns+stationColumnsAll+["date","weekday", "zone_avg","station_avg","station_12"]]
         dfDummy = pd.get_dummies(dfS['weekday'])
         dfS = pd.concat([dfS, dfDummy], axis=1)
         #dataExplore2.showDF(dfS, False)
@@ -250,7 +255,7 @@ def createXmulti(timeWindow, stationIDs, outputSize, save = False, isStandardize
                 lo = pd.Series(scaledLoads.reshape(-1))
                 dfS[zone_name] = lo.values
 
-            for station_name in stationColumns:
+            for station_name in stationColumnsAll:
                 if standardizationType == "minmax":
                     scalerInput[station_name] = MinMaxScaler(feature_range=(0, 1))
                 else:
@@ -258,6 +263,15 @@ def createXmulti(timeWindow, stationIDs, outputSize, save = False, isStandardize
                 scaledTemps = scalerInput[station_name].fit_transform(np.asarray(dfS[station_name].tolist()).reshape(-1,1))
                 lo = pd.Series(scaledTemps.reshape(-1))
                 dfS[station_name] = lo.values
+
+            import sklearn.decomposition as deco
+            pca = deco.PCA(3) # n_components is the components number after reduction
+            dfPCA = dfS[stationColumnsAll]
+            x_r = pca.fit(dfPCA).transform(dfPCA)
+            print ('explained variance (first %d components): %.2f'%(3, sum(pca.explained_variance_ratio_)))
+            dfS["station_13"] = x_r[:,0]
+            dfS["station_14"] = x_r[:,1]
+            dfS["station_15"] = x_r[:,2]
 
             scalerDict = {}
             scalerDict["scalerInput"] = scalerInput

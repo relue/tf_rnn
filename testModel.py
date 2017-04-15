@@ -11,6 +11,8 @@ data["earlyStopping"] = True
 data["epochSize"] = 8
 data["learningRate"] = 0.001
 data["standardizationType"] = "minmax"
+#data["stationIDs"] = [13,14,15]
+data["stationIDs"] = [13,14,15]
 
 import numpy as np
 import pandas as pd
