@@ -25,140 +25,30 @@ import time
 
 class KerasModel():
     results = {}
-    def calculateKaggleScore(self, xOutputV, pV):
-        zoneIDs = range(1,21)
-        sumZones = 0
-        counter = 0
-        zoneIDs.append(21)
-
-        for zoneID in zoneIDs:
-            if zoneID == 21:
-                weightZone= 20
-            else:
-                weightZone = 1
-            for valWeek in range(len(xOutputV[zoneID])):
-                if valWeek == 8:
-                    finalWeight = weightZone*8
-                else:
-                    finalWeight = weightZone
-                #finalWeight = 1
-                for hour in range(len(xOutputV[zoneID][valWeek])):
-                    sumZones += ((xOutputV[zoneID][valWeek][hour] - pV[zoneID][valWeek][hour]) ** 2)*finalWeight
-                    counter += 1*finalWeight
-            #print "zone"+str(zoneID)+" "+str(math.sqrt((sumZones / counter)))
-
-        error = math.sqrt((sumZones / counter))
-        return error
-
-    def getValidationInputOutput(self, stationIDs, timeWindow, scalerOutput, scalerInput, noFillZero = False, useHoliday = True, useWeekday = True, standardizationType="minmax"):
-        df = energyload_class.init_dfs(False, False)
-        backcastWeeks = ["2005-3-5", "2005-6-19", "2005-9-9", "2005-12-24",
-                                 "2006-2-12", "2006-5-24", "2006-8-1", "2006-11-21","2008-6-30"]
-        columns = range(1, timeWindow+1)
-        zoneIDs = range(1,21)
-        zoneColumns = ["zone_" + str(i) for i in zoneIDs]
-        stationColumns = ["station_" + str(i) for i in stationIDs]
-        dfNew = pd.DataFrame(columns=columns)
-        df['weekday'] = df['date'].dt.dayofweek
-        stationColumnsAll = ["station_" + str(i) for i in range(1,12)]
-        dfS = df[zoneColumns+stationColumnsAll+["zone_21","station_12"]+["date", "weekday"]]
-        dfS = dfS.fillna(0)
-        dfDummy = pd.get_dummies(dfS['weekday'])
-        dfS = pd.concat([dfS, dfDummy], axis=1)
-        holidayDict = energyload_class.getHolidayDict()
-
-        for zone_name in zoneColumns:
-            scaledLoads = scalerOutput[zone_name].transform(np.asarray(dfS[zone_name].tolist()).reshape(-1,1))
-            lo = pd.Series(scaledLoads.reshape(-1))
-            dfS[zone_name] = lo.values
-
-        for station_name in stationColumnsAll:
-            scaledTemps = scalerInput[station_name].transform(np.asarray(dfS[station_name].tolist()).reshape(-1,1))
-            lo = pd.Series(scaledTemps.reshape(-1))
-            dfS[station_name] = lo.values
-
-        import sklearn.decomposition as deco
-        pca = deco.PCA(3) # n_components is the components number after reduction
-        dfPCA = dfS[stationColumnsAll]
-        x_r = pca.fit(dfPCA).transform(dfPCA)
-        dfS["station_13"] = x_r[:,0]
-        dfS["station_14"] = x_r[:,1]
-        dfS["station_15"] = x_r[:,2]
-
-        for date in backcastWeeks:
-            mask = (df['date'] == date)
-            i = df.loc[mask].index[0]+24
-            row = energyload_class.createInputOutputRow(dfS, i, columns, zoneColumns, stationColumns, 7*24, holidayDict, addSystemLevel = True, noFillZero=noFillZero, useHoliday=useHoliday, useWeekday=useWeekday)
-            dfNew = dfNew.append([row],ignore_index=True)
-
-        #dataExplore2.showDF(dfNew, False)
-        tfOutput = np.asarray(dfNew["output"].tolist())
-        tfInput = []
-        for t in columns:
-            tfInput.append(dfNew[t].tolist())
-        tfInput= np.asarray(tfInput)
-
-        tfInput = tfInput.swapaxes(0,1)
-
-        zoneIDs = zoneIDs
-        zoneIDs21= zoneIDs+[21]
-        xOutputV = self.getSingleLoadPrediction(tfOutput, zoneIDs21)
-        for zoneID in zoneIDs:
-            xOutputV[zoneID] = scalerOutput["zone_"+str(zoneID)].inverse_transform(xOutputV[zoneID])
-
-        return tfInput, xOutputV
-
-    def getTestError(self, model, testInput, testOutput, testScalerOutput):
-        zoneIDs = range(1,21)
-        testPrediction = model.predict(testInput)
-        pV = self.getSingleLoadPrediction(testPrediction, zoneIDs)
-        pVList = []
-        try:
-            for zoneID in zoneIDs:
-                pV[zoneID] = testScalerOutput["zone_"+str(zoneID)].inverse_transform(pV[zoneID])
-                pVList.append(np.asarray(pV[zoneID]))
-            pV[21] = np.sum(pVList, axis=0)
-            finalTestError = self.calculateKaggleScore(testOutput, pV)
-        except ValueError:
-            print "scaler out of bounds"
-            finalTestError = np.nan
-
-        return finalTestError, pV, testOutput
-
-    def getSingleLoadPrediction(self, outputArray, zoneIDs):
-        sequenceLoads = {}
-        for zoneID in zoneIDs:
-            sequenceLoads[zoneID] = []
-            for row in outputArray:
-                column = []
-                for i in range(zoneID-1, len(row), len(zoneIDs)):
-                    column.append(row[i])
-                sequenceLoads[zoneID].append(column)
-        return sequenceLoads
 
     def __init__(self, timeWindow = 24*7,
-                   cellType = "rnn",
-                   outputSize = 24*7,
-                   noFillZero = True,
-                   useHoliday = True,
-                   useWeekday = True,
-                   learningRate = 0.001,
-                   l1Penalty = 0.000001,
-                   DropoutProp=0.001,
-                   hiddenNodes = 30,
-                   hiddenLayers = 1,
-                   batchSize = 1,
-                   epochSize = 20,
-                   earlyStopping = True,
-                   indexID = 1,
-                   optimizer = "adam",
-                   stationIDs = [12],
-                   validationPercentage = 0.15,
-                   weightInit = "lecun_uniform",
-                   activationFunction = "tanh",
-                   standardizationType = "minmax",
-                   isShow = False,
-                   createHTML = False):
+               cellType = "rnn",
+               outputSize = 24*7,
+               noFillZero = True,
+               useHoliday = True,
+               useWeekday = True,
+               learningRate = 0.001,
+               l1Penalty = 0.000001,
+               DropoutProp=0.001,
+               hiddenNodes = 30,
+               hiddenLayers = 2,
+               batchSize = 1,
+               epochSize = 20,
+               earlyStopping = True,
+               indexID = 1,
+               optimizer = "adam",
+               stationIDs = [13],
+               validationPercentage = 0.15,
+               weightInit = "lecun_uniform",
+               activationFunction = "tanh",
+               standardizationType = "minmax",
+               isShow = False,
+               createHTML = False):
         optimizerObjects = {
             "sgd" : keras.optimizers.SGD(lr=learningRate, momentum=0.0, decay=0.0, nesterov=False, clipvalue=100),
             "adam" : keras.optimizers.Adam(lr=learningRate, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=0.0, clipvalue=100),# empfohlen learning rate default
@@ -171,11 +61,10 @@ class KerasModel():
         finalOutputSize = outputSize * 20
         start_time = time.time()
 
-
-    #
-        xInput, xOutput, scalerOutput, scalerInput = energyload_class.createXmulti(timeWindow, stationIDs, outputSize, save=False, isStandardized=True, noFillZero=noFillZero, useHoliday=useHoliday, useWeekday=useWeekday, standardizationType=standardizationType)
+        xInput, xOutput, scalerOutput, scalerInput, dfS = energyload_class.createXmulti(timeWindow, stationIDs, outputSize, save=False, isStandardized=True, noFillZero=noFillZero, useHoliday=useHoliday, useWeekday=useWeekday, standardizationType=standardizationType)
         xInput = xInput.swapaxes(0,1)
         print "test 1"+str((time.time() - start_time))
+
         def getTestSets(xInput, xOutput, percentage):
             fromT = 0
             last = xOutput.shape[0]-1
@@ -197,7 +86,7 @@ class KerasModel():
 
         eval('model.add('+cellObj+'(hiddenNodes, input_length=timeWindow, input_dim=inputSize, '\
                                   'return_sequences=returnSequence, go_backwards = True, init=weightInit, activation=activationFunction))')
-#        model.add(LSTM(hiddenNodes, input_length=timeWindow, input_dim=inputSize, return_sequences=returnSequence, go_backwards = True, init=weightInit, activation=activationFunction))
+        #        model.add(LSTM(hiddenNodes, input_length=timeWindow, input_dim=inputSize, return_sequences=returnSequence, go_backwards = True, init=weightInit, activation=activationFunction))
         i = 1
         model.add(Dropout(DropoutProp))
         for hdI in range(2,hiddenLayers+1):
@@ -211,7 +100,7 @@ class KerasModel():
         model.add(Dense(finalOutputSize, W_regularizer=regularizers.l1(l1Penalty)))#, kernel_regularizer=regularizers.l1(l1Penalty)
 
         model.compile(loss='mean_squared_error', optimizer=optimizerObjects[optimizer])
-        testInput,testOutput = self.getValidationInputOutput(stationIDs, timeWindow, scalerOutput, scalerInput, noFillZero = noFillZero, useHoliday = useHoliday, useWeekday = useWeekday, standardizationType = standardizationType)
+        testInput,testOutput = self.getValidationInputOutput(stationIDs, timeWindow, scalerOutput, scalerInput, dfS, noFillZero = noFillZero, useHoliday = useHoliday, useWeekday = useWeekday, standardizationType = standardizationType)
         callbacks = []
         if isShow:
             customCallback = callback.KaggleTest(self, testInput,testOutput,scalerOutput)
@@ -362,5 +251,97 @@ class KerasModel():
             ap = column(zoneGrid)
             if isShow:
                 show(ap)
+
+    def calculateKaggleScore(self, xOutputV, pV):
+        zoneIDs = range(1,21)
+        sumZones = 0
+        counter = 0
+        zoneIDs.append(21)
+
+        for zoneID in zoneIDs:
+            if zoneID == 21:
+                weightZone= 20
+            else:
+                weightZone = 1
+            for valWeek in range(len(xOutputV[zoneID])):
+                if valWeek == 8:
+                    finalWeight = weightZone*8
+                else:
+                    finalWeight = weightZone
+                #finalWeight = 1
+                for hour in range(len(xOutputV[zoneID][valWeek])):
+                    sumZones += ((xOutputV[zoneID][valWeek][hour] - pV[zoneID][valWeek][hour]) ** 2)*finalWeight
+                    counter += 1*finalWeight
+            #print "zone"+str(zoneID)+" "+str(math.sqrt((sumZones / counter)))
+
+        error = math.sqrt((sumZones / counter))
+        return error
+
+    def getValidationInputOutput(self, stationIDs, timeWindow, scalerOutput, scalerInput, dfS, noFillZero = False, useHoliday = True, useWeekday = True, standardizationType="minmax"):
+        backcastWeeks = ["2005-3-5", "2005-6-19", "2005-9-9", "2005-12-24",
+                                 "2006-2-12", "2006-5-24", "2006-8-1", "2006-11-21","2008-6-30"]
+        dfS = dfS.fillna(0)
+        columns = range(1, timeWindow+1)
+        zoneIDs = range(1,21)
+        zoneColumns = ["zone_" + str(i) for i in zoneIDs]
+        stationColumns = ["station_" + str(i) for i in stationIDs]
+        dfNew = pd.DataFrame(columns=columns)
+
+
+
+        holidayDict = energyload_class.getHolidayDict()
+
+        for date in backcastWeeks:
+            mask = (dfS['date'] == date)
+            i = dfS.loc[mask].index[0]+24
+            row = energyload_class.createInputOutputRow(dfS, i, columns, zoneColumns, stationColumns, 7*24, holidayDict, addSystemLevel = True, noFillZero=noFillZero, useHoliday=useHoliday, useWeekday=useWeekday)
+            dfNew = dfNew.append([row],ignore_index=True)
+
+        #dataExplore2.showDF(dfNew, False)
+        tfOutput = np.asarray(dfNew["output"].tolist())
+        tfInput = []
+        for t in columns:
+            tfInput.append(dfNew[t].tolist())
+        tfInput= np.asarray(tfInput)
+
+        tfInput = tfInput.swapaxes(0,1)
+
+        zoneIDs = zoneIDs
+        zoneIDs21= zoneIDs+[21]
+        xOutputV = self.getSingleLoadPrediction(tfOutput, zoneIDs21)
+        for zoneID in zoneIDs:
+            xOutputV[zoneID] = scalerOutput["zone_"+str(zoneID)].inverse_transform(xOutputV[zoneID])
+
+        return tfInput, xOutputV
+
+    def getTestError(self, model, testInput, testOutput, testScalerOutput):
+        zoneIDs = range(1,21)
+        testPrediction = model.predict(testInput)
+        pV = self.getSingleLoadPrediction(testPrediction, zoneIDs)
+        pVList = []
+        try:
+            for zoneID in zoneIDs:
+                pV[zoneID] = testScalerOutput["zone_"+str(zoneID)].inverse_transform(pV[zoneID])
+                pVList.append(np.asarray(pV[zoneID]))
+            pV[21] = np.sum(pVList, axis=0)
+            finalTestError = self.calculateKaggleScore(testOutput, pV)
+        except ValueError:
+            print "scaler out of bounds"
+            finalTestError = np.nan
+
+        return finalTestError, pV, testOutput
+
+    def getSingleLoadPrediction(self, outputArray, zoneIDs):
+        sequenceLoads = {}
+        for zoneID in zoneIDs:
+            sequenceLoads[zoneID] = []
+            for row in outputArray:
+                column = []
+                for i in range(zoneID-1, len(row), len(zoneIDs)):
+                    column.append(row[i])
+                sequenceLoads[zoneID].append(column)
+        return sequenceLoads
+
+
 
 #KerasModel(isShow= True, createHTML= True)
