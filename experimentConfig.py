@@ -41,7 +41,8 @@ class Config():
         "useHoliday": True,
         "useWeekday": True,
         "noFillZero": True,
-        "stationIDs":True
+        "stationIDs":True,
+        "standardizationType":True
     }
 
     continousParameterBounds = {

@@ -35,7 +35,7 @@ errorBounds = {
         "val_rmse":  (19000 , 100000),
         "test_rmse": (140000,400000),
 }
-toPlot = ["learningRate", "hiddenLayers", "timeWindow", "hiddenNodes", "l1Penalty", "standardizationType", "optimizer", "batchSize", "weightInit", "useHoliday", "useWeekday"]
+toPlot = ["learningRate", "hiddenLayers", "timeWindow", "hiddenNodes", "l1Penalty", "standardizationType", "activationFunction", "optimizer", "batchSize", "weightInit", "useHoliday", "useWeekday"]
 c = experimentConfig.Config()
 errorType = "test_rmse"
 
