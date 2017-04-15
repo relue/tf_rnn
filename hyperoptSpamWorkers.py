@@ -39,7 +39,7 @@ comMid2 = "srun --ntasks=1 --time=06:00:00 --mem=10000 sh ~/pythonProjects/tf_rn
 createBatchFile(comLong,comFast)
 comLongGPU = "srun --gres=gpu:1 --time=12:00:00 --mem=10000 sh ~/pythonProjects/tf_rnn/HyperoptWorkerWrapper.sh "+ip
 comFastGPU = "srun --gres=gpu:1 --time=01:00:00 --mem=10000 sh ~/pythonProjects/tf_rnn/HyperoptWorkerWrapper.sh "+ip
-createBatchFileGPU(comMid1, comMid2)
+createBatchFileGPU(comLongGPU, comFastGPU)
 
 for i in range(1, workerCount):
     p = subprocess.Popen("sbatch hyperOptScriptExecute.sh", stdout=log, stderr=log, shell=True)

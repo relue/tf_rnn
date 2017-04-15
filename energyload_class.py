@@ -165,11 +165,14 @@ def createInputOutputRow(dfS, i, columns, zoneColumns, stationColumns, outputSiz
     columnList = []
     futureTemps = []
     outputList = []
-
+    tempFuturesTemps = []
     for o in range(0, outputSize):
         timeRowOutput = dfS.ix[i+o]
-        #for station_name in stationColumns:
-            #futureTemps.append(dfS.ix[i+o][station_name])
+        for station_name in stationColumns:
+            tempFuturesTemps.append(dfS.ix[i+o][station_name])
+            if o % 24 == 0:
+                futureTemps.append(np.mean(tempFuturesTemps))
+                tempFuturesTemps = []
         for zone_name in zoneColumns:
             outputList.append(timeRowOutput[zone_name])
         if addSystemLevel:
@@ -183,8 +186,8 @@ def createInputOutputRow(dfS, i, columns, zoneColumns, stationColumns, outputSiz
             tupleList.append(timeRowInput[zone_name])
         for station_name in stationColumns:
             tupleList.append(timeRowInput[station_name])
-        #tupleList += futureTemps
-
+        tupleList += futureTemps
+        #tupleList.append(np.mean(futureTemps)
         if t == 1 or noFillZero == True:
             holidayVector = getHolidayVector(timeRowInput["date"], holidayDict)
             weekDayVector = []
