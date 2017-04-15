@@ -4,6 +4,7 @@ from sklearn.preprocessing import MinMaxScaler,StandardScaler
 import os.path
 import os
 import cPickle as pickle
+import sklearn.decomposition as deco
 import gzip
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -205,7 +206,9 @@ def createInputOutputRow(dfS, i, columns, zoneColumns, stationColumns, outputSiz
 
 def createXmulti(timeWindow, stationIDs, outputSize, save = False, isStandardized = False, noFillZero = False, useHoliday = True, useWeekday = True, standardizationType = "minmax"):
 
-    cacheAdd = "934042017"
+
+    cachePrefix = "150420171600"
+    cacheAdd = cachePrefix
     cacheAdd += 'noFillZero' if noFillZero else ''
     cacheAdd += 'useHoliday' if useHoliday else ''
     cacheAdd += 'useWeekday' if useWeekday else ''
@@ -219,100 +222,97 @@ def createXmulti(timeWindow, stationIDs, outputSize, save = False, isStandardize
     cacheIdent ="_" + str(maxTimeWindow)+"_"+cacheAdd
     filename = dir_path+"/rnnInputs/rnnInput"+str(cacheIdent)+".pd"
     scalerCacheFile = dir_path+"/rnnInputs/"+standStr+temStr+"scalers.pickle"
+    dfSCacheFile = dir_path+"/rnnInputs/"+standStr+temStr+"dfS.pickle"
     cacheExists = os.path.isfile(filename)
     scalerExists = os.path.isfile(scalerCacheFile)
-    #save = 1
+    dfSCacheFileExists = os.path.isfile(dfSCacheFile)
 
-
-
-    if save or not(cacheExists) or not scalerExists:
-        df = init_dfs(False, False)
+    if save or not(cacheExists) or not scalerExists or not dfSCacheFileExists:
 
         columns = range(1, maxTimeWindow+1)
         zoneIDs = range(1,21)
         holidayDict = getHolidayDict()
         zoneColumns = ["zone_" + str(i) for i in zoneIDs]
         stationColumns = ["station_" + str(i) for i in stationIDs]
-        df['weekday'] = df['date'].dt.dayofweek
 
-        stationColumnsAll = ["station_" + str(i) for i in range(1,12)]
+        if not dfSCacheFileExists or save:
+            df = init_dfs(False, False)
+            stationColumnsAll = ["station_" + str(i) for i in range(1,13)]
+            df['weekday'] = df['date'].dt.dayofweek
+            dfS = df[zoneColumns+stationColumnsAll+["date","weekday", "zone_avg","station_avg", "zone_21"]]
+            dfDummy = pd.get_dummies(dfS['weekday'])
+            dfS = pd.concat([dfS, dfDummy], axis=1)
 
+            pca = deco.PCA(1) # n_components is the components number after reduction
 
-        dfS = df[zoneColumns+stationColumnsAll+["date","weekday", "zone_avg","station_avg","station_12"]]
-        dfDummy = pd.get_dummies(dfS['weekday'])
-        dfS = pd.concat([dfS, dfDummy], axis=1)
-        #dataExplore2.showDF(dfS, False)
-        if isStandardized:
-            scalerOutput = {}
-            scalerInput = {}
-
-            for zone_name in zoneColumns:
-                if standardizationType == "minmax":
-                    scalerOutput[zone_name] = MinMaxScaler(feature_range=(0, 1))
-                else:
-                    scalerOutput[zone_name] = StandardScaler()
-                scaledLoads = scalerOutput[zone_name].fit_transform(np.asarray(dfS[zone_name].tolist()).reshape(-1,1))
-                lo = pd.Series(scaledLoads.reshape(-1))
-                dfS[zone_name] = lo.values
-
-            for station_name in stationColumnsAll:
-                if standardizationType == "minmax":
-                    scalerInput[station_name] = MinMaxScaler(feature_range=(0, 1))
-                else:
-                    scalerInput[station_name] = StandardScaler()
-                scaledTemps = scalerInput[station_name].fit_transform(np.asarray(dfS[station_name].tolist()).reshape(-1,1))
-                lo = pd.Series(scaledTemps.reshape(-1))
-                dfS[station_name] = lo.values
-
-            import sklearn.decomposition as deco
-            pca = deco.PCA(3) # n_components is the components number after reduction
-            dfPCA = dfS[stationColumnsAll]
+            pcaCols = stationColumnsAll
+            del pcaCols[-1]
+            dfPCA = dfS[pcaCols]
             x_r = pca.fit(dfPCA).transform(dfPCA)
-            print ('explained variance (first %d components): %.2f'%(3, sum(pca.explained_variance_ratio_)))
+            print ('explained variance (first %d components): %.2f'%(1, sum(pca.explained_variance_ratio_)))
             dfS["station_13"] = x_r[:,0]
-            dfS["station_14"] = x_r[:,1]
-            dfS["station_15"] = x_r[:,2]
 
-            scalerDict = {}
-            scalerDict["scalerInput"] = scalerInput
-            scalerDict["scalerOutput"] = scalerOutput
-            with open(scalerCacheFile, 'wb') as output:
-                pickle.dump(scalerDict, output,-1)
+            if isStandardized:
+                scalerOutput = {}
+                scalerInput = {}
 
-            dfNew = pd.DataFrame(columns=columns)
-            for i in range(0, len(dfS), 24):#len(df.index)
-                if i >= maxTimeWindow and i+outputSize < len(df):
-                    row = createInputOutputRow(dfS, i, range(1, maxTimeWindow+1), zoneColumns, stationColumns, outputSize, holidayDict, noFillZero=noFillZero, useHoliday=useHoliday, useWeekday=useWeekday)
-                    dfNew = dfNew.append([row],ignore_index=True)
-            #dfNew[featureList] = dfNew[0].apply(pd.Series)
+                for zone_name in zoneColumns:
+                    if standardizationType == "minmax":
+                        scalerOutput[zone_name] = MinMaxScaler(feature_range=(0, 1))
+                    else:
+                        scalerOutput[zone_name] = StandardScaler()
+                    scaledLoads = scalerOutput[zone_name].fit_transform(np.asarray(dfS[zone_name].tolist()).reshape(-1,1))
+                    lo = pd.Series(scaledLoads.reshape(-1))
+                    dfS[zone_name] = lo.values
 
-            #file = gzip.open(filename, 'wb')
-            #pickle.dump(dfNew, file, 1)
-            #file.close()
+                for station_name in stationColumnsAll:
+                    if standardizationType == "minmax":
+                        scalerInput[station_name] = MinMaxScaler(feature_range=(0, 1))
+                    else:
+                        scalerInput[station_name] = StandardScaler()
+                    scaledTemps = scalerInput[station_name].fit_transform(np.asarray(dfS[station_name].tolist()).reshape(-1,1))
+                    lo = pd.Series(scaledTemps.reshape(-1))
+                    dfS[station_name] = lo.values
 
-            dfNew.to_pickle(filename)
-            #dataExplore2.showDF(dfNew, False)
+                scalerDict = {}
+                scalerDict["scalerInput"] = scalerInput
+                scalerDict["scalerOutput"] = scalerOutput
+
+                with open(scalerCacheFile, 'wb') as output:
+                    pickle.dump(scalerDict, output,-1)
+
+            with open(dfSCacheFile, 'wb') as output:
+                pickle.dump(dfS, output,-1)
+
+        else:
+            with open(dfSCacheFile, 'rb') as input:
+                dfS = pickle.load(input)
+            with open(scalerCacheFile, 'rb') as input:
+                scalerDict = pickle.load(input)
+
+        dfNew = pd.DataFrame(columns=columns)
+        for i in range(0, len(dfS), 24):#len(df.index)
+            if i >= maxTimeWindow and i+outputSize < len(dfS):
+                row = createInputOutputRow(dfS, i, range(1, maxTimeWindow+1), zoneColumns, stationColumns, outputSize, holidayDict, noFillZero=noFillZero, useHoliday=useHoliday, useWeekday=useWeekday)
+                dfNew = dfNew.append([row],ignore_index=True)
+        dfNew.to_pickle(filename)
     else:
-        #file = gzip.open(filename, 'rb')
-        #dfNew = pickle.load(file)
-        #file.close()
         dfNew = pd.read_pickle(filename)
         with open(scalerCacheFile, 'rb') as input:
             scalerDict = pickle.load(input)
+        with open(dfSCacheFile, 'rb') as input:
+            dfS = pickle.load(input)
 
     scalerInput = scalerDict["scalerInput"]
     scalerOutput= scalerDict["scalerOutput"]
-        #dataExplore2.showDF(dfNew, False)
+
     finalColumns = range(1,timeWindow+1)
     dfTimewindow = dfNew[finalColumns + ["output"]]
     tfOutput = np.asarray(dfTimewindow["output"].tolist())
     tfInput = []
     for t in finalColumns:
         tfInput.append(dfTimewindow[t].tolist())
-    #[t, rows, inputs]
 
     tfInput= np.asarray(tfInput)
-    if isStandardized:
-        return tfInput, tfOutput, scalerOutput, scalerInput
-    else:
-        return tfInput,tfOutput
+
+    return tfInput, tfOutput, scalerOutput, scalerInput, dfS
