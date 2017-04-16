@@ -163,8 +163,11 @@ class KerasModel():
         ], location=(40, 5))
         p.add_layout(legend2, 'below')
         return p
+    def getJumps(self, vec, jump):
+        newVec = 1
+        return newVec
 
-    def getTrainValPlots(self,train_pV, train_xOutputV, val_pV, val_xOutputV):
+    def getTrainValPlots(self,train_pV, train_xOutputV, val_pV, val_xOutputV, jump=24):
         zonePlots = {}
 
         zoneIDs = range(1, 21)
@@ -172,7 +175,7 @@ class KerasModel():
         for zoneID in zoneIDs:
             train_p = list(itertools.chain(*np.reshape(train_pV[zoneID], (-1, 1))))
             train_xOutput = list(itertools.chain(*np.reshape(train_xOutputV[zoneID], (-1, 1))))
-
+            #train_p = self.getJumps(train_p, jump)
             val_p = list(itertools.chain(*np.reshape(val_pV[zoneID], (-1, 1))))
             val_xOutput = list(itertools.chain(*np.reshape(val_xOutputV[zoneID], (-1, 1))))
 
