@@ -57,36 +57,23 @@ class KerasModel():
             "adadelta": keras.optimizers.Adadelta(lr=learningRate, rho=0.95, epsilon=1e-08, decay=0.0, clipvalue=100) # empfohlen learning rate default
         }
 
-        #inputSize = len(stationIDs)+20
         finalOutputSize = outputSize * 20
         start_time = time.time()
 
         xInput, xOutput, scalerOutput, scalerInput, dfS = energyload_class.createXmulti(timeWindow, stationIDs, outputSize, save=False, isStandardized=True, noFillZero=noFillZero, useHoliday=useHoliday, useWeekday=useWeekday, standardizationType=standardizationType)
         xInput = xInput.swapaxes(0,1)
-        print "test 1"+str((time.time() - start_time))
 
-        def getTestSets(xInput, xOutput, percentage):
-            fromT = 0
-            last = xOutput.shape[0]-1
-            toT = int(math.ceil(last*(1-percentage)))
-            inputT = xInput[fromT:toT,:]
-            outputT = xOutput[fromT:toT,:]
-            inputV = xInput[toT+1:last,:]
-            outputV = xOutput[toT+1:last,:]
-            return inputT, outputT, inputV, outputV
-        inputT, outputT, inputV, outputV = getTestSets(xInput, xOutput, validationPercentage)
+
+        inputT, outputT, inputV, outputV = self.getTestSets(xInput, xOutput, validationPercentage)
         inputSize = inputT.shape[2]
         opt = keras.optimizers.SGD(lr=0.1, momentum=0.0, decay=0.0, nesterov=False)
-        early = keras.callbacks.EarlyStopping(monitor='loss', min_delta=0, patience=10, verbose=1, mode='auto')
-        #shapeInput = [rows, timeSteps, InputSize]
+        early = keras.callbacks.EarlyStopping(monitor='loss', min_delta=0, patience=10, verbose=0, mode='auto')
         start_time = time.time()
         model = Sequential()
         returnSequence = True if hiddenLayers > 1 else False
         cellObj = "SimpleRNN" if cellType == "rnn" else "LSTM"
-
         eval('model.add('+cellObj+'(hiddenNodes, input_length=timeWindow, input_dim=inputSize, '\
                                   'return_sequences=returnSequence, go_backwards = True, init=weightInit, activation=activationFunction))')
-        #        model.add(LSTM(hiddenNodes, input_length=timeWindow, input_dim=inputSize, return_sequences=returnSequence, go_backwards = True, init=weightInit, activation=activationFunction))
         i = 1
         model.add(Dropout(DropoutProp))
         for hdI in range(2,hiddenLayers+1):
@@ -94,79 +81,31 @@ class KerasModel():
                 returnSequence = False
             eval('model.add('+cellObj+'(hiddenNodes, input_length=timeWindow, go_backwards = False, return_sequences=returnSequence, '\
              'init=weightInit, activation=activationFunction))')
-            #model.add(LSTM(hiddenNodes, input_length=timeWindow, return_sequences=returnSequence, init=weightInit, activation=activationFunction))
+
             model.add(Dropout(DropoutProp))
-        #model.add(SimpleRNN(50, input_length=timeWindow,  return_sequences=False))
+
         model.add(Dense(finalOutputSize, W_regularizer=regularizers.l1(l1Penalty)))#, kernel_regularizer=regularizers.l1(l1Penalty)
 
         model.compile(loss='mean_squared_error', optimizer=optimizerObjects[optimizer])
-        testInput,testOutput = self.getValidationInputOutput(stationIDs, timeWindow, scalerOutput, scalerInput, dfS, noFillZero = noFillZero, useHoliday = useHoliday, useWeekday = useWeekday, standardizationType = standardizationType)
+        testInput,testOutput = self.getValidationInputOutput(stationIDs, timeWindow, scalerOutput, scalerInput, dfS,
+                                                             noFillZero = noFillZero, useHoliday = useHoliday, useWeekday = useWeekday,
+                                                             standardizationType = standardizationType)
         callbacks = []
         if isShow:
-            customCallback = callback.KaggleTest(self, testInput,testOutput,scalerOutput)
+            customCallback = callback.EpochErrorRetrieve(self, testInput,testOutput, inputT, outputT,
+                                                         inputV, outputV, scalerOutput)
             callbacks.append(customCallback)
-            historyTest = customCallback.getHistory()
+            #historyTest = customCallback.getHistory()
 
         if earlyStopping == False:
             epochSize = 50
             callbacks.append(early)
         history = model.fit(inputT, outputT, nb_epoch=epochSize, batch_size=batchSize, verbose=1, callbacks=callbacks)#callbacks=[early]
-        print "test 2"+str((time.time() - start_time))
-
-        def calulateModelErrors(xInput, xOutput, scalerOutput, model):
-            pV, outputV, predList ,outputList = prepareCalculation(xInput, xOutput, scalerOutput, model)
-            zoneIDs = range(1,21)
-            errorList = []
-            errors = {}
-
-            sumP = 0
-            sumOutput = 0
-            mapeList = []
-            try:
-                for zoneID in zoneIDs:
-                    errorList.append(np.mean((pV[zoneID] - outputV[zoneID]) ** 2))
-                    sumP += pV[zoneID]
-                    sumOutput += outputV[zoneID]
-
-                errors["rmse"] = np.mean(errorList)** 0.5
-                sumP = sum(sumP.reshape(-1))
-                sumOutput = sum(sumOutput.reshape(-1))
-                errors["diff"] = (sumP - sumOutput) / sumOutput
-
-                for i in range(len(predList)):
-                    if outputList[i] != 0:
-                        mapeList.append(np.abs((predList[i] - outputList[i]) / outputList[i]))
-
-                errors['mape'] = np.mean(mapeList)
-            except ValueError:
-                print "scaler out of bounds"
-                for d in errors:
-                    errors[d] = numpy.nan
-            return errors
-
-        def prepareCalculation(input,output, scaler, model):
-            zoneIDs = range(1,21)
-            prediction = model.predict(input)
-            pV = self.getSingleLoadPrediction(prediction, zoneIDs)
-            outputV = self.getSingleLoadPrediction(output, zoneIDs)
-            outputList = []
-            predList = []
-            for zoneID in zoneIDs:
-                pV[zoneID] = scaler["zone_"+str(zoneID)].inverse_transform(pV[zoneID])
-                outputV[zoneID] = scaler["zone_"+str(zoneID)].inverse_transform(outputV[zoneID])
-                outputList.append(outputV[zoneID].reshape(-1))
-                predList.append(pV[zoneID].reshape(-1))
-
-            outputList = np.asarray(outputList).reshape(-1)
-            predList = np.asarray(predList).reshape(-1)
-            return pV,outputV, predList ,outputList
-
 
         finalTestError, pV, xOutputV = self.getTestError(model, testInput,testOutput,scalerOutput)
+        errorsTrain = self.calulateModelErrors(inputT, outputT, scalerOutput, model)
+        errorsVal = self.calulateModelErrors(inputV, outputV, scalerOutput, model)
 
-
-        errorsTrain = calulateModelErrors(inputT, outputT, scalerOutput, model)
-        errorsVal = calulateModelErrors(inputV, outputV, scalerOutput, model)
         self.results["train_netrmse"] = history.history['loss'][-1]
         self.results["test_rmse"] = finalTestError
         self.results["train_rmse"] = errorsTrain['rmse']
@@ -185,27 +124,36 @@ class KerasModel():
         print "kaggle:"+str(finalTestError)
         print "test 3 "+str((time.time() - start_time))
         if createHTML:
-            p3 = figure(width=1000, height=500,toolbar_location="left")
+            testErrors, trainErrors, valErrors = customCallback.getErrors()
 
+            p3 = figure(width=1000, height=500,toolbar_location="left")
             p3.xaxis.axis_label = "Epoch"
             p3.yaxis.axis_label = "Loss"
-
-            r20 = p3.line(range(0,len(xOutput)), history.history['loss'], color="red", line_width=1, line_alpha = 0.8)
-            r22 = p3.line(range(0,len(xOutput)), history.history['val_loss'], color="blue", line_width=1, line_alpha = 0.8)
-
+            r20 = p3.line(range(0,len(xOutput)), trainErrors['rmse'], color="red", line_width=1, line_alpha = 0.8)
+            r22 = p3.line(range(0,len(xOutput)), valErrors['rmse'], color="blue", line_width=1, line_alpha = 0.8)
             legend2 = Legend(legends=[
                 ("Loss Training Set",   [r20]),
                 ("Loss Validation Set", [r22])
             ], location=(40, 5))
-
             p3.add_layout(legend2, 'below')
+
+            p1 = figure(width=1000, height=500, toolbar_location="left")
+            p1.xaxis.axis_label = "Epoch"
+            p1.yaxis.axis_label = "Loss"
+            r20 = p1.line(range(0, len(xOutput)), trainErrors['mape'], color="red", line_width=1, line_alpha=0.8)
+            r22 = p1.line(range(0, len(xOutput)), valErrors['mape'], color="blue", line_width=1, line_alpha=0.8)
+            legend2 = Legend(legends=[
+                ("Loss Training Set", [r20]),
+                ("Loss Validation Set", [r22])
+            ], location=(40, 5))
+            p1.add_layout(legend2, 'below')
 
             p2 = figure(width=1000, height=500,toolbar_location="left")
 
             p2.xaxis.axis_label = "Epoch"
             p2.yaxis.axis_label = "Loss"
 
-            r23 = p2.line(range(0,len(xOutput)), historyTest, color="green", line_width=1, line_alpha = 0.8)
+            r23 = p2.line(range(0,len(xOutput)), testErrors, color="green", line_width=1, line_alpha = 0.8)
 
             legend2 = Legend(legends=[
                 ("Loss Test Set", [r23])
@@ -245,12 +193,70 @@ class KerasModel():
                 zonePlots[zoneID].add_layout(legend2, 'below')
 
             zoneGrid = [zonePlots[i] for i in range(1,22)]
-            zoneGrid = [p2] + [p3] + zoneGrid
+            zoneGrid = [p1] + [p2] + [p3] + zoneGrid
 
             from bokeh.layouts import column
             ap = column(zoneGrid)
             if isShow:
                 show(ap)
+
+    def getTestSets(self, xInput, xOutput, percentage):
+        fromT = 0
+        last = xOutput.shape[0] - 1
+        toT = int(math.ceil(last * (1 - percentage)))
+        inputT = xInput[fromT:toT, :]
+        outputT = xOutput[fromT:toT, :]
+        inputV = xInput[toT + 1:last, :]
+        outputV = xOutput[toT + 1:last, :]
+        return inputT, outputT, inputV, outputV
+
+    def calulateModelErrors(self, xInput, xOutput, scalerOutput, model):
+        pV, outputV, predList, outputList = self.prepareCalculation(xInput, xOutput, scalerOutput, model)
+        zoneIDs = range(1, 21)
+        errorList = []
+        errors = {}
+
+        sumP = 0
+        sumOutput = 0
+        mapeList = []
+        try:
+            for zoneID in zoneIDs:
+                errorList.append(np.mean((pV[zoneID] - outputV[zoneID]) ** 2))
+                sumP += pV[zoneID]
+                sumOutput += outputV[zoneID]
+
+            errors["rmse"] = np.mean(errorList) ** 0.5
+            sumP = sum(sumP.reshape(-1))
+            sumOutput = sum(sumOutput.reshape(-1))
+            errors["diff"] = (sumP - sumOutput) / sumOutput
+
+            for i in range(len(predList)):
+                if outputList[i] != 0:
+                    mapeList.append(np.abs((predList[i] - outputList[i]) / outputList[i]))
+
+            errors['mape'] = np.mean(mapeList)
+        except ValueError:
+            print "scaler out of bounds"
+            for d in errors:
+                errors[d] = numpy.nan
+        return errors
+
+    def prepareCalculation(self, input, output, scaler, model):
+        zoneIDs = range(1, 21)
+        prediction = model.predict(input)
+        pV = self.getSingleLoadPrediction(prediction, zoneIDs)
+        outputV = self.getSingleLoadPrediction(output, zoneIDs)
+        outputList = []
+        predList = []
+        for zoneID in zoneIDs:
+            pV[zoneID] = scaler["zone_" + str(zoneID)].inverse_transform(pV[zoneID])
+            outputV[zoneID] = scaler["zone_" + str(zoneID)].inverse_transform(outputV[zoneID])
+            outputList.append(outputV[zoneID].reshape(-1))
+            predList.append(pV[zoneID].reshape(-1))
+
+        outputList = np.asarray(outputList).reshape(-1)
+        predList = np.asarray(predList).reshape(-1)
+        return pV, outputV, predList, outputList
 
     def calculateKaggleScore(self, xOutputV, pV):
         zoneIDs = range(1,21)

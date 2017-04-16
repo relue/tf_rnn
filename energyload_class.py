@@ -187,6 +187,9 @@ def createInputOutputRow(dfS, i, columns, zoneColumns, stationColumns, outputSiz
         for station_name in stationColumns:
             tupleList.append(timeRowInput[station_name])
         tupleList += futureTemps
+        dayIndex = (i / 24) % 365
+        dayS = (dayIndex) / (365)
+        tupleList.append(dayS)
         #tupleList.append(np.mean(futureTemps)
         if t == 1 or noFillZero == True:
             holidayVector = getHolidayVector(timeRowInput["date"], holidayDict)
@@ -208,8 +211,6 @@ def createInputOutputRow(dfS, i, columns, zoneColumns, stationColumns, outputSiz
     return row
 
 def createXmulti(timeWindow, stationIDs, outputSize, save = False, isStandardized = False, noFillZero = False, useHoliday = True, useWeekday = True, standardizationType = "minmax"):
-
-
     cachePrefix = "150420171600"
     cacheAdd = cachePrefix
     cacheAdd += 'noFillZero' if noFillZero else ''
