@@ -186,7 +186,7 @@ class KerasModel():
             p = self.getLinePlot(train_p, train_xOutput, zoneID, "Train Dataset")
             zoneList.append(p)
 
-            jumpedP = self.getJumps(val_pV[zoneID][zoneID], jump)
+            jumpedP = self.getJumps(val_pV[zoneID], jump)
             jumpedO = self.getJumps(val_xOutputV[zoneID], jump)
             val_p = list(itertools.chain(*np.reshape(jumpedP, (-1, 1))))
             val_xOutput = list(itertools.chain(*np.reshape(jumpedO, (-1, 1))))
