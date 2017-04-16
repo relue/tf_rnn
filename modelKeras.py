@@ -48,7 +48,11 @@ class KerasModel():
                activationFunction = "tanh",
                standardizationType = "minmax",
                isShow = False,
-               createHTML = False):
+               createHTML = False,
+               showEpochPlots = False,
+               showKagglePlots = False,
+               showTrainValPlots = False,
+                 ):
         optimizerObjects = {
             "sgd" : keras.optimizers.SGD(lr=learningRate, momentum=0.0, decay=0.0, nesterov=False, clipvalue=100),
             "adam" : keras.optimizers.Adam(lr=learningRate, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=0.0, clipvalue=100),# empfohlen learning rate default
@@ -91,7 +95,7 @@ class KerasModel():
                                                              noFillZero = noFillZero, useHoliday = useHoliday, useWeekday = useWeekday,
                                                              standardizationType = standardizationType)
         callbacks = []
-        if isShow:
+        if showEpochPlots:
             customCallback = callback.EpochErrorRetrieve(self, testInput,testOutput, inputT, outputT,
                                                          inputV, outputV, scalerOutput)
             callbacks.append(customCallback)
@@ -102,9 +106,9 @@ class KerasModel():
             callbacks.append(early)
         history = model.fit(inputT, outputT, nb_epoch=epochSize, batch_size=batchSize, verbose=1, callbacks=callbacks)#callbacks=[early]
 
-        finalTestError, pV, xOutputV = self.getTestError(model, testInput,testOutput,scalerOutput)
-        errorsTrain = self.calulateModelErrors(inputT, outputT, scalerOutput, model)
-        errorsVal = self.calulateModelErrors(inputV, outputV, scalerOutput, model)
+        finalTestError, test_pV, test_xOutputV = self.getTestError(model, testInput,testOutput,scalerOutput)
+        errorsTrain, train_pV, train_xOutputV = self.calulateModelErrors(inputT, outputT, scalerOutput, model)
+        errorsVal, val_pV, val_xOutputV = self.calulateModelErrors(inputV, outputV, scalerOutput, model)
 
         self.results["train_netrmse"] = history.history['loss'][-1]
         self.results["test_rmse"] = finalTestError
@@ -116,6 +120,7 @@ class KerasModel():
         self.results["val_diff"] = errorsVal['diff']
         self.results["exec_time"] = (time.time() - start_time)
         print  self.results
+
         for key in errorsTrain:
             print key+" : "+str(errorsTrain[key])+"\n"
         for key in errorsVal:
@@ -124,81 +129,131 @@ class KerasModel():
         print "kaggle:"+str(finalTestError)
         print "test 3 "+str((time.time() - start_time))
         if createHTML:
-            testErrors, trainErrors, valErrors = customCallback.getErrors()
+            plots = []
+            output_file("bokehPlots/modeloutput" + str(indexID) + ".html")
+            if showEpochPlots:
+                epochPlots = self.getEpochPlots(customCallback)
+                plots += epochPlots
+            if showKagglePlots:
+                kagglePlots = self.getKagglePlots(test_pV, test_xOutputV)
+                plots += kagglePlots
+            if showTrainValPlots:
+                trainValPlots = self.getTrainValPlots(train_pV, train_xOutputV, val_pV, val_xOutputV)
+                plots += trainValPlots
 
-            p3 = figure(width=1000, height=500,toolbar_location="left")
-            p3.xaxis.axis_label = "Epoch"
-            p3.yaxis.axis_label = "Loss"
-            r20 = p3.line(range(0,len(xOutput)), trainErrors['rmse'], color="red", line_width=1, line_alpha = 0.8)
-            r22 = p3.line(range(0,len(xOutput)), valErrors['rmse'], color="blue", line_width=1, line_alpha = 0.8)
-            legend2 = Legend(legends=[
-                ("Loss Training Set",   [r20]),
-                ("Loss Validation Set", [r22])
-            ], location=(40, 5))
-            p3.add_layout(legend2, 'below')
-
-            p1 = figure(width=1000, height=500, toolbar_location="left")
-            p1.xaxis.axis_label = "Epoch"
-            p1.yaxis.axis_label = "Loss"
-            r20 = p1.line(range(0, len(xOutput)), trainErrors['mape'], color="red", line_width=1, line_alpha=0.8)
-            r22 = p1.line(range(0, len(xOutput)), valErrors['mape'], color="blue", line_width=1, line_alpha=0.8)
-            legend2 = Legend(legends=[
-                ("Loss Training Set", [r20]),
-                ("Loss Validation Set", [r22])
-            ], location=(40, 5))
-            p1.add_layout(legend2, 'below')
-
-            p2 = figure(width=1000, height=500,toolbar_location="left")
-
-            p2.xaxis.axis_label = "Epoch"
-            p2.yaxis.axis_label = "Loss"
-
-            r23 = p2.line(range(0,len(xOutput)), testErrors, color="green", line_width=1, line_alpha = 0.8)
-
-            legend2 = Legend(legends=[
-                ("Loss Test Set", [r23])
-            ], location=(40, 5))
-
-            p2.add_layout(legend2, 'below')
-
-            #p = model.predict(xInput)
-            #xOutputV = getSingleLoadPrediction(xOutput)
-            #pV = getSingleLoadPrediction(p)
-
-            zonePlots = {}
-
-            zoneIDs = range(1,22)
-            for zoneID in zoneIDs:
-                p = list(itertools.chain(*np.reshape(pV[zoneID],(-1,1))))
-                xOutput = list(itertools.chain(*np.reshape(xOutputV[zoneID],(-1,1))))
-                #p = scaler.inverse_transform(p)
-                #xOutput = scaler.inverse_transform(xOutput)
-
-                output_file("bokehPlots/modeloutput"+str(indexID)+".html")
-
-                zonePlots[zoneID] = figure(width=1000, height=500,toolbar_location="left", title="Zone "+str(zoneID))
-
-                zonePlots[zoneID].xaxis.axis_label = "Index"
-                zonePlots[zoneID].yaxis.axis_label = "Energy Load "
-
-                r20 = zonePlots[zoneID].line(range(0,len(xOutput)), xOutput, color="red", line_width=0.5, line_alpha = 0.8)
-                r22 = zonePlots[zoneID].line(range(0,len(xOutput)), p, color="blue", line_width=0.5, line_alpha = 0.8)
-
-
-                legend2 = Legend(legends=[
-                    ("Original Data",   [r20]),
-                    ("Model Prediction", [r22])
-                ], location=(40, 5))
-
-                zonePlots[zoneID].add_layout(legend2, 'below')
-
-            zoneGrid = [zonePlots[i] for i in range(1,22)]
-            zoneGrid = [p1] + [p2] + [p3] + zoneGrid
+            outputGrid = [plots]
 
             from bokeh.layouts import column
-            ap = column(zoneGrid)
+            ap = gridplot(outputGrid)
             if isShow:
                 show(ap)
+
+    def getLinePlot(self, pV, xOutputV, zoneID, title):
+        p = figure(width=1000, height=500, toolbar_location="left", title=title+" - Zone " + str(zoneID))
+
+        p.xaxis.axis_label = "Index"
+        p.yaxis.axis_label = "Energy Load"
+
+        r20 = p.line(range(0, len(xOutputV)), xOutputV, color="red", line_width=0.5, line_alpha=0.8)
+        r22 = p.line(range(0, len(xOutputV)), pV, color="blue", line_width=0.5, line_alpha=0.8)
+
+        legend2 = Legend(legends=[
+            ("Original Data", [r20]),
+            ("Model Prediction", [r22])
+        ], location=(40, 5))
+        p.add_layout(legend2, 'below')
+        return p
+
+    def getTrainValPlots(self,train_pV, train_xOutputV, val_pV, val_xOutputV):
+        zonePlots = {}
+
+        zoneIDs = range(1, 21)
+        zoneList = []
+        for zoneID in zoneIDs:
+            train_p = list(itertools.chain(*np.reshape(train_pV[zoneID], (-1, 1))))
+            train_xOutput = list(itertools.chain(*np.reshape(train_xOutputV[zoneID], (-1, 1))))
+
+            val_p = list(itertools.chain(*np.reshape(val_pV[zoneID], (-1, 1))))
+            val_xOutput = list(itertools.chain(*np.reshape(val_xOutputV[zoneID], (-1, 1))))
+
+            p = self.getLinePlot(train_p, train_xOutput, zoneID, "Train Dataset")
+            zoneList.append(p)
+
+            p = self.getLinePlot(val_p, val_xOutput, zoneID, "Validation Dataset")
+            zoneList.append(p)
+
+        return zoneList
+
+    def getKagglePlots(self, pV, xOutputV):
+        zonePlots = {}
+
+        zoneIDs = range(1, 22)
+        for zoneID in zoneIDs:
+            p = list(itertools.chain(*np.reshape(pV[zoneID], (-1, 1))))
+            xOutput = list(itertools.chain(*np.reshape(xOutputV[zoneID], (-1, 1))))
+            # p = scaler.inverse_transform(p)
+            # xOutput = scaler.inverse_transform(xOutput)
+
+
+            zonePlots[zoneID] = figure(width=1000, height=500, toolbar_location="left", title="Zone " + str(zoneID))
+
+            zonePlots[zoneID].xaxis.axis_label = "Index"
+            zonePlots[zoneID].yaxis.axis_label = "Energy Load "
+
+            r20 = zonePlots[zoneID].line(range(0, len(xOutput)), xOutput, color="red", line_width=0.5, line_alpha=0.8)
+            r22 = zonePlots[zoneID].line(range(0, len(xOutput)), p, color="blue", line_width=0.5, line_alpha=0.8)
+
+            legend2 = Legend(legends=[
+                ("Original Data", [r20]),
+                ("Model Prediction", [r22])
+            ], location=(40, 5))
+            zonePlots[zoneID].add_layout(legend2, 'below')
+        zoneList = [zonePlots[i] for i in range(1, 22)]
+        return zoneList
+        #
+    def getEpochPlots(self, customCallback):
+        testErrors, trainErrors, valErrors = customCallback.getErrors()
+        epochPlots = []
+        p3 = figure(width=1000, height=500, toolbar_location="left")
+        p3.xaxis.axis_label = "Epoch"
+        p3.yaxis.axis_label = "Loss"
+        r20 = p3.line(range(0, len(trainErrors['rmse'])), trainErrors['rmse'], color="red", line_width=1, line_alpha=0.8)
+        r22 = p3.line(range(0, len(trainErrors['rmse'])), valErrors['rmse'], color="blue", line_width=1, line_alpha=0.8)
+        legend2 = Legend(legends=[
+            ("Loss Training Set", [r20]),
+            ("Loss Validation Set", [r22])
+        ], location=(40, 5))
+        p3.add_layout(legend2, 'below')
+        epochPlots.append(p3)
+
+        p1 = figure(width=1000, height=500, toolbar_location="left")
+        p1.xaxis.axis_label = "Epoch"
+        p1.yaxis.axis_label = "Loss"
+        r20 = p1.line(range(0, len(trainErrors['mape'])), trainErrors['mape'], color="red", line_width=1, line_alpha=0.8)
+        r22 = p1.line(range(0, len(trainErrors['mape'])), valErrors['mape'], color="blue", line_width=1, line_alpha=0.8)
+        legend2 = Legend(legends=[
+            ("Loss Training Set", [r20]),
+            ("Loss Validation Set", [r22])
+        ], location=(40, 5))
+        p1.add_layout(legend2, 'below')
+        epochPlots.append(p1)
+
+        p2 = figure(width=1000, height=500, toolbar_location="left")
+
+        p2.xaxis.axis_label = "Epoch"
+        p2.yaxis.axis_label = "Loss"
+
+        r23 = p2.line(range(0, len(trainErrors['rmse'])), testErrors, color="green", line_width=1, line_alpha=0.8)
+
+        legend2 = Legend(legends=[
+            ("Loss Test Set", [r23])
+        ], location=(40, 5))
+
+        p2.add_layout(legend2, 'below')
+        epochPlots.append(p2)
+
+        return epochPlots
+
 
     def getTestSets(self, xInput, xOutput, percentage):
         fromT = 0
@@ -239,7 +294,7 @@ class KerasModel():
             print "scaler out of bounds"
             for d in errors:
                 errors[d] = numpy.nan
-        return errors
+        return errors, pV, outputV
 
     def prepareCalculation(self, input, output, scaler, model):
         zoneIDs = range(1, 21)

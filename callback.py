@@ -20,8 +20,8 @@ class EpochErrorRetrieve(keras.callbacks.Callback):
 
     def on_epoch_end(self, epoch, logs=None):
         finalTestError, pV, xOutputV = self.KerasModel.getTestError(self.model, self.inputTe, self.outputTe, self.scaler)
-        errorsTrain = self.KerasModel.calulateModelErrors(self.inputT, self.outputT, self.scaler, self.model)
-        errorsVal = self.KerasModel.calulateModelErrors(self.inputV, self.outputV, self.scaler, self.model)
+        errorsTrain, _, _ = self.KerasModel.calulateModelErrors(self.inputT, self.outputT, self.scaler, self.model)
+        errorsVal, _, _ = self.KerasModel.calulateModelErrors(self.inputV, self.outputV, self.scaler, self.model)
         self.trainErrors['rmse'].append(errorsTrain['rmse'])
         self.valErrors['rmse'].append(errorsVal['rmse'])
         self.trainErrors['mape'].append(errorsTrain['mape'])

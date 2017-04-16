@@ -9,13 +9,19 @@ data["indexID"] = 1
 data["isShow"] = True
 data["createHTML"] = True
 data["earlyStopping"] = True
-data["epochSize"] = 20
+data["epochSize"] = 2
 data["batchSize"] = 1
 data["learningRate"] = 0.001
 data["standardizationType"] = "zscore"
 #data["stationIDs"] = [13,14,15]
 data["stationIDs"] = [13]
 data["timeWindow"] = 7*24
+
+data["showEpochPlots"] = False
+data["showKagglePlots"] = False
+data["showTrainValPlots"] = True
+
+
 
 
 import numpy as np
