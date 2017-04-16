@@ -104,7 +104,7 @@ class KerasModel():
         if earlyStopping == False:
             epochSize = 50
             callbacks.append(early)
-        history = model.fit(inputT, outputT, nb_epoch=epochSize, batch_size=batchSize, verbose=1, callbacks=callbacks)#callbacks=[early]
+        history = model.fit(inputT, outputT, nb_epoch=epochSize, batch_size=batchSize, verbose=2, callbacks=callbacks)#callbacks=[early]
 
         finalTestError, test_pV, test_xOutputV = self.getTestError(model, testInput,testOutput,scalerOutput)
         errorsTrain, train_pV, train_xOutputV = self.calulateModelErrors(inputT, outputT, scalerOutput, model)
@@ -141,10 +141,9 @@ class KerasModel():
                 trainValPlots = self.getTrainValPlots(train_pV, train_xOutputV, val_pV, val_xOutputV)
                 plots += trainValPlots
 
-            outputGrid = [plots]
-
             from bokeh.layouts import column
-            ap = gridplot(outputGrid)
+            grid = [[plot] for plot in plots]
+            ap = gridplot(grid)
             if isShow:
                 show(ap)
 
@@ -163,8 +162,14 @@ class KerasModel():
         ], location=(40, 5))
         p.add_layout(legend2, 'below')
         return p
-    def getJumps(self, vec, jump):
-        newVec = 1
+
+    def getJumps(self, arr, jump):
+        i = 0
+        n = 0
+        newVec = []
+        for v in range(0, arr.shape[0],jump):
+            newVec.append(arr[v])
+
         return newVec
 
     def getTrainValPlots(self,train_pV, train_xOutputV, val_pV, val_xOutputV, jump=24):
@@ -173,18 +178,21 @@ class KerasModel():
         zoneIDs = range(1, 21)
         zoneList = []
         for zoneID in zoneIDs:
-            train_p = list(itertools.chain(*np.reshape(train_pV[zoneID], (-1, 1))))
-            train_xOutput = list(itertools.chain(*np.reshape(train_xOutputV[zoneID], (-1, 1))))
-            #train_p = self.getJumps(train_p, jump)
-            val_p = list(itertools.chain(*np.reshape(val_pV[zoneID], (-1, 1))))
-            val_xOutput = list(itertools.chain(*np.reshape(val_xOutputV[zoneID], (-1, 1))))
+            jumpedP = self.getJumps(train_pV[zoneID], jump)
+            jumpedO = self.getJumps(train_xOutputV[zoneID], jump)
+            train_p = list(itertools.chain(*np.reshape(jumpedP, (-1, 1))))
+            train_xOutput = list(itertools.chain(*np.reshape(jumpedO, (-1, 1))))
 
             p = self.getLinePlot(train_p, train_xOutput, zoneID, "Train Dataset")
             zoneList.append(p)
 
+            jumpedP = self.getJumps(val_pV[zoneID][zoneID], jump)
+            jumpedO = self.getJumps(val_xOutputV[zoneID], jump)
+            val_p = list(itertools.chain(*np.reshape(jumpedP, (-1, 1))))
+            val_xOutput = list(itertools.chain(*np.reshape(jumpedO, (-1, 1))))
+
             p = self.getLinePlot(val_p, val_xOutput, zoneID, "Validation Dataset")
             zoneList.append(p)
-
         return zoneList
 
     def getKagglePlots(self, pV, xOutputV):

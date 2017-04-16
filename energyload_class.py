@@ -295,7 +295,7 @@ def createXmulti(timeWindow, stationIDs, outputSize, save = False, isStandardize
                 scalerDict = pickle.load(input)
 
         dfNew = pd.DataFrame(columns=columns)
-        for i in range(0, len(dfS), 24*7):#len(df.index)
+        for i in range(0, len(dfS), 24):#len(df.index)
             if i >= maxTimeWindow and i+outputSize < len(dfS):
                 row = createInputOutputRow(dfS, i, range(1, maxTimeWindow+1), zoneColumns, stationColumns, outputSize, holidayDict, noFillZero=noFillZero, useHoliday=useHoliday, useWeekday=useWeekday)
                 dfNew = dfNew.append([row],ignore_index=True)
