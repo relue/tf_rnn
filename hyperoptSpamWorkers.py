@@ -30,10 +30,10 @@ def createBatchFileGPU(singleCommand, com2):
                 line = line.replace('?job?', com2)
                 fout.write(line)
 
-workerCount = 1000
+workerCount = 5000
 ip=sys.argv[1]
 comLong = "srun --ntasks=1 --time=12:00:00 --mem=10000 sh ~/pythonProjects/tf_rnn/HyperoptWorkerWrapper.sh "+ip
-comFast = "srun --ntasks=1 --time=01:00:00 --mem=10000 sh ~/pythonProjects/tf_rnn/HyperoptWorkerWrapper.sh "+ip
+comFast = "srun --ntasks=1 --time=02:00:00 --mem=10000 sh ~/pythonProjects/tf_rnn/HyperoptWorkerWrapper.sh "+ip
 comMid1 = "srun --ntasks=1 --time=03:00:00 --mem=10000 sh ~/pythonProjects/tf_rnn/HyperoptWorkerWrapper.sh "+ip
 comMid2 = "srun --ntasks=1 --time=06:00:00 --mem=10000 sh ~/pythonProjects/tf_rnn/HyperoptWorkerWrapper.sh "+ip
 createBatchFile(comLong,comFast)
@@ -42,14 +42,14 @@ comFastGPU = "srun --gres=gpu:1 --time=01:00:00 --mem=10000 sh ~/pythonProjects/
 createBatchFileGPU(comLongGPU, comFastGPU)
 
 for i in range(1, workerCount):
-    p = subprocess.Popen("sbatch hyperOptScriptExecute.sh", stdout=log, stderr=log, shell=True)
+    #p = subprocess.Popen("sbatch hyperOptScriptExecute.sh", stdout=log, stderr=log, shell=True)
     p = subprocess.Popen("sbatch hyperOptScriptExecuteFill.sh", stdout=log, stderr=log, shell=True)
-    p = subprocess.Popen("sbatch hyperOptScriptExecuteGPU.sh", stdout=log, stderr=log, shell=True)
-    p = subprocess.Popen("sbatch hyperOptScriptExecuteGPUFill.sh", stdout=log, stderr=log, shell=True)
+    #p = subprocess.Popen("sbatch hyperOptScriptExecuteGPU.sh", stdout=log, stderr=log, shell=True)
+    #p = subprocess.Popen("sbatch hyperOptScriptExecuteGPUFill.sh", stdout=log, stderr=log, shell=True)
 
 
     if workerCount > 200:
-        st = 2
+        st = 1
     else:
         st = 16
 
