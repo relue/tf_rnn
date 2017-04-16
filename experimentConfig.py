@@ -42,7 +42,8 @@ class Config():
         "useWeekday": True,
         "noFillZero": True,
         "stationIDs":True,
-        "standardizationType":True
+        "standardizationType":True,
+        "epochSize": True,
     }
 
     continousParameterBounds = {
@@ -64,6 +65,21 @@ class Config():
         "useWeekday": [True, False],
         "noFillZero": [True, False],
         "stationIDs": range(1,13),
+    }
+    defDict = {
+        "learningRate":  (0 , 1),
+        "DropoutProp": (0.01, 0.99),
+        "l1Penalty": (0.0001, 0.99),
+        "standardizationType": ["minmax", "zscore"],
+        "activationFunction": ["tanh", "sigmoid", "relu"],
+        "hiddenNodes": (10,300),
+        "optimizer":  ['adam', 'sgd', 'rms','ada', 'adadelta'],
+        "timeWindow": (10,199),
+        "batchSize": (1,101),
+        "hiddenLayers": (1,10),
+        "weightInit": ["zero", "one", "normal", "glorot_uniform", "lecun_uniform", "glorot_normal"],
+        "useHoliday": [True, False],
+        "useWeekday": [True, False],
     }
 
     def generateRandomVektor(self, parameterList):

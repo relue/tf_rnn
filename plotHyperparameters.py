@@ -17,29 +17,15 @@ from bokeh.models.widgets import DataTable, DateFormatter, TableColumn, Dropdown
 
 from bokeh.charts import BoxPlot
 
-defDict = {
-        "learningRate":  (0 , 1),
-        "DropoutProp": (0.01, 0.99),
-        "l1Penalty": (0.0001, 0.99),
-        "standardizationType": ["minmax", "zscore"],
-        "activationFunction": ["tanh", "sigmoid", "relu"],
-        "hiddenNodes": (10,300),
-        "optimizer":  ['adam', 'sgd', 'rms','ada', 'adadelta'],
-        "timeWindow": (10,199),
-        "batchSize": (1,101),
-        "hiddenLayers": (1,10),
-        "weightInit": ["zero", "one", "normal", "glorot_uniform", "lecun_uniform", "glorot_normal"],
-        "useHoliday": [True, False],
-        "useWeekday": [True, False],
-}
 errorBounds = {
         "val_rmse":  (19000 , 100000),
         "test_rmse": (140000,400000),
 }
-#toPlot = ["learningRate", "hiddenLayers", "timeWindow", "hiddenNodes", "l1Penalty", "standardizationType", "activationFunction", "optimizer", "batchSize", "weightInit", "useHoliday", "useWeekday"]
-toPlot = []
+toPlot = ["epochSize", "learningRate", "hiddenLayers", "timeWindow", "hiddenNodes", "l1Penalty", "standardizationType", "activationFunction", "optimizer", "batchSize", "weightInit", "useHoliday", "useWeekday"]
+#toPlot = []
 c = experimentConfig.Config()
 errorType = "val_rmse"
+errorType2 = "test_rmse"
 
 dfNew = pd.read_pickle("randomSearch.pd")
 output_file('hyperparams.html')
@@ -59,6 +45,7 @@ pSearch.line(dfNewPlain.index, dfNewPlain['min'], color="red", line_width=0.5, l
 pSearch.xaxis.axis_label = "Runs"
 pSearch.yaxis.axis_label = "Minimum Error"
 
+output_file('hyperparams2.html')
 l_params.append([pSearch, None])
 for paramName in toPlot:
     isDiscrete = c.parameterTypeDiscrete[paramName]
@@ -76,26 +63,39 @@ for paramName in toPlot:
         ], location=(40, 5))
         p1.add_layout(legend3, 'below')
 
-        p2 = figure(width=500, height=500, y_range=(0,2000))#x_range = (defDict[paramName][0],defDict[paramName][1]),
+        p2 = figure(width=500, height=500, y_range=(errorBounds[errorType2][0],errorBounds[errorType2][1]))#x_range = (defDict[paramName][0],defDict[paramName][1]),
         p2.xaxis.axis_label = paramName
-        p2.yaxis.axis_label = "execution time"
-        r31 = p2.circle(x, y2, color="red", size=2, alpha=0.6)
+        p2.yaxis.axis_label = errorType2
+        r31 = p2.circle(x, y, color="red", size=2, alpha=0.6)
+        legend3 = Legend(legends=[
+            (paramName+" and "+errorType2,   [r31])
+        ], location=(40, 5))
+        p2.add_layout(legend3, 'below')
+
+        p3 = figure(width=500, height=500, y_range=(0,2000))#x_range = (defDict[paramName][0],defDict[paramName][1]),
+        p3.xaxis.axis_label = paramName
+        p3.yaxis.axis_label = "execution time"
+        r31 = p3.circle(x, y2, color="red", size=2, alpha=0.6)
         legend3 = Legend(legends=[
             (paramName+" and execution time",   [r31])
         ], location=(40, 5))
-        p2.add_layout(legend3, 'below')
+        p3.add_layout(legend3, 'below')
 
     else:
         p1 = BoxPlot(dfNew, values=errorType, label=paramName,title=paramName+" and "+errorType, outliers=False)
         p1.xaxis.axis_label = paramName
         p1.yaxis.axis_label = errorType
 
-        p2 = BoxPlot(dfNew, values="exec_time", label=paramName,title=paramName+" and execution time", outliers=False)
+        p2 = BoxPlot(dfNew, values=errorType2, label=paramName,title=paramName+" and "+errorType2, outliers=False)
         p2.xaxis.axis_label = paramName
-        p2.yaxis.axis_label = "execution time"
+        p2.yaxis.axis_label = errorType2
+
+        p3 = BoxPlot(dfNew, values="exec_time", label=paramName,title=paramName+" and execution time", outliers=False)
+        p3.xaxis.axis_label = paramName
+        p3.yaxis.axis_label = "execution time"
 
 
-    l_params.append([p1,p2])
+    l_params.append([p1, p2, p3])
 
 ap = gridplot(l_params)
 show(ap)
