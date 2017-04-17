@@ -24,7 +24,7 @@ logDB = open("logs/mongo.log", "w")
 ipLog = open("logs/ip.log", "w")
 ipLog.write(ip)
 ipLog.close()
-startDB = "ulimit -u 10000 && mongod --dbpath ~/mongo/mongodb/mongodb-linux-x86_64-3.4.2/data/db"
+startDB = "ulimit -u 20000 && mongod --dbpath ~/mongo/mongodb/mongodb-linux-x86_64-3.4.2/data/db"
 startOptimizer = "source ../env/bin/activate; python HyperoptOptimizer.py "+ip
 
 createBatchFile("srun --time=12:00:00 --mem=10000 ~/pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/hyperoptSpamWorkers.py "+ip)
@@ -37,7 +37,7 @@ p = subprocess.Popen("sbatch hyperOptScriptMain.sh", stdout=log, stderr=log, she
 start_time = time.time()
 while 1:
     exec_time = time.time()-start_time
-    if exec_time > 2200:
+    if exec_time > 5000:
         os.killpg(os.getpgid(pMongo.pid), signal.SIGTERM)
         os.killpg(os.getpgid(pOpti.pid), signal.SIGTERM)
         log.write(str(time.time())+'kill db process\n')  # python will convert \n to os.linesep
