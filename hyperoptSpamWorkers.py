@@ -48,7 +48,7 @@ for i in range(1, workerCount):
     p = subprocess.Popen("sbatch hyperOptScriptExecuteGPUFill.sh", stdout=log, stderr=log, shell=True)
 
 
-    if workerCount > 500:
+    if workerCount < 200:
         st = 0.25
     else:
         st = 16
