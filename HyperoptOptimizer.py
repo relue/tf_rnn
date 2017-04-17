@@ -1,5 +1,5 @@
 import hyperopt
-from hyperopt import fmin,tpe, hp,random
+from hyperopt import fmin,tpe, hp
 from hyperopt.mongoexp import MongoTrials
 import HyperoptObjective
 import logging
