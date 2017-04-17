@@ -1,5 +1,5 @@
 import hyperopt
-from hyperopt import fmin,tpe, hp
+from hyperopt import fmin,tpe, hp,random
 from hyperopt.mongoexp import MongoTrials
 import HyperoptObjective
 import logging
@@ -73,6 +73,6 @@ ip = sys.argv[1]
 #print hyperopt.pyll.stochastic.sample(space)
 #finalCountdown random
 #finalCountdown_TPE tpe
-trials = MongoTrials('mongo://'+ip+':27017/foo_db/jobs', exp_key='finalCountdown_TPE2')
-best = fmin(fn=objective, space=space, trials=trials, algo=hyperopt.random.suggest, max_evals=200000, verbose=999)
+trials = MongoTrials('mongo://'+ip+':27017/final_db/jobs', exp_key='rand1')
+best = fmin(fn=objective, space=space, trials=trials, algo=hyperopt.rand.suggest, max_evals=200000, verbose=999)
 print best
