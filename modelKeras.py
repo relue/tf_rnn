@@ -71,7 +71,7 @@ class KerasModel():
         inputT, outputT, inputV, outputV = self.getTestSets(xInput, xOutput, validationPercentage)
         inputSize = inputT.shape[2]
         opt = keras.optimizers.SGD(lr=0.1, momentum=0.0, decay=0.0, nesterov=False)
-        early = keras.callbacks.EarlyStopping(monitor='loss', min_delta=0, patience=10, verbose=0, mode='auto')
+        early = keras.callbacks.EarlyStopping(monitor='loss', min_delta=0, patience=10, verbose=2, mode='auto')
         start_time = time.time()
         model = Sequential()
         returnSequence = True if hiddenLayers > 1 else False
