@@ -43,7 +43,7 @@ class KerasModel():
                indexID = 1,
                optimizer = "adam",
                stationIDs = [13],
-               validationPercentage = 0.05,
+               validationPercentage = 0.20,
                weightInit = "lecun_uniform",
                activationFunction = "tanh",
                standardizationType = "minmax",
