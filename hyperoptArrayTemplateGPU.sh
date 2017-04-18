@@ -9,5 +9,5 @@
 #SBATCH --time=03:00:00
 #SBATCH --ntasks=1
 #SBATCH --output=logs/slurmStartWorkerArray.log
-#SBATCH --mem10000
+#SBATCH --mem=10000
 sh HyperoptWorkerWrapper.sh $1
