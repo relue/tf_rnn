@@ -51,7 +51,7 @@ pSearch.yaxis.axis_label = "Minimum Error"
 l_params.append([pSearch, None])
 ap = gridplot(l_params)
 show(ap)
-output_file('optimizeProgress.html')
+output_file('bokehPlots/optimizeProgress.html')
 l_params = []
 i = 1
 h = 1
@@ -106,13 +106,13 @@ for paramName in toPlot:
 
     l_params.append([p1, p2, p3])
     if i % 5 == 0:
-        output_file('hyperparams'+str(h)+'.html')
+        output_file('bokehPlots/hyperparams'+str(h)+'.html')
         ap = gridplot(l_params)
         show(ap)
         l_params = []
         h += 1
 
-output_file('hyperparams'+str(h)+'.html')
+output_file('bokehPlots/hyperparams'+str(h)+'.html')
 ap = gridplot(l_params)
 show(ap)
 

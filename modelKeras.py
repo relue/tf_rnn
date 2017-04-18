@@ -38,7 +38,7 @@ class KerasModel():
                hiddenNodes = 30,
                hiddenLayers = 2,
                batchSize = 1,
-               epochSize = 20,
+               epochSize = 30,
                earlyStopping = True,
                indexID = 1,
                optimizer = "adam",
@@ -130,22 +130,37 @@ class KerasModel():
         print "test 3 "+str((time.time() - start_time))
         if createHTML:
             plots = []
-            output_file("bokehPlots/modeloutput" + str(indexID) + ".html")
+
             if showEpochPlots:
                 epochPlots = self.getEpochPlots(customCallback)
-                plots += epochPlots
+                output_file("bokehPlots/epochs.html")
+                #plots += epochPlots
+                grid = [[plot] for plot in epochPlots]
+                ap = gridplot(grid)
+                if isShow:
+                    show(ap)
+
             if showKagglePlots:
                 kagglePlots = self.getKagglePlots(test_pV, test_xOutputV)
-                plots += kagglePlots
+                output_file("bokehPlots/kaggleTest" + str(indexID) + ".html")
+                grid = [[plot] for plot in kagglePlots]
+                ap = gridplot(grid)
+                if isShow:
+                    show(ap)
+
             if showTrainValPlots:
+                output_file("bokehPlots/trainValPlot" + str(indexID) + ".html")
                 trainValPlots = self.getTrainValPlots(train_pV, train_xOutputV, val_pV, val_xOutputV)
-                plots += trainValPlots
+                #plots += trainValPlots
+                grid = [[plot] for plot in trainValPlots]
+                ap = gridplot(grid)
+                if isShow:
+                    show(ap)
 
             from bokeh.layouts import column
             grid = [[plot] for plot in plots]
             ap = gridplot(grid)
-            if isShow:
-                show(ap)
+
 
     def getLinePlot(self, pV, xOutputV, zoneID, title):
         p = figure(width=1000, height=500, toolbar_location="left", title=title+" - Zone " + str(zoneID))

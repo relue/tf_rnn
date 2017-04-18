@@ -18,7 +18,7 @@ data["stationIDs"] = [13]
 data["timeWindow"] = 7*24
 
 data["showEpochPlots"] = True
-data["showKagglePlots"] = False
+data["showKagglePlots"] = True
 data["showTrainValPlots"] = True
 
 
