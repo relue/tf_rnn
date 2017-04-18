@@ -5,7 +5,7 @@ import sys
 log = open("logs/startWorker.log", "w")
 
 def createBatchFile(singleCommand, com2):
-    with open("hyperOptScript.sh", "rt") as fin:
+    with open("hyperoptArrayTemplate.sh", "rt") as fin:
         with open("hyperOptScriptExecute.sh", "wt") as fout:
             for line in fin:
                 line = line.replace('?job?', singleCommand)
@@ -30,8 +30,8 @@ def createBatchFileGPU(singleCommand, com2):
                 line = line.replace('?job?', com2)
                 fout.write(line)
 
-workerCount = 100
-ip=sys.argv[1]
+workerCount = 4000
+
 comLong = "srun --ntasks=1 --time=06:00:00 --mem-per-cpu=2500 sh ~/pythonProjects/tf_rnn/HyperoptWorkerWrapper.sh "+ip
 comFast = "srun --ntasks=1 --time=06:00:00 --mem-per-cpu=2500 sh ~/pythonProjects/tf_rnn/HyperoptWorkerWrapper.sh "+ip
 #comMid1 = "srun --ntasks=1 --time=03:00:00 --mem=10000 sh ~/pythonProjects/tf_rnn/HyperoptWorkerWrapper.sh "+ip

@@ -27,12 +27,12 @@ ipLog.close()
 startDB = "ulimit -u 20000 && mongod --dbpath ~/mongo/mongodb/mongodb-linux-x86_64-3.4.2/data/db"
 startOptimizer = "source ../env/bin/activate; python HyperoptOptimizer.py "+ip
 
-createBatchFile("srun --time=12:00:00 --mem=10000 ~/pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/hyperoptSpamWorkers.py "+ip)
+createBatchFile("srun --time=12:00:00 --mem-per-cpu=10000 ~/pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/hyperoptSpamWorkers.py "+ip)
 
 
 pMongo = subprocess.Popen(startDB, stdout=logDB, stderr=logDB, shell=True, preexec_fn=os.setsid)
 pOpti = subprocess.Popen(startOptimizer, stdout=log, stderr=log, shell=True, preexec_fn=os.setsid)
-p = subprocess.Popen("sbatch hyperOptScriptMain.sh", stdout=log, stderr=log, shell=True)
+p = subprocess.Popen("sbatch hyperoptArrayTemplate.sh "+ip, stdout=log, stderr=log, shell=True)
 
 start_time = time.time()
 while 1:
