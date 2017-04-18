@@ -32,8 +32,8 @@ createBatchFile("srun --time=12:00:00 --mem-per-cpu=10000 ~/pythonProjects/env/b
 
 pMongo = subprocess.Popen(startDB, stdout=logDB, stderr=logDB, shell=True, preexec_fn=os.setsid)
 pOpti = subprocess.Popen(startOptimizer, stdout=log, stderr=log, shell=True, preexec_fn=os.setsid)
-p = subprocess.Popen("sbatch logs/cache/hyperoptArrayTemplate.sh "+ip, stdout=log, stderr=log, shell=True)
-p = subprocess.Popen("sbatch logs/cache/hyperoptArrayTemplateGPU.sh "+ip, stdout=log, stderr=log, shell=True)
+p = subprocess.Popen("cd logs/cache/ && sbatch hyperoptArrayTemplate.sh "+ip, stdout=log, stderr=log, shell=True)
+p = subprocess.Popen("cd logs/cache/ && sbatch hyperoptArrayTemplateGPU.sh "+ip, stdout=log, stderr=log, shell=True)
 
 start_time = time.time()
 while 1:
