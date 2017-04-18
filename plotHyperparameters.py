@@ -21,7 +21,9 @@ errorBounds = {
         "val_rmse":  (19000 , 100000),
         "test_rmse": (140000,400000),
 }
-toPlot = ["epochSize", "learningRate", "hiddenLayers", "timeWindow", "hiddenNodes", "l1Penalty", "standardizationType", "activationFunction", "optimizer", "batchSize", "weightInit", "useHoliday", "useWeekday"]
+toPlot = ["epochSize", "learningRate", "hiddenLayers", "timeWindow", "hiddenNodes",
+          "l1Penalty", "standardizationType", "activationFunction", "optimizer", "batchSize",
+          "weightInit", "useHoliday", "useWeekday"]
 #toPlot = []
 c = experimentConfig.Config()
 errorType = "val_rmse"
@@ -45,11 +47,17 @@ pSearch.line(dfNewPlain.index, dfNewPlain['min'], color="red", line_width=0.5, l
 pSearch.xaxis.axis_label = "Runs"
 pSearch.yaxis.axis_label = "Minimum Error"
 
-output_file('hyperparams2.html')
+
 l_params.append([pSearch, None])
+ap = gridplot(l_params)
+show(ap)
+output_file('optimizeProgress.html')
+l_params = []
+i = 1
+h = 1
 for paramName in toPlot:
     isDiscrete = c.parameterTypeDiscrete[paramName]
-
+    i += 1
     x = dfNew[paramName].tolist()
     y = dfNew[errorType].tolist()
     y2 = dfNew["exec_time"].tolist()
@@ -82,20 +90,30 @@ for paramName in toPlot:
         p3.add_layout(legend3, 'below')
 
     else:
-        p1 = BoxPlot(dfNew, values=errorType, label=paramName,title=paramName+" and "+errorType, outliers=False)
+        p1 = BoxPlot(dfNew, values=errorType, label=paramName,title=paramName+" and "+errorType, outliers=False, legend=False)
         p1.xaxis.axis_label = paramName
+        p1.xaxis.major_label_orientation = math.pi / 4
         p1.yaxis.axis_label = errorType
 
-        p2 = BoxPlot(dfNew, values=errorType2, label=paramName,title=paramName+" and "+errorType2, outliers=False)
+        p2 = BoxPlot(dfNew, values=errorType2, label=paramName,title=paramName+" and "+errorType2, outliers=False, legend=False)
         p2.xaxis.axis_label = paramName
         p2.yaxis.axis_label = errorType2
 
-        p3 = BoxPlot(dfNew, values="exec_time", label=paramName,title=paramName+" and execution time", outliers=False)
+        p3 = BoxPlot(dfNew, values="exec_time", label=paramName,title=paramName+" and execution time", outliers=False, legend=False)
         p3.xaxis.axis_label = paramName
         p3.yaxis.axis_label = "execution time"
 
 
     l_params.append([p1, p2, p3])
+    if i % 5 == 0:
+        output_file('hyperparams'+str(h)+'.html')
+        ap = gridplot(l_params)
+        show(ap)
+        l_params = []
+        h += 1
 
+output_file('hyperparams'+str(h)+'.html')
 ap = gridplot(l_params)
 show(ap)
+
+
