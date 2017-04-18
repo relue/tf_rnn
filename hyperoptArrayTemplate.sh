@@ -9,4 +9,4 @@
 #SBATCH --time=12:00:00
 #SBATCH --ntasks=1
 #SBATCH --mem-per-cpu=2500
-sh HyperoptWorkerWrapper.sh $1
+sh logs/cache/HyperoptWorkerWrapper.sh $1
