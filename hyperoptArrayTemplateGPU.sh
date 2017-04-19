@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH -J HyWorkGPU
-#SBATCH --array 0-100
+#SBATCH --array 0-1000
 #SBATCH -o logs/arr/gpu-%a.out
 #SBATCH -e logs/arr/gpu-%a.err
 #SBATCH --ntasks=1
