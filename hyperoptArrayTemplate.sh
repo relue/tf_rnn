@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH -J HyWorkers
-#SBATCH --array 0-2000
+#SBATCH --array 0-4000
 #SBATCH -o logs/arr/cpu-%a.out
 #SBATCH -e logs/arr/cpu-%a.err
 #SBATCH --ntasks=1
