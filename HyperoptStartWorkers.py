@@ -24,9 +24,9 @@ logDB = open("logs/mongo.log", "w")
 ipLog = open("logs/ip.log", "w")
 ipLog.write(ip)
 ipLog.close()
-startDB = "ulimit -u 15000 && mongod --dbpath ~/mongo/mongodb/mongodb-linux-x86_64-3.4.2/data/db"
-startOptimizer = "ulimit -u 15000 && source ../env/bin/activate; python HyperoptOptimizer.py "+ip
-
+startDB = "ulimit -u 30000 && mongod --dbpath ~/mongo/mongodb/mongodb-linux-x86_64-3.4.2/data/db"
+startOptimizer = "ulimit -u 30000 && source ../env/bin/activate; python HyperoptOptimizer.py "+ip
+#foo = Popen("source the_script.sh", shell=True, executable="/bin/bash")
 #createBatchFile("srun --time=12:00:00 --mem-per-cpu=10000 ~/pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/hyperoptSpamWorkers.py "+ip)
 
 
@@ -38,14 +38,15 @@ p = subprocess.Popen("cp hyperoptArrayTemplateGPU.sh logs/cache/hyperoptArrayTem
 start_time = time.time()
 while 1:
     exec_time = time.time()-start_time
-    if exec_time > 1800:
+    if exec_time > 7600:
         os.killpg(os.getpgid(pMongo.pid), signal.SIGTERM)
         os.killpg(os.getpgid(pOpti.pid), signal.SIGTERM)
         log.write(str(time.time())+'kill db process\n')  # python will convert \n to os.linesep
 
-        time.sleep(30)
+        time.sleep(60)
         pMongo = subprocess.Popen(startDB, stdout=logDB, stderr=logDB, shell=True, preexec_fn=os.setsid)
         pOpti = subprocess.Popen(startOptimizer, stdout=log, stderr=log, shell=True, preexec_fn=os.setsid)
         start_time = time.time()
+        log.write(str(time.time()) + 'restart\n')
     time.sleep(60)
 
