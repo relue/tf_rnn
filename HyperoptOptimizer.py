@@ -93,7 +93,7 @@ ip = sys.argv[1]
 #print hyperopt.pyll.stochastic.sample(space)
 #finalCountdown random
 #finalCountdown_TPE tpe
-db_experiment1 = "final_db"
+#db_experiment1 = "final_db"
 db_experiment2 = "db_tpe1"
 key_experiment1 = "rand1"
 key_experiment2 = "firstTpe"
