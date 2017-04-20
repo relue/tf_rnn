@@ -104,7 +104,7 @@ class KerasModel():
         if earlyStopping == False:
             epochSize = 50
             callbacks.append(early)
-        history = model.fit(inputT, outputT, nb_epoch=epochSize, batch_size=batchSize, verbose=2, callbacks=callbacks)#callbacks=[early]
+        history = model.fit(inputT, outputT, nb_epoch=epochSize, batch_size=batchSize, verbose=0, callbacks=callbacks)#callbacks=[early]
 
         finalTestError, test_pV, test_xOutputV = self.getTestError(model, testInput,testOutput,scalerOutput)
         errorsTrain, train_pV, train_xOutputV = self.calulateModelErrors(inputT, outputT, scalerOutput, model)
