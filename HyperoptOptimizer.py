@@ -101,5 +101,5 @@ key = key_experiment2
 db = db_experiment2
 
 trials = MongoTrials('mongo://'+ip+':27017/'+db+'/jobs', exp_key=key)
-best = fmin(fn=objective, space=space, trials=trials, algo=hyperopt.tpe.suggest, max_evals=300000, verbose=999)
+best = fmin(fn=objective, space=space, trials=trials, algo=hyperopt.tpe.suggest, max_evals=300000, verbose=1)
 print best
