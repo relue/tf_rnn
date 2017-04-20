@@ -52,7 +52,9 @@ def objective(x):
     data = dict(x.items() + data.items())
     return data
 
-space =  {
+
+
+space_1 =  {
         'standardizationType': hp.choice('standardizationType', ["minmax", "zscore"]),
         'epochSize' : hp.choice('epochSize', range(5,30)),
         "learningRate": hp.uniform('learningRate', 0 , 1),
@@ -69,10 +71,35 @@ space =  {
         "useWeekday": hp.choice('useWeekday', [True, False]),
         "dirPath": dir_path
     }
+
+space =  {
+        'standardizationType': hp.choice('standardizationType', ["zscore"]),
+        'epochSize' : hp.choice('epochSize', range(5,30)),
+        "learningRate": hp.uniform('learningRate', 0 , 1),
+        "DropoutProp": hp.uniform('DropoutProp', 0.0001, 0.99),
+        "l1Penalty": hp.uniform('l1Penalty',0.0001, 0.99),
+        "activationFunction": hp.choice('activationFunction',["tanh", "sigmoid", "relu"]),
+        "hiddenNodes": hp.choice('hiddenNodes', range(10,300)),
+        "optimizer": hp.choice('optimizer', ['adam', 'sgd', 'rms','ada', 'adadelta']),
+        "timeWindow": hp.choice('timeWindow', range(24,337, 24)),
+        "batchSize": hp.choice('batchSize', range(1,101)),
+        "hiddenLayers": hp.choice('hiddenLayers', range(1,4)),
+        "weightInit": hp.choice('weightInit', ["glorot_normal"]),
+        "useHoliday": hp.choice('useHoliday', [True]),
+        "useWeekday": hp.choice('useWeekday', [True]),
+        "dirPath": dir_path
+    }
 ip = sys.argv[1]
 #print hyperopt.pyll.stochastic.sample(space)
 #finalCountdown random
 #finalCountdown_TPE tpe
-trials = MongoTrials('mongo://'+ip+':27017/final_db/jobs', exp_key='rand1')
-best = fmin(fn=objective, space=space, trials=trials, algo=hyperopt.rand.suggest, max_evals=300000, verbose=999)
+db_experiment1 = "final_db"
+db_experiment2 = "db_tpe1"
+key_experiment1 = "rand1"
+key_experiment2 = "firstTpe"
+key = key_experiment2
+db = db_experiment2
+
+trials = MongoTrials('mongo://'+ip+':27017/'+db+'/jobs', exp_key=key)
+best = fmin(fn=objective, space=space, trials=trials, algo=hyperopt.tpe.suggest, max_evals=300000, verbose=999)
 print best

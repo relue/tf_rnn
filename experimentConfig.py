@@ -66,6 +66,22 @@ class Config():
         "noFillZero": [True, False],
         "stationIDs": range(1,13),
     }
+    experimentConfigWide = {
+        'standardizationType': ["minmax", "zscore"],
+        'epochSize': range(5, 30),
+        "learningRate": (0, 1),
+        "DropoutProp": (0.0001, 0.99),
+        "l1Penalty": (0.0001, 0.99),
+        "activationFunction": ["tanh", "sigmoid", "relu"],
+        "hiddenNodes": range(10, 300),
+        "optimizer": ['adam', 'sgd', 'rms', 'ada', 'adadelta'],
+        "timeWindow": range(1, 336),
+        "batchSize": range(1, 101),
+        "hiddenLayers": range(1, 10),
+        "weightInit": ["zero", "one", "normal", "glorot_uniform", "lecun_uniform", "glorot_normal"],
+        "useHoliday": [True, False],
+        "useWeekday": [True, False]
+    }
     defDict = {
         "learningRate":  (0 , 1),
         "DropoutProp": (0.01, 0.99),

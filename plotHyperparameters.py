@@ -18,8 +18,8 @@ from bokeh.models.widgets import DataTable, DateFormatter, TableColumn, Dropdown
 from bokeh.charts import BoxPlot
 
 errorBounds = {
-        "val_rmse":  (19000 , 100000),
-        "test_rmse": (140000,400000),
+        "val_rmse":  (14000 , 26000),
+        "test_rmse": (110000,180000),
 }
 toPlot = ["epochSize", "learningRate", "hiddenLayers", "timeWindow", "hiddenNodes",
           "l1Penalty", "standardizationType", "activationFunction", "optimizer", "batchSize",
@@ -60,6 +60,7 @@ for paramName in toPlot:
     i += 1
     x = dfNew[paramName].tolist()
     y = dfNew[errorType].tolist()
+    y2 = dfNew[errorType].tolist()
     y2 = dfNew["exec_time"].tolist()
     if True:
         p1 = figure(width=500, height=500, y_range=(errorBounds[errorType][0],errorBounds[errorType][1]))#x_range = (defDict[paramName][0],defDict[paramName][1]),
@@ -74,7 +75,7 @@ for paramName in toPlot:
         p2 = figure(width=500, height=500, y_range=(errorBounds[errorType2][0],errorBounds[errorType2][1]))#x_range = (defDict[paramName][0],defDict[paramName][1]),
         p2.xaxis.axis_label = paramName
         p2.yaxis.axis_label = errorType2
-        r31 = p2.circle(x, y, color="red", size=2, alpha=0.6)
+        r31 = p2.circle(x, y2, color="red", size=2, alpha=0.6)
         legend3 = Legend(legends=[
             (paramName+" and "+errorType2,   [r31])
         ], location=(40, 5))
@@ -105,15 +106,15 @@ for paramName in toPlot:
 
 
     l_params.append([p1, p2, p3])
-    if i % 5 == 0:
-        output_file('bokehPlots/hyperparams'+str(h)+'.html')
+    if i % 1 == 0:
+        output_file('bokehPlots/randomsearch_'+paramName+'.html')
         ap = gridplot(l_params)
-        show(ap)
+        #show(ap)
         l_params = []
         h += 1
 
-output_file('bokehPlots/hyperparams'+str(h)+'.html')
-ap = gridplot(l_params)
-show(ap)
+#output_file('bokehPlots/hyperparams'+str(h)+'.html')
+#ap = gridplot(l_params)
+#show(ap)
 
 
