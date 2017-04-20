@@ -38,7 +38,7 @@ p = subprocess.Popen("cp hyperoptArrayTemplateGPU.sh logs/cache/hyperoptArrayTem
 start_time = time.time()
 while 1:
     exec_time = time.time()-start_time
-    if exec_time > 5000:
+    if exec_time > 10000:
         os.killpg(os.getpgid(pMongo.pid), signal.SIGTERM)
         os.killpg(os.getpgid(pOpti.pid), signal.SIGTERM)
         log.write(str(time.time())+'kill db process\n')  # python will convert \n to os.linesep
