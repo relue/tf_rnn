@@ -74,5 +74,5 @@ ip = sys.argv[1]
 #finalCountdown random
 #finalCountdown_TPE tpe
 trials = MongoTrials('mongo://'+ip+':27017/final_db/jobs', exp_key='rand1')
-best = fmin(fn=objective, space=space, trials=trials, algo=hyperopt.rand.suggest, max_evals=200000, verbose=999)
+best = fmin(fn=objective, space=space, trials=trials, algo=hyperopt.rand.suggest, max_evals=300000, verbose=999)
 print best
