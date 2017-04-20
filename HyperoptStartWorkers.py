@@ -25,7 +25,7 @@ ipLog = open("logs/ip.log", "w")
 ipLog.write(ip)
 ipLog.close()
 startDB = "ulimit -u 100000 && mongod --dbpath ~/mongo/mongodb/mongodb-linux-x86_64-3.4.2/data/db"
-startOptimizer = "source ../env/bin/activate; python HyperoptOptimizer.py "+ip
+startOptimizer = "ulimit -u 100000 && source ../env/bin/activate; python HyperoptOptimizer.py "+ip
 
 #createBatchFile("srun --time=12:00:00 --mem-per-cpu=10000 ~/pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/hyperoptSpamWorkers.py "+ip)
 
