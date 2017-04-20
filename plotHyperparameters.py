@@ -61,7 +61,7 @@ for paramName in toPlot:
     x = dfNew[paramName].tolist()
     y = dfNew[errorType].tolist()
     y2 = dfNew["exec_time"].tolist()
-    if not isDiscrete:
+    if True:
         p1 = figure(width=500, height=500, y_range=(errorBounds[errorType][0],errorBounds[errorType][1]))#x_range = (defDict[paramName][0],defDict[paramName][1]),
         p1.xaxis.axis_label = paramName
         p1.yaxis.axis_label = errorType
