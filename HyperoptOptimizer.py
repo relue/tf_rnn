@@ -51,7 +51,7 @@ def objective(x):
     data['status'] = STATUS_OK
     data['loss'] = data['val_rmse']
     if math.isnan(data['loss']) == True:
-        raise Exception('nan', 'nan')
+        data['loss'] = 9999999
     data = dict(x.items() + data.items())
     return data
 
