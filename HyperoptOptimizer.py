@@ -3,7 +3,7 @@ from hyperopt import fmin,tpe, hp
 from hyperopt.mongoexp import MongoTrials
 import HyperoptObjective
 import logging
-logging.basicConfig(filename='logs/fminLog.log')
+logging.basicConfig(filename='logs/fminLog.log', level=10)
 
 
 
