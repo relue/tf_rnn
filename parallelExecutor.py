@@ -15,35 +15,44 @@ def createBatchFile(singleCommand,parameters, id):
                 fout.write(line)
 import experimentConfig
 
-isRandomSearch = False
-#if isRandomSearch:
 c = experimentConfig.Config()
-
-maxRandomTrials = 50000
-maxIters = 10
-parameters = experimentConfig.Config.parametersAddtionalInput
-#permMatrix = list(itertools.product(*parameters.values()))
-
-#random.shuffle(permMatrix)
-#iters = len(permMatrix)
-#print "Anzahl der Permutationen:"+str(iters)
 log = open("parallelExecDetail.log", "w")
-permIndex = 0
-#p = subprocess.Popen("scancel -u s2071275",  stdout=log, stderr=log, shell=True)
 for filename in os.listdir("jobResults/"):
     os.remove("jobResults/"+filename)
 for filename in os.listdir("batchScripts/"):
     os.remove("batchScripts/"+filename)
-preCommand = "export PYTHONWARNINGS='ignore' && source ~/pythonProjects/tf_rnn/preInit.sh && "
-command = ""
 
 def executeConfig(setting, permIndex):
     setting["indexID"] = permIndex
     data_str = json.dumps(setting)
     createBatchFile(
-            "srun --cpus-per-task=1 --time=01:00:00 --mem=3110 ~/pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/singleExecution.py '" + data_str + "' 0",
+            "srun --time=02:00:00 --mem-per-cpu=2510 ~/pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/singleExecution.py '" + data_str + "' 0",
         data_str,permIndex)
     p = subprocess.Popen("sbatch batchScripts/script" + str(permIndex) + ".sh", stdout=log, stderr=log, shell=True)
+
+data = {}
+data["earlyStopping"] = True
+data["epochSize"] = 15
+data["batchSize"] = 1
+data["learningRate"] = 0.001
+data["standardizationType"] = "zscore"
+data["stationIDs"] = [13]
+data["noFillZero"] = True
+data["useHoliday"] = True
+data["useWeekday"] = True
+data["l1Penalty"] = 0.000001
+data["DropoutProp"] = 0.001
+data["hiddenNodes"] = 30
+data["hiddenLayers"] = 2
+data["batchSize"] = 1
+data["epochSize"] = 30
+data["earlyStopping"] = True
+data["optimizer"] = "adam"
+data["stationIDs"] = [13]
+data["weightInit"] = "lecun_uniform"
+data["activationFunction"] = "tanh"
+
+
 
 for el in permMatrix:
     keys=parameters.keys()
