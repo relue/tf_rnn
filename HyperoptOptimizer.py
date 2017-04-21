@@ -42,6 +42,7 @@ def objective(x):
     del x["dirPath"]
     from hyperopt import  STATUS_OK
     import imp
+    import math
 
     modelKeras = imp.load_source('modelKeras', path+'/modelKeras.py')
     modelOut = modelKeras.KerasModel(**x)
@@ -49,6 +50,8 @@ def objective(x):
     data = modelOut.results
     data['status'] = STATUS_OK
     data['loss'] = data['val_rmse']
+    if math.isnan(data['loss']) == True:
+        raise Exception('nan', 'nan')
     data = dict(x.items() + data.items())
     return data
 
@@ -94,7 +97,8 @@ ip = sys.argv[1]
 #finalCountdown random
 #finalCountdown_TPE tpe
 #db_experiment1 = "final_db"
-db_experiment2 = "db_tpe2"
+#db_experiment2 = "db_tpe2"
+db_experiment2 = "db_tpe3"
 key_experiment1 = "rand1"
 key_experiment2 = "firstTpe"
 key = key_experiment2
