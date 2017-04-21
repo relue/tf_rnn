@@ -94,7 +94,7 @@ ip = sys.argv[1]
 #finalCountdown random
 #finalCountdown_TPE tpe
 #db_experiment1 = "final_db"
-db_experiment2 = "db_tpe1"
+db_experiment2 = "db_tpe2"
 key_experiment1 = "rand1"
 key_experiment2 = "firstTpe"
 key = key_experiment2
