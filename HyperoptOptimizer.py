@@ -36,14 +36,15 @@ import os.path
 import os
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
-
 def objective(x):
     path = x["dirPath"]
     del x["dirPath"]
     from hyperopt import  STATUS_OK
     import imp
     import math
-
+    convInt = ["batchSize", "timeWindow", "hiddenNodes","epochSize", "hiddenLayers"]
+    for param in convInt:
+        x[param] = int(x[param])
     modelKeras = imp.load_source('modelKeras', path+'/modelKeras.py')
     modelOut = modelKeras.KerasModel(**x)
     data = {}
@@ -119,7 +120,7 @@ ip = sys.argv[1]
 #db_experiment1 = "final_db"
 #db_experiment2 = "db_tpe2"
 db_experiment2 = "db_tpe3"
-db_experiment3 = "db_tpe4"
+db_experiment3 = "db_tpe5"
 key_experiment1 = "rand1"
 key_experiment2 = "firstTpe"
 key = key_experiment2
