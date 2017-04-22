@@ -52,7 +52,7 @@ def objective(x):
     data['status'] = STATUS_OK
     data['loss'] = data['val_rmse']
     if math.isnan(data['loss']) == True:
-        data['loss'] = 45000
+        data['loss'] = 80000
     data = dict(x.items() + data.items())
     return data
 
