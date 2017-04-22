@@ -100,8 +100,8 @@ db_experiment3 = "db_tpe4"
 spaceNarrow=  {
         'epochSize' : hp.quniform('epochSize', 8, 40, 1),
         "learningRate": hp.loguniform('learningRate', -9 , -0.5),
-        "DropoutProp": hp.loguniform('DropoutProp', -9, -0.5),
-        "l1Penalty": hp.loguniform('l1Penalty', -9, -0.5),
+        "DropoutProp": hp.loguniform('DropoutProp', -8.5, -0.5),
+        "l1Penalty": hp.loguniform('l1Penalty', -9, -2),
         "activationFunction": hp.choice('activationFunction',["tanh", "relu"]),
         "hiddenNodes": hp.quniform('hiddenNodes', 10,200, 10),
         "optimizer": hp.choice('optimizer', ['adam', 'sgd', 'rms']),
@@ -117,14 +117,11 @@ ip = sys.argv[1]
 #print hyperopt.pyll.stochastic.sample(space)
 #finalCountdown random
 #finalCountdown_TPE tpe
-#db_experiment1 = "final_db"
-#db_experiment2 = "db_tpe2"
-db_experiment2 = "db_tpe3"
-db_experiment3 = "db_tpe6"
-key_experiment1 = "rand1"
-key_experiment2 = "firstTpe"
-key = key_experiment2
-db = db_experiment3
+#key = "final_db"
+#db = "db_tpe3"
+db = "db_tpe6"
+#key = "rand1"
+key = "firstTpe"
 
 trials = MongoTrials('mongo://127.0.0.1:27017/'+db+'/jobs', exp_key=key)
 best = fmin(fn=objective, space=spaceNarrow, trials=trials, algo=hyperopt.tpe.suggest, max_evals=300000, verbose=1)
