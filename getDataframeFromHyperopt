@@ -15,7 +15,7 @@ ip= first_line
 
 db_experiment1 = "final_db"
 db_experiment2 = "db_tpe3"
-db = "db_tpe6"
+db = "db_tpe7"
 key_experiment1 = "rand1"
 key_experiment2 = "firstTpe"
 key = key_experiment2
