@@ -318,6 +318,8 @@ class KerasModel():
             errors['mape'] = np.mean(mapeList)
         except ValueError:
             print "scaler out of bounds"
+            pV = []
+            outputV = []
             for d in errors:
                 errors[d] = numpy.nan
         return errors, pV, outputV
@@ -415,6 +417,8 @@ class KerasModel():
         except ValueError:
             print "scaler out of bounds"
             finalTestError = np.nan
+            pV = []
+            testOutput = []
 
         return finalTestError, pV, testOutput
 
