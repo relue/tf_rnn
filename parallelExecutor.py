@@ -30,12 +30,14 @@ def executeConfig(setting, permIndex):
         data_str,permIndex)
     p = subprocess.Popen("sbatch batchScripts/script" + str(permIndex) + ".sh", stdout=log, stderr=log, shell=True)
 
+maxResolution = 10
 data = {}
 data["earlyStopping"] = True
 data["epochSize"] = 15
 data["batchSize"] = 1
 data["learningRate"] = 0.001
 data["standardizationType"] = "zscore"
+data["activationFunction"] = "tanh"
 data["stationIDs"] = [13]
 data["noFillZero"] = True
 data["useHoliday"] = True
@@ -43,14 +45,13 @@ data["useWeekday"] = True
 data["l1Penalty"] = 0.000001
 data["DropoutProp"] = 0.001
 data["hiddenNodes"] = 30
-data["hiddenLayers"] = 2
-data["batchSize"] = 1
-data["epochSize"] = 30
+data["hiddenLayers"] = 20
 data["earlyStopping"] = True
 data["optimizer"] = "adam"
 data["stationIDs"] = [13]
 data["weightInit"] = "lecun_uniform"
 data["activationFunction"] = "tanh"
+data["timeWindow"] = 7*24
 
 
 
