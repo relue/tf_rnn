@@ -1,1 +1,1 @@
-source ~/pythonProjects/tf_rnn/preInit.sh ; source ~/pythonProjects/env/bin/activate; hyperopt-mongo-worker --exp-key=firstTpe --max-jobs=10000 --max-consecutive-failures=10000 --reserve-timeout=900 --mongo=$1:27017/db_tpe3 --poll-interval=60
+source ~/pythonProjects/tf_rnn/preInit.sh ; source ~/pythonProjects/env/bin/activate; hyperopt-mongo-worker --exp-key=firstTpe --max-jobs=10000 --max-consecutive-failures=10 --reserve-timeout=900 --mongo=$1:27017/db_tpe4 --poll-interval=60

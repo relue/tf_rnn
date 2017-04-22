@@ -51,11 +51,9 @@ def objective(x):
     data['status'] = STATUS_OK
     data['loss'] = data['val_rmse']
     if math.isnan(data['loss']) == True:
-        data['loss'] = 9999999
+        data['loss'] = 45000
     data = dict(x.items() + data.items())
     return data
-
-
 
 space_1 =  {
         'standardizationType': hp.choice('standardizationType', ["minmax", "zscore"]),
@@ -75,10 +73,12 @@ space_1 =  {
         "dirPath": dir_path
     }
 
-space =  {
-        'standardizationType': hp.choice('standardizationType', ["zscore"]),
+#fast ganzer Bereich
+db_experiment3 = "db_tpe3"
+spaceWideFiltered =  {
+        'standardizationType': hp.choice('standardizationType', ["zscore"]), #da in Voruntersuchung besser
         'epochSize' : hp.choice('epochSize', range(5,30)),
-        "learningRate": hp.uniform('learningRate', 0 , 1),
+        "learningRate": hp.uniform('learningRate', 0 , 1), # niedrig empfohlen
         "DropoutProp": hp.uniform('DropoutProp', 0.0001, 0.99),
         "l1Penalty": hp.uniform('l1Penalty',0.0001, 0.99),
         "activationFunction": hp.choice('activationFunction',["tanh", "sigmoid", "relu"]),
@@ -92,6 +92,26 @@ space =  {
         "useWeekday": hp.choice('useWeekday', [True]),
         "dirPath": dir_path
     }
+
+db_experiment3 = "db_tpe4"
+
+#fast ganzer Bereich
+spaceNarrow=  {
+        'epochSize' : hp.quniform('epochSize', 8, 40, 1),
+        "learningRate": hp.loguniform('learningRate', -9 , -0.5),
+        "DropoutProp": hp.loguniform('DropoutProp', -9, -0.5),
+        "l1Penalty": hp.loguniform('l1Penalty', -9, -0.5),
+        "activationFunction": hp.choice('activationFunction',["tanh", "relu"]),
+        "hiddenNodes": hp.quniform('hiddenNodes', 10,200, 10),
+        "optimizer": hp.choice('optimizer', ['adam', 'sgd', 'rms']),
+        "timeWindow": hp.quniform('timeWindow', 24, 337, 24),
+        "batchSize": hp.quniform('batchSize', 1, 100, 5),
+        "hiddenLayers": hp.quniform('hiddenLayers', 1,4,1),
+        "weightInit": hp.choice('weightInit', ["glorot_normal","lecun_uniform"]),
+        "dirPath": dir_path
+    }
+
+
 ip = sys.argv[1]
 #print hyperopt.pyll.stochastic.sample(space)
 #finalCountdown random
@@ -99,11 +119,12 @@ ip = sys.argv[1]
 #db_experiment1 = "final_db"
 #db_experiment2 = "db_tpe2"
 db_experiment2 = "db_tpe3"
+db_experiment3 = "db_tpe4"
 key_experiment1 = "rand1"
 key_experiment2 = "firstTpe"
 key = key_experiment2
-db = db_experiment2
+db = db_experiment3
 
 trials = MongoTrials('mongo://127.0.0.1:27017/'+db+'/jobs', exp_key=key)
-best = fmin(fn=objective, space=space, trials=trials, algo=hyperopt.tpe.suggest, max_evals=300000, verbose=1)
+best = fmin(fn=objective, space=spaceNarrow, trials=trials, algo=hyperopt.tpe.suggest, max_evals=300000, verbose=1)
 print best
