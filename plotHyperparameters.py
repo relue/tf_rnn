@@ -18,7 +18,7 @@ from bokeh.models.widgets import DataTable, DateFormatter, TableColumn, Dropdown
 from bokeh.charts import BoxPlot
 
 errorBounds = {
-        "val_rmse":  (14000 , 26000),
+        "val_rmse":  (14000 , 25000),
         "test_rmse": (110000,180000),
 }
 toPlot = ["epochSize", "learningRate", "hiddenLayers", "timeWindow", "hiddenNodes",
@@ -29,8 +29,9 @@ c = experimentConfig.Config()
 errorType = "val_rmse"
 errorType2 = "test_rmse"
 
-dfNew = pd.read_pickle("randomSearch.pd")
-output_file('hyperparams.html')
+plotWhat = "rand_1"
+#plotWhat = "tpe_1"
+dfNew = pd.read_pickle("searchResults/"+plotWhat+".pd")
 l_params = []
 
 dfNewPlain = dfNew.sort_index()
@@ -47,11 +48,11 @@ pSearch.line(dfNewPlain.index, dfNewPlain['min'], color="red", line_width=0.5, l
 pSearch.xaxis.axis_label = "Runs"
 pSearch.yaxis.axis_label = "Minimum Error"
 
-
+output_file('bokehPlots/'+plotWhat+'_optimizeProgress.html')
 l_params.append([pSearch, None])
 ap = gridplot(l_params)
 show(ap)
-output_file('bokehPlots/optimizeProgress.html')
+
 l_params = []
 i = 1
 h = 1
@@ -91,6 +92,7 @@ for paramName in toPlot:
         p3.add_layout(legend3, 'below')
 
     else:
+        '''
         p1 = BoxPlot(dfNew, values=errorType, label=paramName,title=paramName+" and "+errorType, outliers=False, legend=False)
         p1.xaxis.axis_label = paramName
         p1.xaxis.major_label_orientation = math.pi / 4
@@ -103,13 +105,14 @@ for paramName in toPlot:
         p3 = BoxPlot(dfNew, values="exec_time", label=paramName,title=paramName+" and execution time", outliers=False, legend=False)
         p3.xaxis.axis_label = paramName
         p3.yaxis.axis_label = "execution time"
+        '''
 
 
     l_params.append([p1, p2, p3])
     if i % 1 == 0:
-        output_file('bokehPlots/randomsearch_'+paramName+'.html')
+        output_file('bokehPlots/'+plotWhat+'_'+paramName+'.html')
         ap = gridplot(l_params)
-        #show(ap)
+        show(ap)
         l_params = []
         h += 1
 

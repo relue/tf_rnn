@@ -15,10 +15,10 @@ ip= first_line
 
 db_experiment1 = "final_db"
 db_experiment2 = "db_tpe3"
+db = "db_tpe5"
 key_experiment1 = "rand1"
 key_experiment2 = "firstTpe"
 key = key_experiment2
-db = db_experiment2
 trials = MongoTrials('mongo://'+ip+':27017/'+db+'/jobs', exp_key=key)
 finished = []
 for row in trials.results:
