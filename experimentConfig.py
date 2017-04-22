@@ -45,6 +45,13 @@ class Config():
         "standardizationType":True,
         "epochSize": True,
     }
+    parameterNumeric = {
+        "hiddenNodes": True,
+        "timeWindow": True,
+        "batchSize": True,
+        "hiddenLayers": True,
+        "epochSize": True
+    }
 
     continousParameterBounds = {
         "learningRate": (0,0.1),
@@ -80,7 +87,6 @@ class Config():
         "hiddenLayers": range(1, 10),
         "weightInit": ["zero", "one", "normal", "glorot_uniform", "lecun_uniform", "glorot_normal"],
         "useHoliday": [True, False],
-        "useWeekday": [True, False]
     }
     defDict = {
         "learningRate":  (0 , 1),

@@ -15,7 +15,7 @@ def createBatchFile(singleCommand,parameters, id):
                 fout.write(line)
 import experimentConfig
 
-c = experimentConfig.Config()
+
 log = open("parallelExecDetail.log", "w")
 for filename in os.listdir("jobResults/"):
     os.remove("jobResults/"+filename)
@@ -30,30 +30,61 @@ def executeConfig(setting, permIndex):
         data_str,permIndex)
     p = subprocess.Popen("sbatch batchScripts/script" + str(permIndex) + ".sh", stdout=log, stderr=log, shell=True)
 
-maxResolution = 10
+maxResolution = 50
 data = {}
 data["earlyStopping"] = True
-data["epochSize"] = 15
-data["batchSize"] = 1
-data["learningRate"] = 0.001
 data["standardizationType"] = "zscore"
-data["activationFunction"] = "tanh"
 data["stationIDs"] = [13]
 data["noFillZero"] = True
 data["useHoliday"] = True
 data["useWeekday"] = True
+data["earlyStopping"] = True
+
+data["epochSize"] = 15
+data["batchSize"] = 1
+data["learningRate"] = 0.001
+data["activationFunction"] = "tanh"
 data["l1Penalty"] = 0.000001
 data["DropoutProp"] = 0.001
 data["hiddenNodes"] = 30
 data["hiddenLayers"] = 20
-data["earlyStopping"] = True
 data["optimizer"] = "adam"
-data["stationIDs"] = [13]
 data["weightInit"] = "lecun_uniform"
-data["activationFunction"] = "tanh"
 data["timeWindow"] = 7*24
 
+c = experimentConfig.Config()
+runs = []
+for param in c.experimentConfigWide:
+    values = c.experimentConfigWide[param]
+    if c.parameterTypeDiscrete[param] == True:
+        ''' if c.parameterNumeric[param]:
+            steps = len(values)
+            toCheck = range(1,len(values))
+        '''
+        for pValue in values:
+            newRow = data.copy()
+            newRow[param] = pValue
+            runs.append(newRow)
+    else:
+        upV = values[1]
+        downV = values[0]
+        stepSize = float(upV) / float(maxResolution)
+        newRow = data.copy()
+        newRow[param] = downV
+        runs.append(newRow)
+        for i in range (1,maxResolution+1):
+            newRow = data.copy()
+            newRow[param] = stepSize*i
+            runs.append(newRow)
+print runs
+print runs
 
+
+
+
+c.experimentConfigWide
+c.parameterTypeDiscrete
+analyze = []
 
 for el in permMatrix:
     keys=parameters.keys()
