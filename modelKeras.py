@@ -292,15 +292,16 @@ class KerasModel():
         return inputT, outputT, inputV, outputV
 
     def calulateModelErrors(self, xInput, xOutput, scalerOutput, model):
-        pV, outputV, predList, outputList = self.prepareCalculation(xInput, xOutput, scalerOutput, model)
-        zoneIDs = range(1, 21)
-        errorList = []
-        errors = {}
-
-        sumP = 0
-        sumOutput = 0
-        mapeList = []
         try:
+            pV, outputV, predList, outputList = self.prepareCalculation(xInput, xOutput, scalerOutput, model)
+            zoneIDs = range(1, 21)
+            errorList = []
+            errors = {}
+
+            sumP = 0
+            sumOutput = 0
+            mapeList = []
+
             for zoneID in zoneIDs:
                 errorList.append(np.mean((pV[zoneID] - outputV[zoneID]) ** 2))
                 sumP += pV[zoneID]

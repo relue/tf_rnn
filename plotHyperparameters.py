@@ -1,7 +1,7 @@
 import pandas as pd
 import experimentConfig
 from bokeh.charts import Bar, output_file, show
-from bokeh.plotting import figure, show, output_file
+from bokeh.plotting import figure, show, output_file, save
 from bokeh.sampledata.autompg import autompg as df
 from bokeh.models import LinearAxis, Range1d
 from bokeh.models import Legend
@@ -51,7 +51,7 @@ pSearch.yaxis.axis_label = "Minimum Error"
 output_file('bokehPlots/'+plotWhat+'_optimizeProgress.html')
 l_params.append([pSearch, None])
 ap = gridplot(l_params)
-show(ap)
+save(ap)
 
 l_params = []
 i = 1
@@ -61,13 +61,13 @@ for paramName in toPlot:
     i += 1
     x = dfNew[paramName].tolist()
     y = dfNew[errorType].tolist()
-    y2 = dfNew[errorType].tolist()
-    y2 = dfNew["exec_time"].tolist()
+    y2 = dfNew[errorType2].tolist()
+    y3 = dfNew["exec_time"].tolist()
     if True:
         p1 = figure(width=500, height=500, y_range=(errorBounds[errorType][0],errorBounds[errorType][1]))#x_range = (defDict[paramName][0],defDict[paramName][1]),
         p1.xaxis.axis_label = paramName
         p1.yaxis.axis_label = errorType
-        r31 = p1.circle(x, y, color="red", size=2, alpha=0.6)
+        r31 = p1.circle(x, y, color="red", size=1, alpha=0.3)
         legend3 = Legend(legends=[
             (paramName+" and "+errorType,   [r31])
         ], location=(40, 5))
@@ -76,7 +76,7 @@ for paramName in toPlot:
         p2 = figure(width=500, height=500, y_range=(errorBounds[errorType2][0],errorBounds[errorType2][1]))#x_range = (defDict[paramName][0],defDict[paramName][1]),
         p2.xaxis.axis_label = paramName
         p2.yaxis.axis_label = errorType2
-        r31 = p2.circle(x, y2, color="red", size=2, alpha=0.6)
+        r31 = p2.circle(x, y2, color="red", size=1, alpha=0.3)
         legend3 = Legend(legends=[
             (paramName+" and "+errorType2,   [r31])
         ], location=(40, 5))
@@ -85,7 +85,7 @@ for paramName in toPlot:
         p3 = figure(width=500, height=500, y_range=(0,2000))#x_range = (defDict[paramName][0],defDict[paramName][1]),
         p3.xaxis.axis_label = paramName
         p3.yaxis.axis_label = "execution time"
-        r31 = p3.circle(x, y2, color="red", size=2, alpha=0.6)
+        r31 = p3.circle(x, y3, color="red", size=1, alpha=0.3)
         legend3 = Legend(legends=[
             (paramName+" and execution time",   [r31])
         ], location=(40, 5))
@@ -112,7 +112,7 @@ for paramName in toPlot:
     if i % 1 == 0:
         output_file('bokehPlots/'+plotWhat+'_'+paramName+'.html')
         ap = gridplot(l_params)
-        show(ap)
+        save(ap)
         l_params = []
         h += 1
 

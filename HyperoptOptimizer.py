@@ -106,7 +106,7 @@ spaceNarrow=  {
         "hiddenNodes": hp.quniform('hiddenNodes', 10,200, 10),
         "optimizer": hp.choice('optimizer', ['adam', 'sgd', 'rms']),
         "timeWindow": hp.quniform('timeWindow', 24, 337, 24),
-        "batchSize": hp.quniform('batchSize', 1, 100, 5),
+        "batchSize": hp.quniform('batchSize', 1, 100, 1),
         "hiddenLayers": hp.quniform('hiddenLayers', 1,4,1),
         "weightInit": hp.choice('weightInit', ["glorot_normal","lecun_uniform"]),
         "dirPath": dir_path
@@ -120,7 +120,7 @@ ip = sys.argv[1]
 #db_experiment1 = "final_db"
 #db_experiment2 = "db_tpe2"
 db_experiment2 = "db_tpe3"
-db_experiment3 = "db_tpe5"
+db_experiment3 = "db_tpe6"
 key_experiment1 = "rand1"
 key_experiment2 = "firstTpe"
 key = key_experiment2
