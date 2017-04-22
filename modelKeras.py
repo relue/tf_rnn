@@ -320,8 +320,9 @@ class KerasModel():
             print "scaler out of bounds"
             pV = []
             outputV = []
-            for d in errors:
-                errors[d] = numpy.nan
+            errors["rmse"] = numpy.nan
+            errors["mape"] = numpy.nan
+            errors["diff"] = numpy.nan
         return errors, pV, outputV
 
     def prepareCalculation(self, input, output, scaler, model):
