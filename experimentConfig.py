@@ -88,6 +88,7 @@ class Config():
         "weightInit": ["zero", "one", "normal", "glorot_uniform", "lecun_uniform", "glorot_normal"],
         "useHoliday": [True, False],
     }
+
     defDict = {
         "learningRate":  (0.0001 , 1),
         "DropoutProp": (0.01, 0.99),
@@ -103,7 +104,27 @@ class Config():
         "useHoliday": [True, False],
         "useWeekday": [True, False],
     }
+    data = {}
+    data["earlyStopping"] = True
+    data["standardizationType"] = "zscore"
+    data["stationIDs"] = [13]
+    data["noFillZero"] = True
+    data["useHoliday"] = True
+    data["useWeekday"] = True
+    data["earlyStopping"] = True
 
+    data["epochSize"] = 15
+    data["batchSize"] = 1
+    data["learningRate"] = 0.001
+    data["activationFunction"] = "tanh"
+    data["l1Penalty"] = 0.000001
+    data["DropoutProp"] = 0.001
+    data["hiddenNodes"] = 30
+    data["hiddenLayers"] = 2
+    data["optimizer"] = "adam"
+    data["weightInit"] = "lecun_uniform"
+    data["timeWindow"] = 7*24
+    sensiExperiment1 = data
     def generateRandomVektor(self, parameterList):
         dict = {}
         for parameterName in parameterList:

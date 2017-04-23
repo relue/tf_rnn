@@ -37,6 +37,7 @@ if isSensi == True:
     alpha = 1
     size = 2
     rangeY = None
+    sensiObj = c.sensiExperiment1
 else:
     alpha = 0.3
     size = 1
@@ -74,13 +75,18 @@ for paramName in toPlot:
     y = dfNew[errorType].tolist()
     y2 = dfNew[errorType2].tolist()
     y3 = dfNew["exec_time"].tolist()
+    points = []
     if True:
         p1 = figure(width=500, height=500, y_range=rangeY) #x_range = (defDict[paramName][0],defDict[paramName][1]),
         p1.xaxis.axis_label = paramName
         p1.yaxis.axis_label = errorType
-        r31 = p1.circle(x, y, color="red", size=size, alpha=alpha)
+        r = p1.circle(x, y, color="red", size=size, alpha=alpha)
+        points.append(r)
+        if isSensi:
+            r = p1.circle(x, y, color="blue", size=size, alpha=alpha)
+            points.append(r)
         legend3 = Legend(legends=[
-            (paramName+" and "+errorType,   [r31])
+            (paramName+" and "+errorType,   points)
         ], location=(40, 5))
         p1.add_layout(legend3, 'below')
 

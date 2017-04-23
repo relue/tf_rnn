@@ -31,29 +31,10 @@ def executeConfig(setting, permIndex):
     p = subprocess.Popen("sbatch batchScripts/script" + str(permIndex) + ".sh", stdout=log, stderr=log, shell=True)
 
 maxResolution = 100
-data = {}
-data["earlyStopping"] = True
-data["standardizationType"] = "zscore"
-data["stationIDs"] = [13]
-data["noFillZero"] = True
-data["useHoliday"] = True
-data["useWeekday"] = True
-data["earlyStopping"] = True
-
-data["epochSize"] = 15
-data["batchSize"] = 1
-data["learningRate"] = 0.001
-data["activationFunction"] = "tanh"
-data["l1Penalty"] = 0.000001
-data["DropoutProp"] = 0.001
-data["hiddenNodes"] = 30
-data["hiddenLayers"] = 2
-data["optimizer"] = "adam"
-data["weightInit"] = "lecun_uniform"
-data["timeWindow"] = 7*24
-
 c = experimentConfig.Config()
+data = c.sensiExperiment1
 runs = []
+runs.append(data)
 for param in c.experimentConfigWide:
     values = c.experimentConfigWide[param]
     if c.parameterTypeDiscrete[param] == True:
@@ -80,7 +61,7 @@ for param in c.experimentConfigWide:
             newRow[param] = pValue
             print 'change ' + param + ' to ' + str(pValue) + 'Rest'
             runs.append(newRow)
-runs.append(data)
+
 print str(len(runs)) + " runs planned"
 
 permIndex = 1
@@ -88,5 +69,5 @@ p = subprocess.Popen("ulimit -u 10000", stdout=log, stderr=log, shell=True)
 
 for run in runs:
     executeConfig(run,permIndex)
-    time.sleep(0.3)
+    time.sleep(0.2)
     permIndex += 1
