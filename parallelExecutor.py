@@ -80,7 +80,8 @@ for param in c.experimentConfigWide:
             newRow[param] = pValue
             print 'change ' + param + ' to ' + str(pValue) + 'Rest'
             runs.append(newRow)
-print runs
+print str(len(runs)) + " runs planned"
+
 permIndex = 1
 p = subprocess.Popen("ulimit -u 10000", stdout=log, stderr=log, shell=True)
 
