@@ -22,17 +22,21 @@ errorBounds = {
         "test_rmse": (90000,150000),
 }
 toPlot = ["epochSize", "learningRate", "hiddenLayers", "timeWindow", "hiddenNodes",
-          "l1Penalty", "standardizationType", "activationFunction", "optimizer", "batchSize",
-          "weightInit", ]#"useHoliday", "useWeekday"
+          "l1Penalty", "activationFunction", "optimizer", "batchSize",
+          "weightInit", ]#"standardizationType","useHoliday", "useWeekday"
 #toPlot = []
 c = experimentConfig.Config()
 errorType = "val_rmse"
 errorType2 = "test_rmse"
+isSensi = False
 
 plotWhat = "rand_1"
-#plotWhat = "tpe_1"
-plotWhat = "manualSensi"
-isSensi = True
+plotWhat = "tpe_1"
+#errorBounds = {"val_rmse":  (23000 , 26000), "test_rmse": (170000,190000)}
+#plotWhat = "manualSensi"
+plotWhat = "tpe_2"
+#isSensi = True
+
 if isSensi == True:
     alpha = 1
     size = 2
@@ -48,7 +52,7 @@ else:
 
 dfNew = pd.read_pickle("searchResults/"+plotWhat+".pd")
 l_params = []
-
+dfNew = dfNew.dropna()
 dfNewPlain = dfNew.sort_index()
 minError = 999999999
 minList = []
@@ -71,6 +75,7 @@ save(ap)
 l_params = []
 i = 1
 h = 1
+tools = "pan,wheel_zoom,box_zoom,reset, hover"
 for paramName in toPlot:
     isDiscrete = c.parameterTypeDiscrete[paramName]
 
@@ -91,13 +96,14 @@ for paramName in toPlot:
     points = []
     pList = []
     if True:
-        p1 = figure(width=500, height=500, tools="hover", x_range=xRange,y_range=rangeY) #x_range = (defDict[paramName][0],defDict[paramName][1]),
+        p1 = figure(width=500, height=500, tools=tools, x_range=xRange,y_range=rangeY) #x_range = (defDict[paramName][0],defDict[paramName][1]),
         p1.xaxis.axis_label = paramName
         p1.yaxis.axis_label = errorType
-        r = p1.circle(x, y, color="red", size=size, alpha=alpha)
+        r = p1.circle(source=dfNew, x=paramName, y=errorType, color="red", size=size, alpha=alpha)
+        #r = p1.circle(source=dfNew, x=paramName, y=errorType)
         points.append(r)
         if isSensi:
-            r = p1.circle(sensiObj[paramName],sensiObj[errorType], color="blue", size=5, alpha=1)
+            r = p1.circle(x=[sensiObj[paramName]],y=[sensiObj[errorType]], color="blue", size=5, alpha=1)
             points.append(r)
             legend3 = Legend(legends=[
                 ("found optimum",   [r])
@@ -105,13 +111,14 @@ for paramName in toPlot:
             p1.add_layout(legend3, 'below')
         pList.append(p1)
 
-        p2 = figure(width=500, height=500, tools="hover",x_range=xRange,y_range=rangeY2) #x_range = (defDict[paramName][0],defDict[paramName][1]),
+        p2 = figure(width=500, height=500, tools=tools,x_range=xRange,y_range=rangeY2) #x_range = (defDict[paramName][0],defDict[paramName][1]),
         p2.xaxis.axis_label = paramName
         p2.yaxis.axis_label = errorType2
-        r = p2.circle(x, y2, color="red", size=size, alpha=alpha)
+        r = p2.circle(source=dfNew, x=paramName, y=errorType2, color="red", size=size, alpha=alpha)
+        #r = p2.circle(source=dfNew, x=paramName, y=errorType2)
         points.append(r)
-        if isSensi and False:
-            r = p2.circle(sensiObj[paramName], sensiObj[errorType2], color="blue", size=6, alpha=1)
+        if isSensi:
+            r = p2.circle(x=[sensiObj[paramName]], y=[sensiObj[errorType2]], color="blue", size=6, alpha=1)
             points.append(r)
             legend3 = Legend(legends=[
                 ("found optimum", [r])
@@ -119,8 +126,8 @@ for paramName in toPlot:
             p2.add_layout(legend3, 'below')
         pList.append(p2)
 
-        if isSensi == False and False:
-            p3 = figure(width=500, height=500)#x_range = (defDict[paramName][0],defDict[paramName][1]),
+        if isSensi == False:
+            p3 = figure(width=500, height=500, tools=tools, x_range=xRange)#x_range = (defDict[paramName][0],defDict[paramName][1]),
             p3.xaxis.axis_label = paramName
             p3.yaxis.axis_label = "execution time"
             r31 = p3.circle(x, y3, color="red", size=size, alpha=alpha)
