@@ -99,9 +99,9 @@ db_experiment3 = "db_tpe4"
 #fast ganzer Bereich
 spaceNarrow=  {
         'epochSize' : hp.quniform('epochSize', 8, 40, 1),
-        "learningRate": hp.loguniform('learningRate', -9 , -0.5),
-        "DropoutProp": hp.loguniform('DropoutProp', -8.5, -0.5),
-        "l1Penalty": hp.loguniform('l1Penalty', -9, -2),
+        "learningRate": hp.loguniform('learningRate', -7.6 , -1.2), # (0.0005,0.3)
+        "DropoutProp": hp.loguniform('DropoutProp', -6.9, -0.51), # (0.001,0.6)
+        "l1Penalty": hp.loguniform('l1Penalty', -11.51, -4.6), # (0,00001,0.01)
         "activationFunction": hp.choice('activationFunction',["tanh", "relu"]),
         "hiddenNodes": hp.quniform('hiddenNodes', 10,200, 10),
         "optimizer": hp.choice('optimizer', ['adam', 'sgd', 'rms']),
