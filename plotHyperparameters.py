@@ -23,7 +23,7 @@ errorBounds = {
 }
 toPlot = ["epochSize", "learningRate", "hiddenLayers", "timeWindow", "hiddenNodes",
           "l1Penalty", "standardizationType", "activationFunction", "optimizer", "batchSize",
-          "weightInit", "useHoliday", "useWeekday"]
+          "weightInit", ]#"useHoliday", "useWeekday"
 #toPlot = []
 c = experimentConfig.Config()
 errorType = "val_rmse"
@@ -73,15 +73,24 @@ i = 1
 h = 1
 for paramName in toPlot:
     isDiscrete = c.parameterTypeDiscrete[paramName]
+
     i += 1
     x = dfNew[paramName].tolist()
     y = dfNew[errorType].tolist()
     y2 = dfNew[errorType2].tolist()
     y3 = dfNew["exec_time"].tolist()
+
+    xRange = None
+    if isDiscrete:
+        isNumeric = c.parameterNumeric
+        if not paramName in isNumeric.keys():
+            xRange = c.experimentConfigWide[paramName]
+            #x = [str(x[i]) for i in range(len(x))]
+
     points = []
     pList = []
     if True:
-        p1 = figure(width=500, height=500, y_range=rangeY) #x_range = (defDict[paramName][0],defDict[paramName][1]),
+        p1 = figure(width=500, height=500, x_range=xRange,y_range=rangeY) #x_range = (defDict[paramName][0],defDict[paramName][1]),
         p1.xaxis.axis_label = paramName
         p1.yaxis.axis_label = errorType
         r = p1.circle(x, y, color="red", size=size, alpha=alpha)
@@ -95,7 +104,7 @@ for paramName in toPlot:
             p1.add_layout(legend3, 'below')
         pList.append(p1)
 
-        p2 = figure(width=500, height=500, y_range=rangeY2) #x_range = (defDict[paramName][0],defDict[paramName][1]),
+        p2 = figure(width=500, height=500, x_range=xRange,y_range=rangeY2) #x_range = (defDict[paramName][0],defDict[paramName][1]),
         p2.xaxis.axis_label = paramName
         p2.yaxis.axis_label = errorType2
         r = p2.circle(x, y2, color="red", size=size, alpha=alpha)
