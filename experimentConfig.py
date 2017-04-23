@@ -112,7 +112,7 @@ class Config():
     data["useHoliday"] = True
     data["useWeekday"] = True
     data["earlyStopping"] = True
-
+    data["indexID"] = 0
     data["epochSize"] = 15
     data["batchSize"] = 1
     data["learningRate"] = 0.001
@@ -124,6 +124,12 @@ class Config():
     data["optimizer"] = "adam"
     data["weightInit"] = "lecun_uniform"
     data["timeWindow"] = 7*24
+
+    data["test_rmse"] = 106159
+    data["val_rmse"] = 15725
+    data["exec_time"] = 600
+
+
     sensiExperiment1 = data
     def generateRandomVektor(self, parameterList):
         dict = {}
