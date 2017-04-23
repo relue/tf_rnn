@@ -16,7 +16,7 @@ def createBatchFile(singleCommand,parameters, id):
 import experimentConfig
 
 
-log = open("logs/parallelExecDetail.log", "w")
+log = open("logs/parallelSensi.log", "w")
 for filename in os.listdir("jobResults/"):
     os.remove("jobResults/"+filename)
 for filename in os.listdir("batchScripts/"):
