@@ -80,6 +80,7 @@ for param in c.experimentConfigWide:
             newRow[param] = pValue
             print 'change ' + param + ' to ' + str(pValue) + 'Rest'
             runs.append(newRow)
+runs.append(data)
 print str(len(runs)) + " runs planned"
 
 permIndex = 1

@@ -31,6 +31,17 @@ errorType2 = "test_rmse"
 
 plotWhat = "rand_1"
 #plotWhat = "tpe_1"
+plotWhat = "manualSensi"
+isSensi = True
+if isSensi == True:
+    alpha = 1
+    size = 2
+    rangeY = None
+else:
+    alpha = 0.3
+    size = 1
+    rangeY = (errorBounds[errorType][0], errorBounds[errorType][1])
+
 dfNew = pd.read_pickle("searchResults/"+plotWhat+".pd")
 l_params = []
 
@@ -64,28 +75,28 @@ for paramName in toPlot:
     y2 = dfNew[errorType2].tolist()
     y3 = dfNew["exec_time"].tolist()
     if True:
-        p1 = figure(width=500, height=500, y_range=(errorBounds[errorType][0],errorBounds[errorType][1]))#x_range = (defDict[paramName][0],defDict[paramName][1]),
+        p1 = figure(width=500, height=500, y_range=rangeY) #x_range = (defDict[paramName][0],defDict[paramName][1]),
         p1.xaxis.axis_label = paramName
         p1.yaxis.axis_label = errorType
-        r31 = p1.circle(x, y, color="red", size=1, alpha=0.3)
+        r31 = p1.circle(x, y, color="red", size=size, alpha=alpha)
         legend3 = Legend(legends=[
             (paramName+" and "+errorType,   [r31])
         ], location=(40, 5))
         p1.add_layout(legend3, 'below')
 
-        p2 = figure(width=500, height=500, y_range=(errorBounds[errorType2][0],errorBounds[errorType2][1]))#x_range = (defDict[paramName][0],defDict[paramName][1]),
+        p2 = figure(width=500, height=500, y_range=rangeY) #x_range = (defDict[paramName][0],defDict[paramName][1]),
         p2.xaxis.axis_label = paramName
         p2.yaxis.axis_label = errorType2
-        r31 = p2.circle(x, y2, color="red", size=1, alpha=0.3)
+        r31 = p2.circle(x, y2, color="red", size=size, alpha=alpha)
         legend3 = Legend(legends=[
             (paramName+" and "+errorType2,   [r31])
         ], location=(40, 5))
         p2.add_layout(legend3, 'below')
 
-        p3 = figure(width=500, height=500, y_range=(0,2000))#x_range = (defDict[paramName][0],defDict[paramName][1]),
+        p3 = figure(width=500, height=500, y_range=rangeY)#x_range = (defDict[paramName][0],defDict[paramName][1]),
         p3.xaxis.axis_label = paramName
         p3.yaxis.axis_label = "execution time"
-        r31 = p3.circle(x, y3, color="red", size=1, alpha=0.3)
+        r31 = p3.circle(x, y3, color="red", size=size, alpha=alpha)
         legend3 = Legend(legends=[
             (paramName+" and execution time",   [r31])
         ], location=(40, 5))
