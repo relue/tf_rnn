@@ -77,8 +77,8 @@ class Config():
         'standardizationType': ["minmax", "zscore"],
         'epochSize': range(5, 30),
         "learningRate": (0, 1),
-        "DropoutProp": (0.0001, 0.99),
-        "l1Penalty": (0.0001, 0.99),
+        "DropoutProp": (0, 0.99),
+        "l1Penalty": (0, 1),
         "activationFunction": ["tanh", "sigmoid", "relu"],
         "hiddenNodes": range(10, 300),
         "optimizer": ['adam', 'sgd', 'rms', 'ada', 'adadelta'],
@@ -89,7 +89,7 @@ class Config():
         "useHoliday": [True, False],
     }
     defDict = {
-        "learningRate":  (0 , 1),
+        "learningRate":  (0.0001 , 1),
         "DropoutProp": (0.01, 0.99),
         "l1Penalty": (0.0001, 0.99),
         "standardizationType": ["minmax", "zscore"],

@@ -16,7 +16,7 @@ def createBatchFile(singleCommand,parameters, id):
 import experimentConfig
 
 
-log = open("parallelExecDetail.log", "w")
+log = open("logs/parallelExecDetail.log", "w")
 for filename in os.listdir("jobResults/"):
     os.remove("jobResults/"+filename)
 for filename in os.listdir("batchScripts/"):
@@ -30,7 +30,7 @@ def executeConfig(setting, permIndex):
         data_str,permIndex)
     p = subprocess.Popen("sbatch batchScripts/script" + str(permIndex) + ".sh", stdout=log, stderr=log, shell=True)
 
-maxResolution = 50
+maxResolution = 100
 data = {}
 data["earlyStopping"] = True
 data["standardizationType"] = "zscore"
@@ -47,7 +47,7 @@ data["activationFunction"] = "tanh"
 data["l1Penalty"] = 0.000001
 data["DropoutProp"] = 0.001
 data["hiddenNodes"] = 30
-data["hiddenLayers"] = 20
+data["hiddenLayers"] = 2
 data["optimizer"] = "adam"
 data["weightInit"] = "lecun_uniform"
 data["timeWindow"] = 7*24
@@ -64,6 +64,8 @@ for param in c.experimentConfigWide:
         for pValue in values:
             newRow = data.copy()
             newRow[param] = pValue
+            print 'change '+param+' to '+str(pValue)+ 'Rest'
+            print newRow
             runs.append(newRow)
     else:
         upV = values[1]
@@ -72,33 +74,17 @@ for param in c.experimentConfigWide:
         newRow = data.copy()
         newRow[param] = downV
         runs.append(newRow)
-        for i in range (1,maxResolution+1):
+        for i in range (1,maxResolution):
             newRow = data.copy()
-            newRow[param] = stepSize*i
+            pValue = stepSize*i
+            newRow[param] = pValue
+            print 'change ' + param + ' to ' + str(pValue) + 'Rest'
             runs.append(newRow)
 print runs
-print runs
+permIndex = 1
+p = subprocess.Popen("ulimit -u 10000", stdout=log, stderr=log, shell=True)
 
-
-
-
-c.experimentConfigWide
-c.parameterTypeDiscrete
-analyze = []
-
-for el in permMatrix:
-    keys=parameters.keys()
-    setting = {}
-    for key in keys:
-        setting[key] = el[keys.index(key)]
-    executeConfig(setting,permIndex)
-
+for run in runs:
+    executeConfig(run,permIndex)
+    time.sleep(0.3)
     permIndex += 1
-    if permIndex >= maxIters:
-        break
-
-while 1:
-    time.sleep(10)
-    p= subprocess.Popen("cat parallelExecDetail.log", stdout=subprocess.PIPE, stderr=None, shell=True)
-    result = p.communicate()[0]
-    print result

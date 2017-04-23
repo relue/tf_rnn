@@ -21,11 +21,11 @@ with warnings.catch_warnings():
     start_time = time.time()
     modelOut = modelKeras.KerasModel(**data)
 
-    data['loss'] = modelOut.results['loss'][-1]
-    data['val_loss'] = modelOut.results['val_loss'][-1]
-    data['test_loss'] = modelOut.results['test_loss'][-1]
+    resultsKeys = ['train_rmse','val_rmse', 'test_rmse', 'train_mape', 'val_mape']
+    columns = data.keys() + resultsKeys + ['exec_time']
+    for key in resultsKeys:
+        data[key] = modelOut.results[key]
     data['exec_time'] = (time.time() - start_time)
-    columns = data.keys() + ['loss', 'val_loss','exec_time']
 
     singleResult = pd.DataFrame(data, index=[data["indexID"]])
     singleResult.to_pickle("jobResults/result_"+str(data["indexID"]))
