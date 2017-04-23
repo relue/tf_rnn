@@ -76,6 +76,7 @@ for paramName in toPlot:
 
     i += 1
     x = dfNew[paramName].tolist()
+
     y = dfNew[errorType].tolist()
     y2 = dfNew[errorType2].tolist()
     y3 = dfNew["exec_time"].tolist()
@@ -85,12 +86,12 @@ for paramName in toPlot:
         isNumeric = c.parameterNumeric
         if not paramName in isNumeric.keys():
             xRange = c.experimentConfigWide[paramName]
-            #x = [str(x[i]) for i in range(len(x))]
+            x = [str(x[i]) for i in range(len(x))]
 
     points = []
     pList = []
     if True:
-        p1 = figure(width=500, height=500, x_range=xRange,y_range=rangeY) #x_range = (defDict[paramName][0],defDict[paramName][1]),
+        p1 = figure(width=500, height=500, tools="hover", x_range=xRange,y_range=rangeY) #x_range = (defDict[paramName][0],defDict[paramName][1]),
         p1.xaxis.axis_label = paramName
         p1.yaxis.axis_label = errorType
         r = p1.circle(x, y, color="red", size=size, alpha=alpha)
@@ -104,12 +105,12 @@ for paramName in toPlot:
             p1.add_layout(legend3, 'below')
         pList.append(p1)
 
-        p2 = figure(width=500, height=500, x_range=xRange,y_range=rangeY2) #x_range = (defDict[paramName][0],defDict[paramName][1]),
+        p2 = figure(width=500, height=500, tools="hover",x_range=xRange,y_range=rangeY2) #x_range = (defDict[paramName][0],defDict[paramName][1]),
         p2.xaxis.axis_label = paramName
         p2.yaxis.axis_label = errorType2
         r = p2.circle(x, y2, color="red", size=size, alpha=alpha)
         points.append(r)
-        if isSensi:
+        if isSensi and False:
             r = p2.circle(sensiObj[paramName], sensiObj[errorType2], color="blue", size=6, alpha=1)
             points.append(r)
             legend3 = Legend(legends=[
@@ -118,7 +119,7 @@ for paramName in toPlot:
             p2.add_layout(legend3, 'below')
         pList.append(p2)
 
-        if isSensi == False:
+        if isSensi == False and False:
             p3 = figure(width=500, height=500)#x_range = (defDict[paramName][0],defDict[paramName][1]),
             p3.xaxis.axis_label = paramName
             p3.yaxis.axis_label = "execution time"
