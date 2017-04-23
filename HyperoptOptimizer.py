@@ -98,12 +98,12 @@ db_experiment3 = "db_tpe4"
 
 #fast ganzer Bereich
 spaceNarrow=  {
-        'epochSize' : hp.quniform('epochSize', 8, 40, 1),#evtl. erhöhen
+        'epochSize' : hp.quniform('epochSize', 8, 40, 1),#evtl. erhoehen
         "learningRate": hp.loguniform('learningRate', -7.6 , -1.2), # (0.0005,0.3)
         "DropoutProp": hp.loguniform('DropoutProp', -6.9, -0.51), # (0.001,0.6)
         "l1Penalty": hp.loguniform('l1Penalty', -11.51, -4.6), # (0,00001,0.01) # noch weiter verkleinern
         "activationFunction": hp.choice('activationFunction',["tanh", "relu"]),
-        "hiddenNodes": hp.quniform('hiddenNodes', 10,200, 10),# evtl nochmal erhöhen, feiner?
+        "hiddenNodes": hp.quniform('hiddenNodes', 10,200, 10),# evtl nochmal erhoehen, feiner?
         "optimizer": hp.choice('optimizer', ['adam', 'sgd', 'rms']),
         "timeWindow": hp.quniform('timeWindow', 24, 337, 24), # eventuell feiner
         "batchSize": hp.quniform('batchSize', 1, 100, 1),
