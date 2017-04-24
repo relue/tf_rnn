@@ -117,7 +117,7 @@ spaceNarrowTuned=  {
         'epochSize' : hp.quniform('epochSize', 8, 40, 1),#evtl. erhoehen
         "learningRate": hp.loguniform('learningRate', -7.6 , -1.2), # (0.0005,0.3)
         "DropoutProp": hp.loguniform('DropoutProp', -6.9, -0.51), # (0.001,0.6)
-        "l1Penalty": hp.loguniform('l1Penalty', -13.81, -4.6), # (0,00001,0.01) # noch weiter verkleinern
+        "l1Penalty": hp.loguniform('l1Penalty', -13.81, -4.6), # (0,000001,0.01) # noch weiter verkleinern
         "activationFunction": hp.choice('activationFunction',["tanh", "relu"]),
         "hiddenNodes": hp.quniform('hiddenNodes', 10,300, 5),# evtl nochmal erhoehen, feiner?
         "optimizer": hp.choice('optimizer', ['adam', 'sgd', 'rms']),

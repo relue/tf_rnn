@@ -1,5 +1,6 @@
 import collections
 import random
+import pandas as pd
 '''Umszusetzen:
     - Dropout
     - L1 Penalty
@@ -88,6 +89,19 @@ class Config():
         "weightInit": ["zero", "one", "normal", "glorot_uniform", "lecun_uniform", "glorot_normal"],
         "useHoliday": [True, False],
     }
+    sensiIntervalsOptimizer = {
+        'epochSize': range(1, 50),
+        "learningRate": (0.0001, 0.01),
+        "DropoutProp": (0, 0.6),
+        "l1Penalty": (0, 0.0001),
+        "activationFunction": ["tanh", "sigmoid", "relu"],
+        "hiddenNodes": range(10, 300),
+        "optimizer": ['adam', 'sgd', 'rms', 'ada', 'adadelta'],
+        "timeWindow": range(1, 336),
+        "batchSize": range(1, 101),
+        "hiddenLayers": range(1, 10),
+        "weightInit": ["zero", "one", "normal", "glorot_uniform", "lecun_uniform", "glorot_normal"],
+    }
 
     defDict = {
         "learningRate":  (0.0001 , 1),
@@ -129,6 +143,16 @@ class Config():
     data["val_rmse"] = 15725
     data["exec_time"] = 600
 
+    def getBestAsDict(self,resultName, hypeOnly = False):
+        df = pd.read_pickle("searchResults/" + resultName + ".pd")
+        best = df.iloc[0]
+        bestD = best.to_dict()
+        if hypeOnly:
+            nonParameter = ['train_rmse', 'val_rmse', 'test_rmse', 'train_mape', 'val_mape', 'status', 'exec_time',
+                           'train_diff', 'val_diff', 'train_netrmse', 'loss']
+            for k in nonParameter:
+                del bestD[k]
+        return bestD
 
     sensiExperiment1 = data
     def generateRandomVektor(self, parameterList):

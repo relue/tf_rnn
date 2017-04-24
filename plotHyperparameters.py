@@ -23,7 +23,7 @@ errorBounds = {
 }
 toPlot = ["epochSize", "learningRate", "hiddenLayers", "timeWindow", "hiddenNodes",
           "l1Penalty", "activationFunction", "optimizer", "batchSize",
-          "weightInit", ]#"standardizationType","useHoliday", "useWeekday"
+          "weightInit", "DropoutProp"]#"standardizationType","useHoliday", "useWeekday"
 #toPlot = []
 c = experimentConfig.Config()
 errorType = "val_rmse"
@@ -52,6 +52,7 @@ else:
     rangeY2 = (errorBounds[errorType2][0], errorBounds[errorType2][1])
 
 dfNew = pd.read_pickle("searchResults/"+plotWhat+".pd")
+
 l_params = []
 dfNew = dfNew.dropna()
 dfNewPlain = dfNew.sort_index()
@@ -65,6 +66,7 @@ dfNewPlain['min'] = minList
 
 pSearch = figure(width=500, height=500)
 pSearch.line(dfNewPlain.index, dfNewPlain['min'], color="red", line_width=0.5, line_alpha = 0.8)
+pSearch.line(dfNewPlain.index, dfNewPlain['min2'], color="red", line_width=0.5, line_alpha = 0.8)
 pSearch.xaxis.axis_label = "Runs"
 pSearch.yaxis.axis_label = "Minimum Error"
 

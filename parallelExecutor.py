@@ -32,18 +32,21 @@ def executeConfig(setting, permIndex):
 
 maxResolution = 100
 c = experimentConfig.Config()
-data = c.sensiExperiment1
+#optHyperparams = c.sensiExperiment1
+
+optHyperparams = c.getBestAsDict("tpe_2b", hypeOnly=True)
+
 runs = []
-runs.append(data)
-for param in c.experimentConfigWide:
-    values = c.experimentConfigWide[param]
+runs.append(optHyperparams)
+for param in optHyperparams:
+    values = c.sensiIntervalsOptimizer[param]
     if c.parameterTypeDiscrete[param] == True:
         ''' if c.parameterNumeric[param]:
             steps = len(values)
             toCheck = range(1,len(values))
         '''
         for pValue in values:
-            newRow = data.copy()
+            newRow = optHyperparams.copy()
             newRow[param] = pValue
             print 'change '+param+' to '+str(pValue)+ 'Rest'
             print newRow
@@ -52,11 +55,11 @@ for param in c.experimentConfigWide:
         upV = values[1]
         downV = values[0]
         stepSize = float(upV) / float(maxResolution)
-        newRow = data.copy()
+        newRow = optHyperparams.copy()
         newRow[param] = downV
         runs.append(newRow)
         for i in range (1,maxResolution):
-            newRow = data.copy()
+            newRow = optHyperparams.copy()
             pValue = stepSize*i
             newRow[param] = pValue
             print 'change ' + param + ' to ' + str(pValue) + 'Rest'
