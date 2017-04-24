@@ -26,7 +26,7 @@ def executeConfig(setting, permIndex):
     setting["indexID"] = permIndex
     data_str = json.dumps(setting)
     createBatchFile(
-            "srun --time=03:00:00 --mem-per-cpu=2500 ~/pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/singleExecution.py '" + data_str + "' 0",
+            "srun --time=03:00:00 --mem-per-cpu=3500 ~/pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/singleExecution.py '" + data_str + "' 0",
         data_str,permIndex)
     p = subprocess.Popen("sbatch batchScripts/script" + str(permIndex) + ".sh", stdout=log, stderr=log, shell=True)
 
@@ -34,7 +34,7 @@ maxResolution = 100
 c = experimentConfig.Config()
 #optHyperparams = c.sensiExperiment1
 
-optHyperparams = c.getBestAsDict("tpe_2b", hypeOnly=True)
+optHyperparams = c.getBestAsDict("tpe_3", hypeOnly=True)
 
 runs = []
 runs.append(optHyperparams)
