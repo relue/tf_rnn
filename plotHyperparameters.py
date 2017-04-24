@@ -58,20 +58,29 @@ dfNew = dfNew.dropna()
 dfNewPlain = dfNew.sort_index()
 minError = 999999999
 minList = []
+valList = []
+testList = []
 for row in dfNewPlain.itertuples():
     if not math.isnan(row.val_rmse):
         minError = min(row.val_rmse, minError)
     minList.append(minError)
+    valList.append(row.val_rmse)
 dfNewPlain['min'] = minList
 
-pSearch = figure(width=500, height=500)
-pSearch.line(dfNewPlain.index, dfNewPlain['min'], color="red", line_width=0.5, line_alpha = 0.8)
-pSearch.line(dfNewPlain.index, dfNewPlain['min2'], color="red", line_width=0.5, line_alpha = 0.8)
+pSearch = figure(width=500, height=500, y_range= (errorBounds[errorType][0], errorBounds[errorType][1]))
+pSearch.line(dfNewPlain.index, dfNewPlain['min'], color="red", line_width=1, line_alpha = 1)
+pSearch.circle(dfNewPlain.index, dfNewPlain['val_rmse'], color="blue", size=1, alpha = 0.2)
 pSearch.xaxis.axis_label = "Runs"
 pSearch.yaxis.axis_label = "Minimum Error"
 
+pSearch2 = figure(width=500, height=500, y_range= (errorBounds[errorType2][0], errorBounds[errorType2][1]))
+pSearch2.circle(dfNewPlain.index, dfNewPlain['test_rmse'], color="red", size=1, alpha = 0.2)
+pSearch2.xaxis.axis_label = "Runs"
+pSearch2.yaxis.axis_label = "Minimum Error"
+
+
 output_file('bokehPlots/'+plotWhat+'_optimizeProgress.html')
-l_params.append([pSearch, None])
+l_params.append([pSearch, pSearch2])
 ap = gridplot(l_params)
 save(ap)
 
