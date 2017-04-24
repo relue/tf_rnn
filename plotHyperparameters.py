@@ -35,6 +35,7 @@ plotWhat = "tpe_1"
 #errorBounds = {"val_rmse":  (23000 , 26000), "test_rmse": (170000,190000)}
 #plotWhat = "manualSensi"
 plotWhat = "tpe_2"
+plotWhat = "tpe_2b"
 #isSensi = True
 
 if isSensi == True:
