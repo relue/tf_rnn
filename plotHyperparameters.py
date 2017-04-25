@@ -14,6 +14,7 @@ import calendar
 import math
 from bokeh.models import ColumnDataSource, CustomJS
 from bokeh.models.widgets import DataTable, DateFormatter, TableColumn, Dropdown
+from bokeh.layouts import widgetbox
 
 from bokeh.charts import BoxPlot
 
@@ -37,8 +38,9 @@ plotWhat = "tpe_1"
 plotWhat = "tpe_2"
 plotWhat = "tpe_2b"
 plotWhat = "tpe_3"
-plotWhat = "sensi_tpe_3"
-isSensi = True
+
+#plotWhat = "sensi_tpe_3"
+isSensi = False
 
 if isSensi == True:
     alpha = 1
@@ -47,9 +49,11 @@ if isSensi == True:
     rangeY = (errorBounds[errorType][0], errorBounds[errorType][1])
     rangeY2 = (errorBounds[errorType2][0], errorBounds[errorType2][1])
     #sensiObj = c.sensiExperiment1
-
-    sensiObj = c.getBestAsDict(plotWhat, hypeOnly = False, orderByIndexID = True)
+    bestDict = c.getBestAsDict(plotWhat, hypeOnly=False, orderByIndexID=True)
+    bestDictHypes = c.getBestAsDict(plotWhat, hypeOnly=True, orderByIndexID=True)
 else:
+    bestDict = c.getBestAsDict(plotWhat, hypeOnly=False, orderByIndexID=False)
+    bestDictHypes = c.getBestAsDict(plotWhat, hypeOnly=True, orderByIndexID=False)
     alpha = 0.3
     size = 1
     rangeY = (errorBounds[errorType][0], errorBounds[errorType][1])
@@ -82,9 +86,19 @@ pSearch2.circle(dfNewPlain.index, dfNewPlain['test_rmse'], color="red", size=2, 
 pSearch2.xaxis.axis_label = "Runs"
 pSearch2.yaxis.axis_label = "Minimum Error"
 
-
 output_file('bokehPlots/'+plotWhat+'_optimizeProgress.html')
-l_params.append([pSearch, pSearch2])
+
+pname = []
+pvalue = []
+for keys in bestDictHypes:
+    pname.append(keys)
+    pvalue.append(bestDictHypes[keys])
+columns = [TableColumn(field="Parameter", title="Parameter"), TableColumn(field="Wert", title="Wert")]
+tDict = {"Parameter": pname, "Wert": pvalue}
+data = ColumnDataSource(tDict)
+dTable = DataTable(source=data, columns=columns, width=400, height=580)
+tb = widgetbox(dTable)
+l_params.append([pSearch, pSearch2, tb])
 ap = gridplot(l_params)
 save(ap)
 
@@ -118,11 +132,11 @@ for paramName in toPlot:
         r = p1.circle(source=dfNew, x=paramName, y=errorType, color="red", size=size, alpha=alpha)
         #r = p1.circle(source=dfNew, x=paramName, y=errorType)
         points.append(r)
-        if isSensi:
-            r = p1.circle(x=[sensiObj[paramName]],y=[sensiObj[errorType]], color="blue", size=5, alpha=1)
+        if True:
+            r = p1.circle(x=[bestDict[paramName]],y=[bestDict[errorType]], color="blue", size=5, alpha=1)
             points.append(r)
             legend3 = Legend(legends=[
-                ("found optimum for "+str(sensiObj[paramName]),   [r])
+                ("found optimum for "+str(bestDict[paramName]),   [r])
             ], location=(40, 5))
             p1.add_layout(legend3, 'below')
         pList.append(p1)
@@ -133,11 +147,11 @@ for paramName in toPlot:
         r = p2.circle(source=dfNew, x=paramName, y=errorType2, color="red", size=size, alpha=alpha)
         #r = p2.circle(source=dfNew, x=paramName, y=errorType2)
         points.append(r)
-        if isSensi:
-            r = p2.circle(x=[sensiObj[paramName]], y=[sensiObj[errorType2]], color="blue", size=6, alpha=1)
+        if True:
+            r = p2.circle(x=[bestDict[paramName]], y=[bestDict[errorType2]], color="blue", size=6, alpha=1)
             points.append(r)
             legend3 = Legend(legends=[
-                ("found optimum for " + str(sensiObj[paramName]), [r])
+                ("found optimum for " + str(bestDict[paramName]), [r])
             ], location=(40, 5))
             p2.add_layout(legend3, 'below')
         pList.append(p2)
@@ -152,7 +166,7 @@ for paramName in toPlot:
             ], location=(40, 5))
             p3.add_layout(legend3, 'below')
             pList.append(p3)
-
+        pList.append(tb)
     else:
         '''
         p1 = BoxPlot(dfNew, values=errorType, label=paramName,title=paramName+" and "+errorType, outliers=False, legend=False)

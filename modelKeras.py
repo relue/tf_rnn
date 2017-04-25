@@ -46,7 +46,7 @@ class KerasModel():
                validationPercentage = 0.20,
                weightInit = "lecun_uniform",
                activationFunction = "tanh",
-               standardizationType = "minmax",
+               standardizationType = "zscore",
                isShow = False,
                createHTML = False,
                showEpochPlots = False,
