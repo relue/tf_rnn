@@ -18,8 +18,8 @@ from bokeh.models.widgets import DataTable, DateFormatter, TableColumn, Dropdown
 from bokeh.charts import BoxPlot
 
 errorBounds = {
-        "val_rmse":  (14000 , 19000),
-        "test_rmse": (90000,150000),
+        "val_rmse":  (13000 , 24000),
+        "test_rmse": (80000,170000),
 }
 toPlot = ["epochSize", "learningRate", "hiddenLayers", "timeWindow", "hiddenNodes",
           "l1Penalty", "activationFunction", "optimizer", "batchSize",
@@ -36,7 +36,8 @@ plotWhat = "tpe_1"
 #plotWhat = "manualSensi"
 plotWhat = "tpe_2"
 plotWhat = "tpe_2b"
-#isSensi = True
+plotWhat = "tpe_3"
+isSensi = True
 
 if isSensi == True:
     alpha = 1
@@ -69,12 +70,12 @@ dfNewPlain['min'] = minList
 
 pSearch = figure(width=500, height=500, y_range= (errorBounds[errorType][0], errorBounds[errorType][1]))
 pSearch.line(dfNewPlain.index, dfNewPlain['min'], color="red", line_width=1, line_alpha = 1)
-pSearch.circle(dfNewPlain.index, dfNewPlain['val_rmse'], color="blue", size=1, alpha = 0.2)
+pSearch.circle(dfNewPlain.index, dfNewPlain['val_rmse'], color="blue", size=2, alpha = 0.5)
 pSearch.xaxis.axis_label = "Runs"
 pSearch.yaxis.axis_label = "Minimum Error"
 
 pSearch2 = figure(width=500, height=500, y_range= (errorBounds[errorType2][0], errorBounds[errorType2][1]))
-pSearch2.circle(dfNewPlain.index, dfNewPlain['test_rmse'], color="red", size=1, alpha = 0.2)
+pSearch2.circle(dfNewPlain.index, dfNewPlain['test_rmse'], color="red", size=2, alpha = 0.5)
 pSearch2.xaxis.axis_label = "Runs"
 pSearch2.yaxis.axis_label = "Minimum Error"
 
