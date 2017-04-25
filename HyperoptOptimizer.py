@@ -42,6 +42,8 @@ def objective(x):
     from hyperopt import  STATUS_OK
     import imp
     import math
+    import numpy as np
+    np.random.seed(1337)
     convInt = ["batchSize", "timeWindow", "hiddenNodes","epochSize", "hiddenLayers"]
     for param in convInt:
         x[param] = int(x[param])
@@ -96,7 +98,7 @@ spaceWideFiltered =  {
 
 db_experiment3 = "db_tpe4"
 
-#fast ganzer Bereich
+#fast ganzer Bereich tpe2b
 spaceNarrow=  {
         'epochSize' : hp.quniform('epochSize', 8, 40, 1),#evtl. erhoehen
         "learningRate": hp.loguniform('learningRate', -7.6 , -1.2), # (0.0005,0.3)
@@ -112,7 +114,7 @@ spaceNarrow=  {
         "dirPath": dir_path
     }
 
-#fast ganzer Bereich
+#fast ganzer Bereich tpe_3
 spaceNarrowTuned=  {
         'epochSize' : hp.quniform('epochSize', 8, 40, 1),#evtl. erhoehen
         "learningRate": hp.loguniform('learningRate', -7.6 , -1.2), # (0.0005,0.3)
@@ -128,6 +130,24 @@ spaceNarrowTuned=  {
         "dirPath": dir_path
     }
 
+#fast ganzer Bereich tpe_4
+spaceCompleteNarrow=  {
+        'epochSize' : hp.quniform('epochSize', 8, 40, 1),#evtl. erhoehen
+        "learningRate": hp.loguniform('learningRate', -11.51 , -1.2), # (0.00001,0.3)
+        "DropoutProp": hp.loguniform('DropoutProp', -6.9, -0.51), # (0.001,0.6)
+        "l1Penalty": hp.loguniform('l1Penalty', -18,42, -4.6), # (10^-8,0.01) # noch weiter verkleinern
+        "activationFunction": hp.choice('activationFunction',["tanh", "sigmoid","relu"]),
+        "hiddenNodes": hp.quniform('hiddenNodes', 10,300, 5),# evtl nochmal erhoehen, feiner?
+        "optimizer": hp.choice('optimizer', ['adam', 'sgd', 'rms']),
+        "timeWindow": hp.quniform('timeWindow', 24, 337, 1), # eventuell feiner
+        "batchSize": hp.quniform('batchSize', 1, 100, 1),
+        "hiddenLayers": hp.quniform('hiddenLayers', 1,6,1),
+        "weightInit": hp.choice('weightInit', ["zero", "one", "normal", "glorot_uniform", "lecun_uniform", "glorot_normal"]),
+        "useHoliday": hp.choice('useHoliday', [True, False]),
+        "useWeekday": hp.choice('useWeekday', [True, False]),
+        "standardizationType": hp.choice('standardizationType',["minmax", "zscore"]),
+        "dirPath": dir_path
+    }
 
 ip = sys.argv[1]
 #print hyperopt.pyll.stochastic.sample(space)
@@ -140,5 +160,5 @@ db = "db_tpe8"
 key = "firstTpe"
 
 trials = MongoTrials('mongo://127.0.0.1:27017/'+db+'/jobs', exp_key=key)
-best = fmin(fn=objective, space=spaceNarrowTuned, trials=trials, algo=hyperopt.tpe.suggest, max_evals=300000, verbose=1)
+best = fmin(fn=objective, space=spaceCompleteNarrow, trials=trials, algo=hyperopt.tpe.suggest, max_evals=300000, verbose=1)
 print best

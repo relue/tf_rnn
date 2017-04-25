@@ -37,6 +37,7 @@ plotWhat = "tpe_1"
 plotWhat = "tpe_2"
 plotWhat = "tpe_2b"
 plotWhat = "tpe_3"
+plotWhat = "sensi_tpe_3"
 isSensi = True
 
 if isSensi == True:
@@ -45,7 +46,9 @@ if isSensi == True:
     rangeY = None
     rangeY = (errorBounds[errorType][0], errorBounds[errorType][1])
     rangeY2 = (errorBounds[errorType2][0], errorBounds[errorType2][1])
-    sensiObj = c.sensiExperiment1
+    #sensiObj = c.sensiExperiment1
+
+    sensiObj = c.getBestAsDict(plotWhat, hypeOnly = False, orderByIndexID = True)
 else:
     alpha = 0.3
     size = 1
@@ -119,7 +122,7 @@ for paramName in toPlot:
             r = p1.circle(x=[sensiObj[paramName]],y=[sensiObj[errorType]], color="blue", size=5, alpha=1)
             points.append(r)
             legend3 = Legend(legends=[
-                ("found optimum",   [r])
+                ("found optimum for "+str(sensiObj[paramName]),   [r])
             ], location=(40, 5))
             p1.add_layout(legend3, 'below')
         pList.append(p1)
@@ -134,7 +137,7 @@ for paramName in toPlot:
             r = p2.circle(x=[sensiObj[paramName]], y=[sensiObj[errorType2]], color="blue", size=6, alpha=1)
             points.append(r)
             legend3 = Legend(legends=[
-                ("found optimum", [r])
+                ("found optimum for " + str(sensiObj[paramName]), [r])
             ], location=(40, 5))
             p2.add_layout(legend3, 'below')
         pList.append(p2)

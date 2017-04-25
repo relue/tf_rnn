@@ -92,15 +92,19 @@ class Config():
     sensiIntervalsOptimizer = {
         'epochSize': range(1, 50),
         "learningRate": (0.0001, 0.01),
-        "DropoutProp": (0, 0.6),
+        "DropoutProp": (0, 0.1),
         "l1Penalty": (0, 0.0001),
         "activationFunction": ["tanh", "sigmoid", "relu"],
-        "hiddenNodes": range(10, 300),
+        "hiddenNodes": range(10, 300,5),
         "optimizer": ['adam', 'sgd', 'rms', 'ada', 'adadelta'],
         "timeWindow": range(1, 336),
-        "batchSize": range(1, 101),
+        "batchSize": range(1, 101,5),
         "hiddenLayers": range(1, 10),
         "weightInit": ["zero", "one", "normal", "glorot_uniform", "lecun_uniform", "glorot_normal"],
+        "useHoliday": [True, False],
+        "useWeekday": [True, False],
+        #"earlyStopping": [True, False],
+        'standardizationType': ["minmax", "zscore"]
     }
 
     defDict = {
@@ -143,8 +147,10 @@ class Config():
     data["val_rmse"] = 15725
     data["exec_time"] = 600
 
-    def getBestAsDict(self,resultName, hypeOnly = False):
+    def getBestAsDict(self,resultName, hypeOnly = False, orderByIndexID = True):
         df = pd.read_pickle("searchResults/" + resultName + ".pd")
+        if orderByIndexID:
+            df = df.sort_values(['indexID'], ascending=[True])
         best = df.iloc[0]
         bestD = best.to_dict()
         if hypeOnly:

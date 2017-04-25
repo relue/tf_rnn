@@ -26,8 +26,8 @@ ipLog.close()
 #backup: cp -ar /lustre/ssd/s2071275/mongo ~/mongo/mongodb/mongodb-linux-x86_64-3.4.2/data/tpe3
 #db3 = tpe_2
 #db4 = tpe_2b
-
-startDB = "ulimit -u 100000 && numactl --interleave=all mongod --dbpath /lustre/scratch2/s2071275/mongo/mongo/tpe3"
+#tpe3
+startDB = "ulimit -u 100000 && numactl --interleave=all mongod --dbpath /lustre/scratch2/s2071275/mongo/mongo/tpe4"
 startOptimizer = "ulimit -u 100000 && source ../env/bin/activate; python HyperoptOptimizer.py "+ip
 #foo = Popen("source the_script.sh", shell=True, executable="/bin/bash")
 #createBatchFile("srun --time=12:00:00 --mem-per-cpu=10000 ~/pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/hyperoptSpamWorkers.py "+ip)
