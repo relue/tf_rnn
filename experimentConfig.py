@@ -147,7 +147,7 @@ class Config():
     data["val_rmse"] = 15725
     data["exec_time"] = 600
 
-    def getBestAsDict(self,resultName, hypeOnly = False, orderByIndexID = True):
+    def getBestAsDict(self,resultName, hypeOnly = False, orderByIndexID = False):
         df = pd.read_pickle("searchResults/" + resultName + ".pd")
         if orderByIndexID:
             df = df.sort_values(['indexID'], ascending=[True])
