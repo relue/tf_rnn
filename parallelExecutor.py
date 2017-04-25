@@ -26,7 +26,7 @@ def executeConfig(setting, permIndex):
     setting["indexID"] = permIndex
     data_str = json.dumps(setting)
     createBatchFile(
-            "srun --time=05:00:00 --mem-per-cpu=5100 ~/pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/singleExecution.py '" + data_str + "' 0",
+            "srun ~/pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/singleExecution.py '" + data_str + "' 0",
         data_str,permIndex)
     p = subprocess.Popen("sbatch batchScripts/script" + str(permIndex) + ".sh", stdout=log, stderr=log, shell=True)
 
