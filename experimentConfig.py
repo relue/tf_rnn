@@ -90,10 +90,10 @@ class Config():
         "useHoliday": [True, False],
     }
     sensiIntervalsOptimizer = {
-        'epochSize': range(1, 50),
-        "learningRate": (0.0001, 0.01),
-        "DropoutProp": (0, 0.1),
-        "l1Penalty": (0, 0.0001),
+        'epochSize': range(1,100),
+        "learningRate": (0.0001, 0.02),
+        "DropoutProp": (0, 0.99),
+        "l1Penalty": (0, 0.00001),
         "activationFunction": ["tanh", "sigmoid", "relu"],
         "hiddenNodes": range(10, 300,5),
         "optimizer": ['adam', 'sgd', 'rms', 'ada', 'adadelta'],
@@ -154,8 +154,11 @@ class Config():
         best = df.iloc[0]
         bestD = best.to_dict()
         if hypeOnly:
-            nonParameter = ['train_rmse', 'val_rmse', 'test_rmse', 'train_mape', 'val_mape', 'status', 'exec_time',
-                           'train_diff', 'val_diff', 'train_netrmse', 'loss']
+            nonParameter = ['train_rmse', 'val_rmse', 'test_rmse', 'train_mape', 'val_mape',  'exec_time']
+            if not orderByIndexID:
+                hyperOptAdd = ['train_diff', 'val_diff', 'status', 'train_netrmse', 'loss']
+                nonParameter += hyperOptAdd
+
             for k in nonParameter:
                 del bestD[k]
         return bestD

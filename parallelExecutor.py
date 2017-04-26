@@ -38,7 +38,7 @@ optHyperparams = c.getBestAsDict("tpe_3", hypeOnly=True)
 
 runs = []
 runs.append(optHyperparams)
-for param in optHyperparams:
+for param in c.sensiIntervalsOptimizer:
     values = c.sensiIntervalsOptimizer[param]
     if c.parameterTypeDiscrete[param] == True:
         ''' if c.parameterNumeric[param]:

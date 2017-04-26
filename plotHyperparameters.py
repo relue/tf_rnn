@@ -24,7 +24,7 @@ errorBounds = {
 }
 toPlot = ["epochSize", "learningRate", "hiddenLayers", "timeWindow", "hiddenNodes",
           "l1Penalty", "activationFunction", "optimizer", "batchSize",
-          "weightInit", "DropoutProp"]#"standardizationType","useHoliday", "useWeekday"
+          "weightInit", "DropoutProp", "standardizationType"]#"standardizationType","useHoliday", "useWeekday"
 #toPlot = []
 c = experimentConfig.Config()
 errorType = "val_rmse"
@@ -40,7 +40,9 @@ plotWhat = "tpe_2b"
 plotWhat = "tpe_3"
 
 #plotWhat = "sensi_tpe_3"
-isSensi = False
+plotWhat = "sensi_tpe_3b" #3
+optWhat = "tpe_3"
+isSensi = True
 
 if isSensi == True:
     alpha = 1
@@ -49,8 +51,8 @@ if isSensi == True:
     rangeY = (errorBounds[errorType][0], errorBounds[errorType][1])
     rangeY2 = (errorBounds[errorType2][0], errorBounds[errorType2][1])
     #sensiObj = c.sensiExperiment1
-    bestDict = c.getBestAsDict(plotWhat, hypeOnly=False, orderByIndexID=True)
-    bestDictHypes = c.getBestAsDict(plotWhat, hypeOnly=True, orderByIndexID=True)
+    bestDict = c.getBestAsDict(optWhat, hypeOnly=False, orderByIndexID=False)
+    bestDictHypes = c.getBestAsDict(optWhat, hypeOnly=True, orderByIndexID=False)
 else:
     bestDict = c.getBestAsDict(plotWhat, hypeOnly=False, orderByIndexID=False)
     bestDictHypes = c.getBestAsDict(plotWhat, hypeOnly=True, orderByIndexID=False)
@@ -66,25 +68,43 @@ dfNew = dfNew.dropna()
 dfNewPlain = dfNew.sort_index()
 minError = 999999999
 minList = []
-valList = []
-testList = []
+valListMin = []
+testListMin = []
+genIndex = []
+i = 1
 for row in dfNewPlain.itertuples():
+
     if not math.isnan(row.val_rmse):
+        if row.val_rmse < minError:
+            valListMin.append(row.val_rmse)
+            testListMin.append(row.test_rmse)
+            genIndex.append(i)
         minError = min(row.val_rmse, minError)
-    minList.append(minError)
-    valList.append(row.val_rmse)
+        minList.append(minError)
+        i += 1
 dfNewPlain['min'] = minList
 
-pSearch = figure(width=500, height=500, y_range= (errorBounds[errorType][0], errorBounds[errorType][1]))
+pSearch = figure(title=u"Optimizer Durchlaeufe und Validation RMSE", width=500, height=500, y_range= (errorBounds[errorType][0], errorBounds[errorType][1]))
 pSearch.line(dfNewPlain.index, dfNewPlain['min'], color="red", line_width=1, line_alpha = 1)
 pSearch.circle(dfNewPlain.index, dfNewPlain['val_rmse'], color="blue", size=2, alpha = 0.5)
 pSearch.xaxis.axis_label = "Runs"
-pSearch.yaxis.axis_label = "Minimum Error"
+pSearch.yaxis.axis_label = "Validation RMSE"
 
-pSearch2 = figure(width=500, height=500, y_range= (errorBounds[errorType2][0], errorBounds[errorType2][1]))
+pSearch2 = figure(title=u"Optimizer Durchlaeufe und Test RMSE",width=500, height=500, y_range= (errorBounds[errorType2][0], errorBounds[errorType2][1]))
 pSearch2.circle(dfNewPlain.index, dfNewPlain['test_rmse'], color="red", size=2, alpha = 0.5)
 pSearch2.xaxis.axis_label = "Runs"
-pSearch2.yaxis.axis_label = "Minimum Error"
+pSearch2.yaxis.axis_label = "Test RMSE"
+
+pSearch3 = figure(title=u"Optimizer und neue gefunde Minima Validation RMSE",width=500, height=500, y_range= (errorBounds[errorType][0], errorBounds[errorType][1]))
+pSearch3.circle(genIndex, valListMin, color="blue")
+pSearch3.xaxis.axis_label = "Runs"
+pSearch3.yaxis.axis_label = "Validation RMSE"
+
+pSearch4 = figure(title=u"Generalisierung Test RMSE fuer gefundene Validation RMSE Minima",width=500, height=500, y_range= (errorBounds[errorType2][0], errorBounds[errorType2][1]))
+pSearch4.circle(genIndex, testListMin, color="red")
+pSearch4.xaxis.axis_label = "Runs"
+pSearch4.yaxis.axis_label = "Test RMSE"
+
 
 output_file('bokehPlots/'+plotWhat+'_optimizeProgress.html')
 
@@ -98,7 +118,8 @@ tDict = {"Parameter": pname, "Wert": pvalue}
 data = ColumnDataSource(tDict)
 dTable = DataTable(source=data, columns=columns, width=400, height=580)
 tb = widgetbox(dTable)
-l_params.append([pSearch, pSearch2, tb])
+l_params.append([pSearch, pSearch2])
+l_params.append([pSearch3, pSearch4])
 ap = gridplot(l_params)
 save(ap)
 

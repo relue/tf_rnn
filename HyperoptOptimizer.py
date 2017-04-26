@@ -121,7 +121,7 @@ spaceNarrowTuned=  {
         "DropoutProp": hp.loguniform('DropoutProp', -6.9, -0.51), # (0.001,0.6)
         "l1Penalty": hp.loguniform('l1Penalty', -13.81, -4.6), # (0,000001,0.01) # noch weiter verkleinern
         "activationFunction": hp.choice('activationFunction',["tanh", "relu"]),
-        "hiddenNodes": hp.quniform('hiddenNodes', 10,300, 5),# evtl nochmal erhoehen, feiner?
+        "hiddenNodes": hp.quniform('hiddenNodes', 10,200, 5),# evtl nochmal erhoehen, feiner?
         "optimizer": hp.choice('optimizer', ['adam', 'sgd', 'rms']),
         "timeWindow": hp.quniform('timeWindow', 24, 337, 1), # eventuell feiner
         "batchSize": hp.quniform('batchSize', 1, 100, 1),
@@ -141,7 +141,7 @@ spaceCompleteNarrow=  {
         "optimizer": hp.choice('optimizer', ['adam', 'sgd', 'rms']),
         "timeWindow": hp.quniform('timeWindow', 24, 337, 1), # eventuell feiner
         "batchSize": hp.quniform('batchSize', 1, 100, 1),
-        "hiddenLayers": hp.quniform('hiddenLayers', 1,6,1),
+        "hiddenLayers": hp.quniform('hiddenLayers', 1,4,1),
         "weightInit": hp.choice('weightInit', ["zero", "one", "normal", "glorot_uniform", "lecun_uniform", "glorot_normal"]),
         "useHoliday": hp.choice('useHoliday', [True, False]),
         "useWeekday": hp.choice('useWeekday', [True, False]),
