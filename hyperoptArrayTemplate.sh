@@ -5,5 +5,5 @@
 #SBATCH -e logs/arr/cpu-%a.err
 #SBATCH --ntasks=1
 #SBATCH --time=12:00:00
-#SBATCH --mem-per-cpu=3500
+#SBATCH --mem=4500
 sh HyperoptWorkerWrapper.sh $1
