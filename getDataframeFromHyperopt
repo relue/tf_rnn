@@ -28,7 +28,7 @@ for row in trials.results:
 
 
 dfF = pd.DataFrame(finished)
-measures = ["train_netrmse", "test_rmse","train_rmse", "val_rmse", "train_mape", "val_mape","train_diff","val_diff"]
+measures = ["train_netrmse", "test_rmse", "test_mape","train_rmse", "val_rmse", "train_mape", "val_mape","train_diff","val_diff"]
 columns = list(dfF)
 for m in measures:
     columns.remove(m)

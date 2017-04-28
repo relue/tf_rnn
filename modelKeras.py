@@ -15,6 +15,7 @@ energyload_class = imp.load_source('energyload_class', dir_path +'/energyload_cl
 callback = imp.load_source('callback',  dir_path +'/callback.py')
 
 import numpy as np
+from random import shuffle
 np.random.seed(1337) # for reproducibility
 import keras
 from bokeh.plotting import figure, show, output_file
@@ -44,6 +45,7 @@ class KerasModel():
                optimizer = "adam",
                stationIDs = [13],
                validationPercentage = 0.20,
+               testPercentage = 0.20,
                weightInit = "lecun_uniform",
                activationFunction = "tanh",
                standardizationType = "zscore",
@@ -68,9 +70,11 @@ class KerasModel():
         xInput = xInput.swapaxes(0,1)
 
 
-        inputT, outputT, inputV, outputV = self.getTestSets(xInput, xOutput, validationPercentage)
+        xInput,xOutput = self.shuffleData(xInput, xOutput)
+
+        inputT, outputT, inputB, outputB = self.getTestSets(xInput, xOutput, validationPercentage+testPercentage)
+        inputV, outputV, inputV2, outputV2 = self.getTestSets(inputB, outputB, testPercentage/(validationPercentage+testPercentage))
         inputSize = inputT.shape[2]
-        opt = keras.optimizers.SGD(lr=0.1, momentum=0.0, decay=0.0, nesterov=False)
         early = keras.callbacks.EarlyStopping(monitor='val_loss', min_delta=0, patience=10, verbose=2, mode='auto')
         start_time = time.time()
         model = Sequential()
@@ -97,7 +101,7 @@ class KerasModel():
         callbacks = []
         if showEpochPlots:
             customCallback = callback.EpochErrorRetrieve(self, testInput,testOutput, inputT, outputT,
-                                                         inputV, outputV, scalerOutput)
+                                                         inputV, outputV, inputV2, outputV2, scalerOutput)
             callbacks.append(customCallback)
             #historyTest = customCallback.getHistory()
 
@@ -106,16 +110,19 @@ class KerasModel():
             callbacks.append(early)
         history = model.fit(inputT, outputT,  nb_epoch=epochSize, batch_size=batchSize, verbose=0, callbacks=callbacks)#callbacks=[early]
         #validation_data = (inputV, outputV),
-        finalTestError, test_pV, test_xOutputV = self.getTestError(model, testInput,testOutput,scalerOutput)
+        #finalTestError, test_pV, test_xOutputV = self.getTestError(model, testInput,testOutput,scalerOutput)
         errorsTrain, train_pV, train_xOutputV = self.calulateModelErrors(inputT, outputT, scalerOutput, model)
         errorsVal, val_pV, val_xOutputV = self.calulateModelErrors(inputV, outputV, scalerOutput, model)
+        errorsTest, test_pV, test_xOutputV = self.calulateModelErrors(inputV2, outputV2, scalerOutput, model)
 
         self.results["train_netrmse"] = history.history['loss'][-1]
-        self.results["test_rmse"] = finalTestError
+        self.results["test_rmse"] = errorsTest['rmse']
+        self.results["test_mape"] = errorsTest['mape']
         self.results["train_rmse"] = errorsTrain['rmse']
         self.results["val_rmse"] = errorsVal['rmse']
         self.results["train_mape"] = errorsTrain['mape']
         self.results["val_mape"] = errorsVal['mape']
+
         self.results["train_diff"] = errorsTrain['diff']
         self.results["val_diff"] = errorsVal['diff']
         self.results["exec_time"] = (time.time() - start_time)
@@ -125,8 +132,10 @@ class KerasModel():
             print key+" : "+str(errorsTrain[key])+"\n"
         for key in errorsVal:
             print key+" : "+str(errorsVal[key])+"\n"
+        for key in errorsTest:
+            print key+" : "+str(errorsTest[key])+"\n"
 
-        print "kaggle:"+str(finalTestError)
+        #print "kaggle:"+str(finalTestError)
         print "test 3 "+str((time.time() - start_time))
         if createHTML:
             plots = []
@@ -139,7 +148,7 @@ class KerasModel():
                 ap = gridplot(grid)
                 if isShow:
                     show(ap)
-
+            '''
             if showKagglePlots:
                 kagglePlots = self.getKagglePlots(test_pV, test_xOutputV)
                 output_file("bokehPlots/kaggleTest" + str(indexID) + ".html")
@@ -147,10 +156,11 @@ class KerasModel():
                 ap = gridplot(grid)
                 if isShow:
                     show(ap)
+            '''
 
             if showTrainValPlots:
                 output_file("bokehPlots/trainValPlot" + str(indexID) + ".html")
-                trainValPlots = self.getTrainValPlots(train_pV, train_xOutputV, val_pV, val_xOutputV)
+                trainValPlots = self.getTrainValPlots(train_pV, train_xOutputV, val_pV, val_xOutputV, test_pV, test_xOutputV)
                 #plots += trainValPlots
                 grid = [[plot] for plot in trainValPlots]
                 ap = gridplot(grid)
@@ -161,6 +171,15 @@ class KerasModel():
             grid = [[plot] for plot in plots]
             ap = gridplot(grid)
 
+    def shuffleData(self, xInput, xOutput):
+        xInputShuf = []
+        xOutputShuf = []
+        index_shuf = range(len(xInput))
+        shuffle(index_shuf)
+        for i in index_shuf:
+            xInputShuf.append(xInput[i])
+            xOutputShuf.append(xOutput[i])
+        return np.asarray(xInputShuf), np.asarray(xOutputShuf)
 
     def getLinePlot(self, pV, xOutputV, zoneID, title):
         p = figure(width=1000, height=500, toolbar_location="left", title=title+" - Zone " + str(zoneID))
@@ -187,7 +206,7 @@ class KerasModel():
 
         return newVec
 
-    def getTrainValPlots(self,train_pV, train_xOutputV, val_pV, val_xOutputV, jump=24):
+    def getTrainValPlots(self,train_pV, train_xOutputV, val_pV, val_xOutputV, test_pV, test_xOutputV, jump=24):
         zonePlots = {}
 
         zoneIDs = range(1, 21)
@@ -207,6 +226,14 @@ class KerasModel():
             val_xOutput = list(itertools.chain(*np.reshape(jumpedO, (-1, 1))))
 
             p = self.getLinePlot(val_p, val_xOutput, zoneID, "Validation Dataset")
+            zoneList.append(p)
+
+            jumpedP = self.getJumps(test_pV[zoneID], jump)
+            jumpedO = self.getJumps(test_xOutputV[zoneID], jump)
+            test_p = list(itertools.chain(*np.reshape(jumpedP, (-1, 1))))
+            test_xOutput = list(itertools.chain(*np.reshape(jumpedO, (-1, 1))))
+
+            p = self.getLinePlot(test_p, test_xOutput, zoneID, "Test Dataset")
             zoneList.append(p)
         return zoneList
 
@@ -245,9 +272,11 @@ class KerasModel():
         p3.yaxis.axis_label = "Loss"
         r20 = p3.line(range(0, len(trainErrors['rmse'])), trainErrors['rmse'], color="red", line_width=1, line_alpha=0.8)
         r22 = p3.line(range(0, len(trainErrors['rmse'])), valErrors['rmse'], color="blue", line_width=1, line_alpha=0.8)
+        r23 = p3.line(range(0, len(trainErrors['rmse'])), testErrors['rmse'], color="green", line_width=1, line_alpha=0.8)
         legend2 = Legend(legends=[
-            ("Loss Training Set", [r20]),
-            ("Loss Validation Set", [r22])
+            ("RMSE Training Set", [r20]),
+            ("RMSE Validation Set", [r22]),
+            ("RMSE Test Set", [r23])
         ], location=(40, 5))
         p3.add_layout(legend2, 'below')
         epochPlots.append(p3)
@@ -257,29 +286,18 @@ class KerasModel():
         p1.yaxis.axis_label = "Loss"
         r20 = p1.line(range(0, len(trainErrors['mape'])), trainErrors['mape'], color="red", line_width=1, line_alpha=0.8)
         r22 = p1.line(range(0, len(trainErrors['mape'])), valErrors['mape'], color="blue", line_width=1, line_alpha=0.8)
+        r23 = p1.line(range(0, len(trainErrors['mape'])), testErrors['mape'], color="green", line_width=1,
+                      line_alpha=0.8)
         legend2 = Legend(legends=[
-            ("Loss Training Set", [r20]),
-            ("Loss Validation Set", [r22])
+            ("MAPE Training Set", [r20]),
+            ("MAPE Validation Set", [r22]),
+            ("MAPE Test Set", [r22])
         ], location=(40, 5))
         p1.add_layout(legend2, 'below')
         epochPlots.append(p1)
 
-        p2 = figure(width=1000, height=500, toolbar_location="left")
-
-        p2.xaxis.axis_label = "Epoch"
-        p2.yaxis.axis_label = "Loss"
-
-        r23 = p2.line(range(0, len(trainErrors['rmse'])), testErrors, color="green", line_width=1, line_alpha=0.8)
-
-        legend2 = Legend(legends=[
-            ("Loss Test Set", [r23])
-        ], location=(40, 5))
-
-        p2.add_layout(legend2, 'below')
-        epochPlots.append(p2)
 
         return epochPlots
-
 
     def getTestSets(self, xInput, xOutput, percentage):
         fromT = 0
@@ -377,8 +395,6 @@ class KerasModel():
         stationColumns = ["station_" + str(i) for i in stationIDs]
         dfNew = pd.DataFrame(columns=columns)
 
-
-
         holidayDict = energyload_class.getHolidayDict()
 
         for date in backcastWeeks:
@@ -387,7 +403,6 @@ class KerasModel():
             row = energyload_class.createInputOutputRow(dfS, i, columns, zoneColumns, stationColumns, 7*24, holidayDict, addSystemLevel = True, noFillZero=noFillZero, useHoliday=useHoliday, useWeekday=useWeekday)
             dfNew = dfNew.append([row],ignore_index=True)
 
-        #dataExplore2.showDF(dfNew, False)
         tfOutput = np.asarray(dfNew["output"].tolist())
         tfInput = []
         for t in columns:

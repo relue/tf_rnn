@@ -24,7 +24,7 @@ errorBounds = {
 }
 toPlot = ["epochSize", "learningRate", "hiddenLayers", "timeWindow", "hiddenNodes",
           "l1Penalty", "activationFunction", "optimizer", "batchSize",
-          "weightInit", "DropoutProp", "standardizationType"]#"standardizationType","useHoliday", "useWeekday"
+          "weightInit", "DropoutProp"]#"standardizationType","useHoliday", "useWeekday"
 #toPlot = []
 c = experimentConfig.Config()
 errorType = "val_rmse"
@@ -40,7 +40,7 @@ plotWhat = "tpe_2b"
 plotWhat = "tpe_3"
 
 #plotWhat = "sensi_tpe_3"
-plotWhat = "sensi_tpe_3b" #3
+plotWhat = "sensi2_tpe_3" #3
 optWhat = "tpe_3"
 isSensi = True
 
@@ -64,7 +64,8 @@ else:
 dfNew = pd.read_pickle("searchResults/"+plotWhat+".pd")
 
 l_params = []
-dfNew = dfNew.dropna()
+#dfNew.dropna(axis=1, how='all')
+dfNew = dfNew.fillna(0)
 dfNewPlain = dfNew.sort_index()
 minError = 999999999
 minList = []
@@ -150,12 +151,10 @@ for paramName in toPlot:
         p1 = figure(width=500, height=500, tools=tools, x_range=xRange,y_range=rangeY) #x_range = (defDict[paramName][0],defDict[paramName][1]),
         p1.xaxis.axis_label = paramName
         p1.yaxis.axis_label = errorType
-        r = p1.circle(source=dfNew, x=paramName, y=errorType, color="red", size=size, alpha=alpha)
-        #r = p1.circle(source=dfNew, x=paramName, y=errorType)
-        points.append(r)
+        p1.circle(source=dfNew, x=paramName, y=errorType, color="red", size=size, alpha=alpha)
+
         if True:
             r = p1.circle(x=[bestDict[paramName]],y=[bestDict[errorType]], color="blue", size=5, alpha=1)
-            points.append(r)
             legend3 = Legend(legends=[
                 ("found optimum for "+str(bestDict[paramName]),   [r])
             ], location=(40, 5))
@@ -166,11 +165,10 @@ for paramName in toPlot:
         p2.xaxis.axis_label = paramName
         p2.yaxis.axis_label = errorType2
         r = p2.circle(source=dfNew, x=paramName, y=errorType2, color="red", size=size, alpha=alpha)
-        #r = p2.circle(source=dfNew, x=paramName, y=errorType2)
-        points.append(r)
+
         if True:
             r = p2.circle(x=[bestDict[paramName]], y=[bestDict[errorType2]], color="blue", size=6, alpha=1)
-            points.append(r)
+
             legend3 = Legend(legends=[
                 ("found optimum for " + str(bestDict[paramName]), [r])
             ], location=(40, 5))

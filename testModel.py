@@ -8,8 +8,8 @@ data=json.loads(modelInput)
 data["indexID"] = 1
 data["isShow"] = True
 data["createHTML"] = True
-data["earlyStopping"] = False
-data["epochSize"] = 30
+#data["earlyStopping"] = False
+data["epochSize"] = 10
 data["batchSize"] = 1
 data["learningRate"] = 0.001
 data["standardizationType"] = "zscore"
@@ -17,12 +17,9 @@ data["standardizationType"] = "zscore"
 data["stationIDs"] = [13]
 data["timeWindow"] = 7*24
 data["l1Penalty"] = 0
-#data["showEpochPlots"] = True
+data["showEpochPlots"] = True
 #data["showKagglePlots"] = True
-#data["showTrainValPlots"] = True
-
-
-
+data["showTrainValPlots"] = True
 
 import numpy as np
 import pandas as pd

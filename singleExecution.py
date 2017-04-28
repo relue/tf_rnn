@@ -21,7 +21,7 @@ with warnings.catch_warnings():
     start_time = time.time()
     modelOut = modelKeras.KerasModel(**data)
 
-    resultsKeys = ['train_rmse','val_rmse', 'test_rmse', 'train_mape', 'val_mape']
+    resultsKeys = ['train_rmse','val_rmse', 'test_rmse', 'train_mape', 'val_mape', 'test_mape']
     columns = data.keys() + resultsKeys + ['exec_time']
     for key in resultsKeys:
         data[key] = modelOut.results[key]

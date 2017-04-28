@@ -15,7 +15,6 @@ def createBatchFile(singleCommand,parameters, id):
                 fout.write(line)
 import experimentConfig
 
-
 log = open("logs/parallelSensi.log", "w")
 for filename in os.listdir("jobResults/"):
     os.remove("jobResults/"+filename)
