@@ -70,7 +70,7 @@ class KerasModel():
         xInput = xInput.swapaxes(0,1)
 
 
-        xInput,xOutput = self.shuffleData(xInput, xOutput)
+        #xInput,xOutput = self.shuffleData(xInput, xOutput)
 
         inputT, outputT, inputB, outputB = self.getTestSets(xInput, xOutput, validationPercentage+testPercentage)
         inputV, outputV, inputV2, outputV2 = self.getTestSets(inputB, outputB, testPercentage/(validationPercentage+testPercentage))
