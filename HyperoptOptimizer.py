@@ -135,7 +135,7 @@ spaceCompleteNarrow=  {
         'epochSize' : hp.quniform('epochSize', 8, 40, 1),#evtl. erhoehen
         "learningRate": hp.loguniform('learningRate', -11.51 , -1.2), # (0.00001,0.3)
         "DropoutProp": hp.loguniform('DropoutProp', -6.9, -0.51), # (0.001,0.6)
-        "l1Penalty": hp.loguniform('l1Penalty', -18,42, -4.6), # (10^-8,0.01) # noch weiter verkleinern
+        "l1Penalty": hp.loguniform('l1Penalty', -18.42, -4.6), # (10^-8,0.01) # noch weiter verkleinern
         "activationFunction": hp.choice('activationFunction',["tanh", "sigmoid","relu"]),
         "hiddenNodes": hp.quniform('hiddenNodes', 10,200, 5),# evtl nochmal erhoehen, feiner?
         "optimizer": hp.choice('optimizer', ['adam', 'sgd', 'rms']),
