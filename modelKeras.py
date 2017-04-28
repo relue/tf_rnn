@@ -301,8 +301,8 @@ class KerasModel():
 
     def getTestSets(self, xInput, xOutput, percentage):
         fromT = 0
-        last = xOutput.shape[0] - 1
-        toT = int(math.ceil(last * (1 - percentage)))
+        last = xOutput.shape[0]
+        toT = int(math.floor(last * (1 - percentage)))
         inputT = xInput[fromT:toT, :]
         outputT = xOutput[fromT:toT, :]
         inputV = xInput[toT + 1:last, :]
