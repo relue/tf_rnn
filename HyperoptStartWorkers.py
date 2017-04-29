@@ -27,6 +27,8 @@ ipLog.close()
 #db3 = tpe_2
 #db4 = tpe_2b
 #tpe3
+#tpe4
+#random
 startDB = "ulimit -u 100000 && numactl --interleave=all mongod --dbpath /lustre/scratch2/s2071275/mongo/mongo/tpe4"
 startOptimizer = "ulimit -u 100000 && source ../env/bin/activate; python HyperoptOptimizer.py "+ip
 #foo = Popen("source the_script.sh", shell=True, executable="/bin/bash")
