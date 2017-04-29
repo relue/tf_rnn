@@ -67,7 +67,7 @@ dfNew = pd.read_pickle("searchResults/"+plotWhat+".pd")
 
 l_params = []
 #dfNew.dropna(axis=1, how='all')
-dfNew = dfNew.fillna(0)
+dfNew = dfNew.fillna()
 dfNewPlain = dfNew.sort_index()
 minError = 999999999
 minList = []
