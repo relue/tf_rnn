@@ -149,7 +149,7 @@ spaceCompleteNarrow=  {
         "dirPath": dir_path
     }
 
-ip = sys.argv[1]
+#ip = sys.argv[1]
 #print hyperopt.pyll.stochastic.sample(space)
 #finalCountdown random
 #finalCountdown_TPE tpe
@@ -160,5 +160,6 @@ db = "db_tpe8"
 key = "firstTpe"
 
 trials = MongoTrials('mongo://127.0.0.1:27017/'+db+'/jobs', exp_key=key)
-best = fmin(fn=objective, space=spaceCompleteNarrow, trials=trials, algo=hyperopt.random.suggest, max_evals=300000, verbose=1)
+#best = fmin(fn=objective, space=spaceCompleteNarrow, trials=trials, algo=hyperopt.random.suggest, max_evals=300000, verbose=1)
+best = fmin(fn=objective, space=spaceCompleteNarrow, trials=trials, algo=hyperopt.rand.suggest, max_evals=300000, verbose=1)
 print best
