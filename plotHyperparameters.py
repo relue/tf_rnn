@@ -19,8 +19,8 @@ from bokeh.layouts import widgetbox
 from bokeh.charts import BoxPlot
 
 errorBounds = {
-        "val_rmse":  (13000 , 24000),
-        "test_rmse": (80000,170000),
+        "val_rmse":  (10000 , 15000),
+        "test_rmse": (13700,17000),
 }
 toPlot = ["epochSize", "learningRate", "hiddenLayers", "timeWindow", "hiddenNodes",
           "l1Penalty", "activationFunction", "optimizer", "batchSize",
@@ -67,7 +67,7 @@ dfNew = pd.read_pickle("searchResults/"+plotWhat+".pd")
 
 l_params = []
 #dfNew.dropna(axis=1, how='all')
-dfNew = dfNew.fillna()
+dfNew = dfNew.dropna()
 dfNewPlain = dfNew.sort_index()
 minError = 999999999
 minList = []
