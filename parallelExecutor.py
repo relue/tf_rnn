@@ -37,6 +37,7 @@ usedIntervall = c.experimentConfigWide
 #usedIntervall = c.sensiIntervalsOptimizer
 runs = []
 runs.append(optHyperparams)
+j = 0
 for param in usedIntervall:
     values = usedIntervall[param]
     if c.parameterTypeDiscrete[param] == True:
@@ -47,9 +48,10 @@ for param in usedIntervall:
         for pValue in values:
             newRow = optHyperparams.copy()
             newRow[param] = pValue
-            print 'change '+param+' to '+str(pValue)+ 'Rest'
+            print str(j)+'change '+param+' to '+str(pValue)+ 'Rest'
             print newRow
             runs.append(newRow)
+            j += 1
     else:
         upV = values[1]
         downV = values[0]
@@ -61,8 +63,10 @@ for param in usedIntervall:
             newRow = optHyperparams.copy()
             pValue = stepSize*i
             newRow[param] = pValue
-            print 'change ' + param + ' to ' + str(pValue) + 'Rest'
+            print str(j)+' change ' + param + ' to ' + str(pValue) + 'Rest'
             runs.append(newRow)
+            j += 1
+
 
 print str(len(runs)) + " runs planned"
 

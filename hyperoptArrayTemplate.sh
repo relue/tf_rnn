@@ -1,9 +1,9 @@
 #!/bin/bash
 #SBATCH -J HyWorkers
-#SBATCH --array 0-1000
+#SBATCH --array 0-700
 #SBATCH -o logs/arr/cpu-%a.out
 #SBATCH -e logs/arr/cpu-%a.err
 #SBATCH --ntasks=1
-#SBATCH --time=12:00:00
-#SBATCH --mem=4500
+#SBATCH --time=23:00:00
+#SBATCH --mem-per-cpu=4500
 sh HyperoptWorkerWrapper.sh $1
