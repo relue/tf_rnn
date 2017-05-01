@@ -144,9 +144,9 @@ class Config():
     data["weightInit"] = "lecun_uniform"
     data["timeWindow"] = 7*24
 
-    data["test_rmse"] = 106159
-    data["val_rmse"] = 15725
-    data["exec_time"] = 600
+    #data["test_rmse"] = 106159
+    #data["val_rmse"] = 15725
+    #data["exec_time"] = 600
 
     def getBestAsDict(self,resultName, hypeOnly = False, orderByIndexID = False):
         df = pd.read_pickle("searchResults/" + resultName + ".pd")
