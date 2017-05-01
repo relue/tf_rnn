@@ -31,20 +31,21 @@ errorType = "val_rmse"
 errorType2 = "test_rmse"
 isSensi = False
 
-plotWhat = "rand_1"
-plotWhat = "tpe_1"
+#plotWhat = "rand_1"
+#plotWhat = "tpe_1"
 #errorBounds = {"val_rmse":  (23000 , 26000), "test_rmse": (170000,190000)}
 #plotWhat = "manualSensi"
-plotWhat = "tpe_2"
-plotWhat = "tpe_2b"
-plotWhat = "tpe_3"
+#plotWhat = "tpe_2"
+#plotWhat = "tpe_2b"
+#plotWhat = "tpe_3"
 
 #plotWhat = "sensi_tpe_3"
-plotWhat = "sensi2_tpe_3" #3
+#plotWhat = "sensi2_tpe_3" #3
 #optWhat = "tpe_3"
-optWhat = "tpe_4"
-plotWhat = "tpe_4"
-isSensi = True
+#optWhat = "tpe_4"
+#plotWhat = "tpe_4"
+#isSensi = True
+plotWhat = "rand_2"
 
 if isSensi == True:
     alpha = 1

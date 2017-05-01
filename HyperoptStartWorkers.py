@@ -29,7 +29,7 @@ ipLog.close()
 #tpe3
 #tpe4
 #random
-startDB = "ulimit -u 100000 && numactl --interleave=all mongod --dbpath /lustre/scratch2/s2071275/mongo/mongo/random"
+startDB = "ulimit -u 100000 && numactl --interleave=all mongod --dbpath /lustre/scratch2/s2071275/mongo/mongo/tpe4"
 startOptimizer = "ulimit -u 100000 && source ../env/bin/activate; python HyperoptOptimizer.py "+ip
 #foo = Popen("source the_script.sh", shell=True, executable="/bin/bash")
 #createBatchFile("srun --time=12:00:00 --mem-per-cpu=10000 ~/pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/hyperoptSpamWorkers.py "+ip)
