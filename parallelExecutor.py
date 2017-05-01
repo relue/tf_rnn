@@ -31,14 +31,14 @@ def executeConfig(setting, permIndex):
 
 maxResolution = 100
 c = experimentConfig.Config()
-#optHyperparams = c.sensiExperiment1
-
-optHyperparams = c.getBestAsDict("tpe_3", hypeOnly=True)
-
+optHyperparams = c.sensiExperiment1
+usedIntervall = c.experimentConfigWide
+#optHyperparams = c.getBestAsDict("tpe_3", hypeOnly=True)
+#usedIntervall = c.sensiIntervalsOptimizer
 runs = []
 runs.append(optHyperparams)
-for param in c.sensiIntervalsOptimizer:
-    values = c.sensiIntervalsOptimizer[param]
+for param in usedIntervall:
+    values = usedIntervall[param]
     if c.parameterTypeDiscrete[param] == True:
         ''' if c.parameterNumeric[param]:
             steps = len(values)

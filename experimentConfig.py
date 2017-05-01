@@ -75,7 +75,6 @@ class Config():
         "stationIDs": range(1,13),
     }
     experimentConfigWide = {
-        'standardizationType': ["minmax", "zscore"],
         'epochSize': range(5, 30),
         "learningRate": (0, 1),
         "DropoutProp": (0, 0.99),
@@ -88,6 +87,8 @@ class Config():
         "hiddenLayers": range(1, 10),
         "weightInit": ["zero", "one", "normal", "glorot_uniform", "lecun_uniform", "glorot_normal"],
         "useHoliday": [True, False],
+        "useWeekday": [True, False],
+        'standardizationType': ["minmax", "zscore"],
     }
     sensiIntervalsOptimizer = {
         'epochSize': range(1,100),
