@@ -156,7 +156,7 @@ class Config():
         best = df.iloc[0]
         bestD = best.to_dict()
         if hypeOnly:
-            nonParameter = ['train_rmse', 'val_rmse', 'test_rmse', 'train_mape', 'val_mape',  'exec_time']
+            nonParameter = ['train_rmse', 'val_rmse', 'test_rmse', 'train_mape', 'val_mape', 'test_mape', 'exec_time']
             if not orderByIndexID:
                 hyperOptAdd = ['train_diff', 'val_diff','status', 'train_netrmse', 'loss']
                 nonParameter += hyperOptAdd
