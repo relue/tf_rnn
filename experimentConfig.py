@@ -157,7 +157,7 @@ class Config():
         if hypeOnly:
             nonParameter = ['train_rmse', 'val_rmse', 'test_rmse', 'train_mape', 'val_mape',  'exec_time']
             if not orderByIndexID:
-                hyperOptAdd = ['train_diff', 'val_diff', 'status', 'train_netrmse', 'loss']
+                hyperOptAdd = ['status', 'train_netrmse', 'loss']
                 nonParameter += hyperOptAdd
 
             for k in nonParameter:

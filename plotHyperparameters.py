@@ -34,7 +34,7 @@ isSensi = False
 #plotWhat = "rand_1"
 #plotWhat = "tpe_1"
 #errorBounds = {"val_rmse":  (23000 , 26000), "test_rmse": (170000,190000)}
-#plotWhat = "manualSensi"
+
 #plotWhat = "tpe_2"
 #plotWhat = "tpe_2b"
 #plotWhat = "tpe_3"
@@ -42,10 +42,15 @@ isSensi = False
 #plotWhat = "sensi_tpe_3"
 #plotWhat = "sensi2_tpe_3" #3
 #optWhat = "tpe_3"
-#optWhat = "tpe_4"
-#plotWhat = "tpe_4"
+optWhat = "tpe_4"
+plotWhat = "tpe_4"
 #isSensi = True
-plotWhat = "rand_2"
+#plotWhat = "rand_2"
+
+#optWhat = "sensi_manual"
+#plotWhat = "sensi_manual"
+#isSensi = True
+
 
 if isSensi == True:
     alpha = 1
@@ -54,8 +59,8 @@ if isSensi == True:
     rangeY = (errorBounds[errorType][0], errorBounds[errorType][1])
     rangeY2 = (errorBounds[errorType2][0], errorBounds[errorType2][1])
     #sensiObj = c.sensiExperiment1
-    bestDict = c.getBestAsDict(optWhat, hypeOnly=False, orderByIndexID=False)
-    bestDictHypes = c.getBestAsDict(optWhat, hypeOnly=True, orderByIndexID=False)
+    bestDict = c.getBestAsDict(optWhat, hypeOnly=False, orderByIndexID=True)
+    bestDictHypes = c.getBestAsDict(optWhat, hypeOnly=True, orderByIndexID=True)
 else:
     bestDict = c.getBestAsDict(plotWhat, hypeOnly=False, orderByIndexID=False)
     bestDictHypes = c.getBestAsDict(plotWhat, hypeOnly=True, orderByIndexID=False)

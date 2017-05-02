@@ -29,12 +29,12 @@ def executeConfig(setting, permIndex):
         data_str,permIndex)
     p = subprocess.Popen("sbatch batchScripts/script" + str(permIndex) + ".sh", stdout=log, stderr=log, shell=True)
 
-maxResolution = 100
+maxResolution = 300
 c = experimentConfig.Config()
-optHyperparams = c.sensiExperiment1
-usedIntervall = c.experimentConfigWide
-#optHyperparams = c.getBestAsDict("tpe_3", hypeOnly=True)
-#usedIntervall = c.sensiIntervalsOptimizer
+#optHyperparams = c.sensiExperiment1
+#usedIntervall = c.experimentConfigWide
+optHyperparams = c.getBestAsDict("tpe_4", hypeOnly=True)
+usedIntervall = c.sensiIntervalsOptimizer
 runs = []
 runs.append(optHyperparams)
 j = 0
