@@ -230,7 +230,7 @@ def createXmulti(timeWindow, stationIDs, outputSize, save = False, isStandardize
     cacheExists = os.path.isfile(filename)
     scalerExists = os.path.isfile(scalerCacheFile)
     dfSCacheFileExists = os.path.isfile(dfSCacheFile)
-
+    print filename
     if save or not(cacheExists) or not scalerExists or not dfSCacheFileExists:
 
         columns = range(1, maxTimeWindow+1)
