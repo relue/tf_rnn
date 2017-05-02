@@ -150,6 +150,7 @@ class Config():
 
     def getBestAsDict(self,resultName, hypeOnly = False, orderByIndexID = False):
         df = pd.read_pickle("searchResults/" + resultName + ".pd")
+
         if orderByIndexID:
             df = df.sort_values(['indexID'], ascending=[True])
         best = df.iloc[0]

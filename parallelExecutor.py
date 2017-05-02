@@ -34,6 +34,8 @@ c = experimentConfig.Config()
 #optHyperparams = c.sensiExperiment1
 #usedIntervall = c.experimentConfigWide
 optHyperparams = c.getBestAsDict("tpe_4", hypeOnly=True)
+optHyperparams['useWeekday'] = bool(optHyperparams['useWeekday'])
+optHyperparams['useHoliday'] = bool(optHyperparams['useHoliday'])
 usedIntervall = c.sensiIntervalsOptimizer
 runs = []
 runs.append(optHyperparams)
