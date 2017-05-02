@@ -42,14 +42,14 @@ isSensi = False
 #plotWhat = "sensi_tpe_3"
 #plotWhat = "sensi2_tpe_3" #3
 #optWhat = "tpe_3"
-optWhat = "tpe_4"
-plotWhat = "tpe_4"
+#optWhat = "tpe_4"
+#plotWhat = "tpe_4"
 #isSensi = True
 #plotWhat = "rand_2"
 
-#optWhat = "sensi_manual"
-#plotWhat = "sensi_manual"
-#isSensi = True
+optWhat = "sensi_manual"
+plotWhat = "sensi_manual"
+isSensi = True
 
 
 if isSensi == True:
