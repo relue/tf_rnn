@@ -24,7 +24,7 @@ errorBounds = {
 }
 toPlot = ["epochSize", "learningRate", "hiddenLayers", "timeWindow", "hiddenNodes",
           "l1Penalty", "activationFunction", "optimizer", "batchSize",
-          "weightInit", "DropoutProp"]#"standardizationType","useHoliday", "useWeekday"
+          "weightInit", "DropoutProp", "standardizationType", "useHoliday", "useWeekday" ]#,"useHoliday", "useWeekday"
 #toPlot = []
 c = experimentConfig.Config()
 errorType = "val_rmse"
@@ -47,8 +47,8 @@ isSensi = False
 #isSensi = True
 #plotWhat = "rand_2"
 
-optWhat = "sensi_manual"
-plotWhat = "sensi_manual"
+optWhat = "sensi_tpe_4"
+plotWhat = "sensi_tpe_4"
 isSensi = True
 
 
