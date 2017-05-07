@@ -78,5 +78,5 @@ p = subprocess.Popen("ulimit -u 10000", stdout=log, stderr=log, shell=True)
 for run in runs:
     run["indexID"] = permIndex
     executeConfig(run,permIndex)
-    time.sleep(0.5)
+    time.sleep(1)
     permIndex += 1
