@@ -90,6 +90,22 @@ class Config():
         "useWeekday": [True, False],
         'standardizationType': ["minmax", "zscore"],
     }
+    experimentConfigManual = {
+        'epochSize': range(5, 30),
+        "learningRate": (0, 0.3),
+        "DropoutProp": (0, 0.99),
+        "l1Penalty": (0, 0.0001),
+        "activationFunction": ["tanh", "sigmoid", "relu"],
+        "hiddenNodes": range(10, 300),
+        "optimizer": ['adam', 'sgd', 'rms', 'ada', 'adadelta'],
+        "timeWindow": range(1, 336),
+        "batchSize": range(1, 101),
+        "hiddenLayers": range(1, 10),
+        "weightInit": ["zero", "one", "normal", "glorot_uniform", "lecun_uniform", "glorot_normal"],
+        "useHoliday": [True, False],
+        "useWeekday": [True, False],
+        'standardizationType': ["minmax", "zscore"],
+    }
     sensiIntervalsOptimizer = {
         'epochSize': range(1,100),
         "learningRate": (0.0001, 0.02),
@@ -138,7 +154,7 @@ class Config():
     data["activationFunction"] = "tanh"
     data["l1Penalty"] = 0.000001
     data["DropoutProp"] = 0.001
-    data["hiddenNodes"] = 30
+    data["hiddenNodes"] = 120
     data["hiddenLayers"] = 2
     data["optimizer"] = "adam"
     data["weightInit"] = "lecun_uniform"

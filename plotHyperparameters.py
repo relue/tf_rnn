@@ -17,6 +17,7 @@ from bokeh.models.widgets import DataTable, DateFormatter, TableColumn, Dropdown
 from bokeh.layouts import widgetbox
 
 from bokeh.charts import BoxPlot
+import six
 
 errorBounds = {
         "val_rmse":  (10000 , 15000),
@@ -47,14 +48,18 @@ isSensi = False
 #isSensi = True
 #plotWhat = "rand_2"
 
-optWhat = "sensi_tpe_4"
-plotWhat = "sensi_tpe_4"
-isSensi = True
+optWhat = "sensi_manual"
+plotWhat = "sensi_manual"
+#optWhat = "sensi_tpe_4"
+#plotWhat = "sensi_tpe_4"
 
+isSensi = True
+plotWidth = 450
+plotHeight = 450
 
 if isSensi == True:
     alpha = 1
-    size = 2
+    size = 3
     rangeY = None
     rangeY = (errorBounds[errorType][0], errorBounds[errorType][1])
     rangeY2 = (errorBounds[errorType2][0], errorBounds[errorType2][1])
@@ -125,7 +130,7 @@ for keys in bestDictHypes:
 columns = [TableColumn(field="Parameter", title="Parameter"), TableColumn(field="Wert", title="Wert")]
 tDict = {"Parameter": pname, "Wert": pvalue}
 data = ColumnDataSource(tDict)
-dTable = DataTable(source=data, columns=columns, width=400, height=580)
+dTable = DataTable(source=data, columns=columns, width=300, height=400)
 tb = widgetbox(dTable)
 l_params.append([pSearch, pSearch2])
 l_params.append([pSearch3, pSearch4])
@@ -135,16 +140,25 @@ save(ap)
 l_params = []
 i = 1
 h = 1
-tools = "pan,wheel_zoom,box_zoom,reset, hover"
+tools = "pan,wheel_zoom,box_zoom,reset, hover, save"
 for paramName in toPlot:
     isDiscrete = c.parameterTypeDiscrete[paramName]
+    if isSensi:
+        if isinstance(bestDict[paramName], six.string_types):
+            compStr = "'"+ bestDict[paramName] + "'"
+        else:
+            compStr = repr(bestDict[paramName])
+
+        strQuery = paramName+ " != "+compStr
+        print strQuery
+        dfNewFiltered = dfNew.query(strQuery)
 
     i += 1
-    x = dfNew[paramName].tolist()
+    x = dfNewFiltered[paramName].tolist()
 
-    y = dfNew[errorType].tolist()
-    y2 = dfNew[errorType2].tolist()
-    y3 = dfNew["exec_time"].tolist()
+    y = dfNewFiltered[errorType].tolist()
+    y2 = dfNewFiltered[errorType2].tolist()
+    y3 = dfNewFiltered["exec_time"].tolist()
 
     xRange = None
     if isDiscrete:
@@ -156,35 +170,38 @@ for paramName in toPlot:
     points = []
     pList = []
     if True:
-        p1 = figure(width=500, height=500, tools=tools, x_range=xRange,y_range=rangeY) #x_range = (defDict[paramName][0],defDict[paramName][1]),
+        p1 = figure(width=plotWidth, height=plotHeight, tools=tools, x_range=xRange,y_range=rangeY) #x_range = (defDict[paramName][0],defDict[paramName][1]),
         p1.xaxis.axis_label = paramName
         p1.yaxis.axis_label = errorType
-        p1.circle(source=dfNew, x=paramName, y=errorType, color="red", size=size, alpha=alpha)
+        paramNameFiltered = paramName
+        #del paramNameFiltered[paramName]
+        s= p1.circle(source=dfNewFiltered, x=paramName, y=errorType, color="red", size=size, alpha=alpha)
 
         if True:
             r = p1.circle(x=[bestDict[paramName]],y=[bestDict[errorType]], color="blue", size=5, alpha=1)
             legend3 = Legend(legends=[
-                ("found optimum for "+str(bestDict[paramName]),   [r])
-            ], location=(40, 5))
-            p1.add_layout(legend3, 'below')
+                ("Gefundenes Optimum",   [r]),
+                ("Ergebnis aus Sensitivitaets-Analyse", [s])
+            ], location=(70, -60))
+            p1.add_layout(legend3, 'above')
         pList.append(p1)
 
-        p2 = figure(width=500, height=500, tools=tools,x_range=xRange,y_range=rangeY2) #x_range = (defDict[paramName][0],defDict[paramName][1]),
+        p2 = figure(width=plotWidth, height=plotHeight, tools=tools,x_range=xRange,y_range=rangeY2) #x_range = (defDict[paramName][0],defDict[paramName][1]),
         p2.xaxis.axis_label = paramName
         p2.yaxis.axis_label = errorType2
-        r = p2.circle(source=dfNew, x=paramName, y=errorType2, color="red", size=size, alpha=alpha)
+        s = p2.circle(source=dfNewFiltered, x=paramName, y=errorType2, color="red", size=size, alpha=alpha)
 
         if True:
-            r = p2.circle(x=[bestDict[paramName]], y=[bestDict[errorType2]], color="blue", size=6, alpha=1)
-
+            r = p2.circle(x=[bestDict[paramName]], y=[bestDict[errorType2]], color="blue", size=5, alpha=1)
             legend3 = Legend(legends=[
-                ("found optimum for " + str(bestDict[paramName]), [r])
+                ("Gefundenes Optimum bei", [r]),
+                ("Ergebnis aus Sensitivitaets-Analyse", [s])
             ], location=(40, 5))
-            p2.add_layout(legend3, 'below')
+            #p2.add_layout(legend3, 'below')
         pList.append(p2)
-
+    '''
         if isSensi == False:
-            p3 = figure(width=500, height=500, tools=tools, x_range=xRange)#x_range = (defDict[paramName][0],defDict[paramName][1]),
+            p3 = figure(width=plotWidth, height=plotHeight, tools=tools, x_range=xRange)#x_range = (defDict[paramName][0],defDict[paramName][1]),
             p3.xaxis.axis_label = paramName
             p3.yaxis.axis_label = "execution time"
             r31 = p3.circle(x, y3, color="red", size=size, alpha=alpha)
@@ -194,8 +211,9 @@ for paramName in toPlot:
             p3.add_layout(legend3, 'below')
             pList.append(p3)
         pList.append(tb)
+
     else:
-        '''
+        
         p1 = BoxPlot(dfNew, values=errorType, label=paramName,title=paramName+" and "+errorType, outliers=False, legend=False)
         p1.xaxis.axis_label = paramName
         p1.xaxis.major_label_orientation = math.pi / 4
@@ -208,8 +226,8 @@ for paramName in toPlot:
         p3 = BoxPlot(dfNew, values="exec_time", label=paramName,title=paramName+" and execution time", outliers=False, legend=False)
         p3.xaxis.axis_label = paramName
         p3.yaxis.axis_label = "execution time"
-        '''
-
+        
+    '''
 
     l_params.append(pList)
     if i % 1 == 0:

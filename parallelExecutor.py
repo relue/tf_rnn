@@ -29,14 +29,14 @@ def executeConfig(setting, permIndex):
         data_str,permIndex)
     p = subprocess.Popen("sbatch batchScripts/script" + str(permIndex) + ".sh", stdout=log, stderr=log, shell=True)
 
-maxResolution = 300
+maxResolution = 500
 c = experimentConfig.Config()
-#optHyperparams = c.sensiExperiment1
-#usedIntervall = c.experimentConfigWide
-optHyperparams = c.getBestAsDict("tpe_4", hypeOnly=True)
+optHyperparams = c.sensiExperiment1
+usedIntervall = c.experimentConfigManual
+#optHyperparams = c.getBestAsDict("tpe_4", hypeOnly=True)
 optHyperparams['useWeekday'] = bool(optHyperparams['useWeekday'])
 optHyperparams['useHoliday'] = bool(optHyperparams['useHoliday'])
-usedIntervall = c.sensiIntervalsOptimizer
+#usedIntervall = c.sensiIntervalsOptimizer
 runs = []
 runs.append(optHyperparams)
 j = 0

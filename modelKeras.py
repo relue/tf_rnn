@@ -270,9 +270,9 @@ class KerasModel():
         p3 = figure(width=1000, height=500, toolbar_location="left")
         p3.xaxis.axis_label = "Epoch"
         p3.yaxis.axis_label = "Loss"
-        r20 = p3.line(range(0, len(trainErrors['rmse'])), trainErrors['rmse'], color="red", line_width=1, line_alpha=0.8)
-        r22 = p3.line(range(0, len(trainErrors['rmse'])), valErrors['rmse'], color="blue", line_width=1, line_alpha=0.8)
-        r23 = p3.line(range(0, len(trainErrors['rmse'])), testErrors['rmse'], color="green", line_width=1, line_alpha=0.8)
+        r20 = p3.line(range(1, len(trainErrors['rmse'])+1), trainErrors['rmse'], color="red", line_width=1, line_alpha=0.8)
+        r22 = p3.line(range(1, len(trainErrors['rmse'])+1), valErrors['rmse'], color="blue", line_width=1, line_alpha=0.8)
+        r23 = p3.line(range(1, len(trainErrors['rmse'])+1), testErrors['rmse'], color="green", line_width=1, line_alpha=0.8)
         legend2 = Legend(legends=[
             ("RMSE Training Set", [r20]),
             ("RMSE Validation Set", [r22]),
@@ -284,9 +284,9 @@ class KerasModel():
         p1 = figure(width=1000, height=500, toolbar_location="left")
         p1.xaxis.axis_label = "Epoch"
         p1.yaxis.axis_label = "Loss"
-        r20 = p1.line(range(0, len(trainErrors['mape'])), trainErrors['mape'], color="red", line_width=1, line_alpha=0.8)
-        r22 = p1.line(range(0, len(trainErrors['mape'])), valErrors['mape'], color="blue", line_width=1, line_alpha=0.8)
-        r23 = p1.line(range(0, len(trainErrors['mape'])), testErrors['mape'], color="green", line_width=1,
+        r20 = p1.line(range(1, len(trainErrors['mape'])+1), trainErrors['mape'], color="red", line_width=1, line_alpha=0.8)
+        r22 = p1.line(range(1, len(trainErrors['mape'])+1), valErrors['mape'], color="blue", line_width=1, line_alpha=0.8)
+        r23 = p1.line(range(1, len(trainErrors['mape'])+1), testErrors['mape'], color="green", line_width=1,
                       line_alpha=0.8)
         legend2 = Legend(legends=[
             ("MAPE Training Set", [r20]),
