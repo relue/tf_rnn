@@ -22,14 +22,18 @@ import six
 errorBounds = {
         "val_rmse":  (10000 , 15000),
         "test_rmse": (13700,17000),
+        "val_mape":  (0.0 , 0.30),
+        "test_mape": (0.0,0.30),
 }
 toPlot = ["epochSize", "learningRate", "hiddenLayers", "timeWindow", "hiddenNodes",
           "l1Penalty", "activationFunction", "optimizer", "batchSize",
           "weightInit", "DropoutProp", "standardizationType", "useHoliday", "useWeekday" ]#,"useHoliday", "useWeekday"
 #toPlot = []
 c = experimentConfig.Config()
-errorType = "val_rmse"
-errorType2 = "test_rmse"
+#errorType = "val_rmse"
+#errorType2 = "test_rmse"
+errorType = "val_mape"
+errorType2 = "test_mape"
 isSensi = False
 paramLabel = {}
 errorLabel = {}
@@ -68,10 +72,10 @@ paramLabel["useWeekday"] = "Input Wochentage"
 
 #optWhat = "sensi_manual"
 #plotWhat = "sensi_manual"
-#optWhat = "sensi_tpe_4"
-#plotWhat = "sensi_tpe_4"
-optWhat = "sensi_test"
-plotWhat = "sensi_test"
+optWhat = "sensi_tpe_4"
+plotWhat = "sensi_tpe_4"
+#optWhat = "sensi_test"
+#plotWhat = "sensi_test"
 isSensi = True
 plotWidth = 450
 plotHeight = 450

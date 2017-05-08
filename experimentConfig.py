@@ -96,7 +96,7 @@ class Config():
         "DropoutProp": (0, 0.99),
         "l1Penalty": (0, 0.001),
         "activationFunction": ["tanh", "sigmoid", "relu"],
-        "hiddenNodes": range(10, 300),
+        "hiddenNodes": range(10, 400),
         "optimizer": ['adam', 'sgd', 'rms', 'ada', 'adadelta'],
         "timeWindow": range(1, 336),
         "batchSize": range(1, 101),
