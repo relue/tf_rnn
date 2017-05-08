@@ -31,6 +31,24 @@ c = experimentConfig.Config()
 errorType = "val_rmse"
 errorType2 = "test_rmse"
 isSensi = False
+paramLabel = {}
+errorLabel = {}
+errorLabel[errorType] = "RMSE Validation-Set"
+errorLabel[errorType2] = "RMSE Test-Set"
+paramLabel["epochSize"] = "Anzahl der Epochen"
+paramLabel["learningRate"] = "Learning Rate"
+paramLabel["hiddenLayers"] = "Hidden Layers"
+paramLabel["timeWindow"] = "Time Window Size"
+paramLabel["hiddenNodes"] = "Anzahl der Hidden Nodes"
+paramLabel["l1Penalty"] = "L1 Penalty"
+paramLabel["activationFunction"] = "Aktivierungsfunktion"
+paramLabel["optimizer"] = "Optimizer"
+paramLabel["batchSize"] = "Batch Size"
+paramLabel["weightInit"] = "Weight Initialization"
+paramLabel["DropoutProp"] = "Dropout Probability"
+paramLabel["standardizationType"] = "Standardisierungsmethode"
+paramLabel["useHoliday"] = "Input Feiertage"
+paramLabel["useWeekday"] = "Input Wochentage"
 
 #plotWhat = "rand_1"
 #plotWhat = "tpe_1"
@@ -102,22 +120,22 @@ pSearch = figure(title=u"Optimizer Durchlaeufe und Validation RMSE", width=500, 
 pSearch.line(dfNewPlain.index, dfNewPlain['min'], color="red", line_width=1, line_alpha = 1)
 pSearch.circle(dfNewPlain.index, dfNewPlain['val_rmse'], color="blue", size=2, alpha = 0.5)
 pSearch.xaxis.axis_label = "Runs"
-pSearch.yaxis.axis_label = "Validation RMSE"
+pSearch.yaxis.axis_label = errorLabel[errorType]
 
 pSearch2 = figure(title=u"Optimizer Durchlaeufe und Test RMSE",width=500, height=500, y_range= (errorBounds[errorType2][0], errorBounds[errorType2][1]))
 pSearch2.circle(dfNewPlain.index, dfNewPlain['test_rmse'], color="red", size=2, alpha = 0.5)
 pSearch2.xaxis.axis_label = "Runs"
-pSearch2.yaxis.axis_label = "Test RMSE"
+pSearch2.yaxis.axis_label = errorLabel[errorType2]
 
 pSearch3 = figure(title=u"Optimizer und neue gefunde Minima Validation RMSE",width=500, height=500, y_range= (errorBounds[errorType][0], errorBounds[errorType][1]))
 pSearch3.circle(genIndex, valListMin, color="blue")
 pSearch3.xaxis.axis_label = "Runs"
-pSearch3.yaxis.axis_label = "Validation RMSE"
+pSearch3.yaxis.axis_label = errorLabel[errorType]
 
 pSearch4 = figure(title=u"Generalisierung Test RMSE fuer gefundene Validation RMSE Minima",width=500, height=500, y_range= (errorBounds[errorType2][0], errorBounds[errorType2][1]))
 pSearch4.circle(genIndex, testListMin, color="red")
 pSearch4.xaxis.axis_label = "Runs"
-pSearch4.yaxis.axis_label = "Test RMSE"
+pSearch4.yaxis.axis_label = errorLabel[errorType2]
 
 
 output_file('bokehPlots/'+plotWhat+'_optimizeProgress.html')
@@ -171,8 +189,8 @@ for paramName in toPlot:
     pList = []
     if True:
         p1 = figure(width=plotWidth, height=plotHeight, tools=tools, x_range=xRange,y_range=rangeY) #x_range = (defDict[paramName][0],defDict[paramName][1]),
-        p1.xaxis.axis_label = paramName
-        p1.yaxis.axis_label = errorType
+        p1.xaxis.axis_label = paramLabel[paramName]
+        p1.yaxis.axis_label = errorLabel[errorType]
         paramNameFiltered = paramName
         #del paramNameFiltered[paramName]
         s= p1.circle(source=dfNewFiltered, x=paramName, y=errorType, color="red", size=size, alpha=alpha)
@@ -187,8 +205,8 @@ for paramName in toPlot:
         pList.append(p1)
 
         p2 = figure(width=plotWidth, height=plotHeight, tools=tools,x_range=xRange,y_range=rangeY2) #x_range = (defDict[paramName][0],defDict[paramName][1]),
-        p2.xaxis.axis_label = paramName
-        p2.yaxis.axis_label = errorType2
+        p2.xaxis.axis_label = paramLabel[paramName]
+        p2.yaxis.axis_label = errorLabel[errorType2]
         s = p2.circle(source=dfNewFiltered, x=paramName, y=errorType2, color="red", size=size, alpha=alpha)
 
         if True:

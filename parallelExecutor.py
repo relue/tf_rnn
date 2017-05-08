@@ -29,7 +29,7 @@ def executeConfig(setting, permIndex):
         data_str,permIndex)
     p = subprocess.Popen("sbatch batchScripts/script" + str(permIndex) + ".sh", stdout=log, stderr=log, shell=True)
 
-maxResolution = 500
+maxResolution = 300
 c = experimentConfig.Config()
 optHyperparams = c.sensiExperiment1
 usedIntervall = c.experimentConfigManual
@@ -78,5 +78,5 @@ p = subprocess.Popen("ulimit -u 10000", stdout=log, stderr=log, shell=True)
 for run in runs:
     run["indexID"] = permIndex
     executeConfig(run,permIndex)
-    time.sleep(1)
+    time.sleep(1.5)
     permIndex += 1
