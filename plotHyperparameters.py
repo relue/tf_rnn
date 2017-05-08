@@ -66,11 +66,12 @@ paramLabel["useWeekday"] = "Input Wochentage"
 #isSensi = True
 #plotWhat = "rand_2"
 
-optWhat = "sensi_manual"
-plotWhat = "sensi_manual"
+#optWhat = "sensi_manual"
+#plotWhat = "sensi_manual"
 #optWhat = "sensi_tpe_4"
 #plotWhat = "sensi_tpe_4"
-
+optWhat = "sensi_test"
+plotWhat = "sensi_test"
 isSensi = True
 plotWidth = 450
 plotHeight = 450
@@ -228,7 +229,7 @@ for paramName in toPlot:
             ], location=(40, 5))
             p3.add_layout(legend3, 'below')
             pList.append(p3)
-        pList.append(tb)
+        
 
     else:
         
@@ -246,7 +247,7 @@ for paramName in toPlot:
         p3.yaxis.axis_label = "execution time"
         
     '''
-
+    pList.append(tb)
     l_params.append(pList)
     if i % 1 == 0:
         output_file('bokehPlots/'+plotWhat+'_'+paramName+'.html')

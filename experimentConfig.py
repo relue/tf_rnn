@@ -92,9 +92,9 @@ class Config():
     }
     experimentConfigManual = {
         'epochSize': range(5, 30),
-        "learningRate": (0, 0.3),
+        "learningRate": (0, 0.7),
         "DropoutProp": (0, 0.99),
-        "l1Penalty": (0, 0.0001),
+        "l1Penalty": (0, 0.001),
         "activationFunction": ["tanh", "sigmoid", "relu"],
         "hiddenNodes": range(10, 300),
         "optimizer": ['adam', 'sgd', 'rms', 'ada', 'adadelta'],
@@ -151,14 +151,14 @@ class Config():
     data["epochSize"] = 15
     data["batchSize"] = 1
     data["learningRate"] = 0.001
-    data["activationFunction"] = "tanh"
+    data["activationFunction"] = "relu"
     data["l1Penalty"] = 0.000001
     data["DropoutProp"] = 0.001
-    data["hiddenNodes"] = 120
+    data["hiddenNodes"] = 100
     data["hiddenLayers"] = 2
     data["optimizer"] = "adam"
     data["weightInit"] = "lecun_uniform"
-    data["timeWindow"] = 7*24
+    data["timeWindow"] = 5*24
 
     #data["test_rmse"] = 106159
     #data["val_rmse"] = 15725

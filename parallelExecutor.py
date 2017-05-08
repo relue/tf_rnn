@@ -29,7 +29,7 @@ def executeConfig(setting, permIndex):
         data_str,permIndex)
     p = subprocess.Popen("sbatch batchScripts/script" + str(permIndex) + ".sh", stdout=log, stderr=log, shell=True)
 
-maxResolution = 300
+maxResolution = 700
 c = experimentConfig.Config()
 optHyperparams = c.sensiExperiment1
 usedIntervall = c.experimentConfigManual
