@@ -15,6 +15,7 @@ import math
 from bokeh.models import ColumnDataSource, CustomJS
 from bokeh.models.widgets import DataTable, DateFormatter, TableColumn, Dropdown
 from bokeh.layouts import widgetbox
+from bokeh.models import FixedTicker
 
 from bokeh.charts import BoxPlot
 import six
@@ -30,10 +31,10 @@ toPlot = ["epochSize", "learningRate", "hiddenLayers", "timeWindow", "hiddenNode
           "weightInit", "DropoutProp", "standardizationType", "useHoliday", "useWeekday" ]#,"useHoliday", "useWeekday"
 #toPlot = []
 c = experimentConfig.Config()
-#errorType = "val_rmse"
-#errorType2 = "test_rmse"
-errorType = "val_mape"
-errorType2 = "test_mape"
+errorType = "val_rmse"
+errorType2 = "test_rmse"
+#errorType = "val_mape"
+#errorType2 = "test_mape"
 isSensi = False
 paramLabel = {}
 errorLabel = {}
@@ -82,7 +83,7 @@ plotHeight = 450
 
 if isSensi == True:
     alpha = 1
-    size = 3
+    size = 4
     rangeY = None
     rangeY = (errorBounds[errorType][0], errorBounds[errorType][1])
     rangeY2 = (errorBounds[errorType2][0], errorBounds[errorType2][1])
@@ -195,13 +196,19 @@ for paramName in toPlot:
     if True:
         p1 = figure(width=plotWidth, height=plotHeight, tools=tools, x_range=xRange,y_range=rangeY) #x_range = (defDict[paramName][0],defDict[paramName][1]),
         p1.xaxis.axis_label = paramLabel[paramName]
+        if paramName == 'hiddenLayers':
+            p1.xaxis[0].ticker = FixedTicker(ticks=range(1,11))
+        if paramName == 'useWeekday':
+            p1.xaxis[0].ticker = FixedTicker(ticks=[1,0])
+        if paramName == 'useHoliday':
+            p1.xaxis[0].ticker = FixedTicker(ticks=[0,1])
         p1.yaxis.axis_label = errorLabel[errorType]
         paramNameFiltered = paramName
         #del paramNameFiltered[paramName]
         s= p1.circle(source=dfNewFiltered, x=paramName, y=errorType, color="red", size=size, alpha=alpha)
 
         if True:
-            r = p1.circle(x=[bestDict[paramName]],y=[bestDict[errorType]], color="blue", size=5, alpha=1)
+            r = p1.circle(x=[bestDict[paramName]],y=[bestDict[errorType]], color="blue", size=7, alpha=1)
             legend3 = Legend(legends=[
                 ("Gefundenes Optimum",   [r]),
                 ("Ergebnis aus Sensitivitaets-Analyse", [s])
@@ -215,7 +222,7 @@ for paramName in toPlot:
         s = p2.circle(source=dfNewFiltered, x=paramName, y=errorType2, color="red", size=size, alpha=alpha)
 
         if True:
-            r = p2.circle(x=[bestDict[paramName]], y=[bestDict[errorType2]], color="blue", size=5, alpha=1)
+            r = p2.circle(x=[bestDict[paramName]], y=[bestDict[errorType2]], color="blue", size=7, alpha=1)
             legend3 = Legend(legends=[
                 ("Gefundenes Optimum bei", [r]),
                 ("Ergebnis aus Sensitivitaets-Analyse", [s])
