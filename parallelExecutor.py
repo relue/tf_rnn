@@ -29,7 +29,7 @@ def executeConfig(setting, permIndex):
         data_str,permIndex)
     p = subprocess.Popen("sbatch batchScripts/script" + str(permIndex) + ".sh", stdout=log, stderr=log, shell=True)
 
-maxResolution = 300
+maxResolution = 500
 c = experimentConfig.Config()
 optHyperparams = c.sensiExperiment1
 usedIntervall = c.experimentConfigManual
@@ -38,8 +38,9 @@ optHyperparams['useWeekday'] = bool(optHyperparams['useWeekday'])
 optHyperparams['useHoliday'] = bool(optHyperparams['useHoliday'])
 #usedIntervall = c.sensiIntervalsOptimizer
 runs = []
+optHyperparams['indexID'] = 1
 runs.append(optHyperparams)
-j = 0
+j = 2
 for param in usedIntervall:
     values = usedIntervall[param]
     if c.parameterTypeDiscrete[param] == True:
@@ -52,6 +53,7 @@ for param in usedIntervall:
             newRow[param] = pValue
             print str(j)+'change '+param+' to '+str(pValue)+ 'Rest'
             print newRow
+            newRow["indexID"] = j
             runs.append(newRow)
             j += 1
     else:
@@ -66,6 +68,7 @@ for param in usedIntervall:
             pValue = stepSize*i
             newRow[param] = pValue
             print str(j)+' change ' + param + ' to ' + str(pValue) + 'Rest'
+            newRow["indexID"] = j
             runs.append(newRow)
             j += 1
 
@@ -74,9 +77,8 @@ print str(len(runs)) + " runs planned"
 
 permIndex = 1
 p = subprocess.Popen("ulimit -u 10000", stdout=log, stderr=log, shell=True)
-
+random.shuffle(runs)
 for run in runs:
-    run["indexID"] = permIndex
+    print run
     executeConfig(run,permIndex)
-    time.sleep(2)
-    permIndex += 1
+    time.sleep(3)
