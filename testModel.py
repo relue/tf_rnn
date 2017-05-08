@@ -20,11 +20,10 @@ data["showEpochPlots"] = True
 data["showKagglePlots"] = True
 data["showTrainValPlots"] = True
 
+data["epochSize"] = 2
 
-
+data["batchSize"] = 50
 '''
-data["epochSize"] = 20
-data["batchSize"] = 1
 data["learningRate"] = 0.001
 data["standardizationType"] = "zscore"
 #data["stationIDs"] = [13,14,15]

@@ -1,3 +1,4 @@
+# coding=utf-8
 import pandas as pd
 import experimentConfig
 from bokeh.charts import Bar, output_file, show
@@ -16,7 +17,7 @@ from bokeh.models import ColumnDataSource, CustomJS
 from bokeh.models.widgets import DataTable, DateFormatter, TableColumn, Dropdown
 from bokeh.layouts import widgetbox
 from bokeh.models import FixedTicker
-
+from numpy import pi
 from bokeh.charts import BoxPlot
 import six
 
@@ -71,10 +72,10 @@ paramLabel["useWeekday"] = "Input Wochentage"
 #isSensi = True
 #plotWhat = "rand_2"
 
-#optWhat = "sensi_manual"
-#plotWhat = "sensi_manual"
-optWhat = "sensi_tpe_4"
-plotWhat = "sensi_tpe_4"
+optWhat = "sensi_manual2"
+plotWhat = "sensi_manual2"
+#optWhat = "sensi_tpe_4"
+#plotWhat = "sensi_tpe_4"
 #optWhat = "sensi_test"
 #plotWhat = "sensi_test"
 isSensi = True
@@ -90,59 +91,69 @@ if isSensi == True:
     #sensiObj = c.sensiExperiment1
     bestDict = c.getBestAsDict(optWhat, hypeOnly=False, orderByIndexID=True)
     bestDictHypes = c.getBestAsDict(optWhat, hypeOnly=True, orderByIndexID=True)
+    labelRedDots = "Ergebnis aus Sensitivitäts-Analyse"
 else:
     bestDict = c.getBestAsDict(plotWhat, hypeOnly=False, orderByIndexID=False)
     bestDictHypes = c.getBestAsDict(plotWhat, hypeOnly=True, orderByIndexID=False)
-    alpha = 0.3
-    size = 1
+    alpha = 0.35
+    size = 2
     rangeY = (errorBounds[errorType][0], errorBounds[errorType][1])
     rangeY2 = (errorBounds[errorType2][0], errorBounds[errorType2][1])
+    labelRedDots = "Beobachteter Parameter des TPE-Optimizers "
 
 dfNew = pd.read_pickle("searchResults/"+plotWhat+".pd")
 
 l_params = []
-#dfNew.dropna(axis=1, how='all')
 dfNew = dfNew.dropna()
 dfNewPlain = dfNew.sort_index()
 minError = 999999999
+minErrorTest = 999999999
 minList = []
+minListTest = []
 valListMin = []
 testListMin = []
+testListMin2 = []
 genIndex = []
 i = 1
 for row in dfNewPlain.itertuples():
-
     if not math.isnan(row.val_rmse):
         if row.val_rmse < minError:
             valListMin.append(row.val_rmse)
             testListMin.append(row.test_rmse)
             genIndex.append(i)
+        if row.test_rmse < minError:
+            testListMin2.append(row.test_rmse)
         minError = min(row.val_rmse, minError)
+        minErrorTest = min(row.test_rmse, minErrorTest)
         minList.append(minError)
+        minListTest.append(minErrorTest)
         i += 1
 dfNewPlain['min'] = minList
+dfNewPlain['mintest'] = minListTest
 
-pSearch = figure(title=u"Optimizer Durchlaeufe und Validation RMSE", width=500, height=500, y_range= (errorBounds[errorType][0], errorBounds[errorType][1]))
-pSearch.line(dfNewPlain.index, dfNewPlain['min'], color="red", line_width=1, line_alpha = 1)
-pSearch.circle(dfNewPlain.index, dfNewPlain['val_rmse'], color="blue", size=2, alpha = 0.5)
-pSearch.xaxis.axis_label = "Runs"
+pSearch = figure(width=plotWidth, height=plotHeight, y_range= (errorBounds[errorType][0], errorBounds[errorType][1])) #title=u"Optimizer Durchlaeufe und Validation RMSE",
+pSearch.line(dfNewPlain.index, dfNewPlain['min'], color="blue", line_width=1, line_alpha = 1)
+pSearch.circle(dfNewPlain.index, dfNewPlain['val_rmse'], color="blue", size=2, alpha = 0.7)
+pSearch.xaxis.axis_label = "Anzahl der Durchläufe"
 pSearch.yaxis.axis_label = errorLabel[errorType]
 
-pSearch2 = figure(title=u"Optimizer Durchlaeufe und Test RMSE",width=500, height=500, y_range= (errorBounds[errorType2][0], errorBounds[errorType2][1]))
-pSearch2.circle(dfNewPlain.index, dfNewPlain['test_rmse'], color="red", size=2, alpha = 0.5)
-pSearch2.xaxis.axis_label = "Runs"
+pSearch2 = figure(width=plotWidth, height=plotHeight, y_range= (errorBounds[errorType2][0], errorBounds[errorType2][1]))#title=u"Optimizer Durchlaeufe und Test RMSE",
+pSearch2.line(dfNewPlain.index, dfNewPlain['mintest'], color="red", line_width=1, line_alpha = 1)
+pSearch2.circle(dfNewPlain.index, dfNewPlain['test_rmse'], color="red", size=2, alpha = 0.7)
+pSearch2.xaxis.axis_label = "Anzahl der Durchläufe"
 pSearch2.yaxis.axis_label = errorLabel[errorType2]
 
-pSearch3 = figure(title=u"Optimizer und neue gefunde Minima Validation RMSE",width=500, height=500, y_range= (errorBounds[errorType][0], errorBounds[errorType][1]))
+pSearch3 = figure(width=plotWidth, height=plotHeight, y_range= (errorBounds[errorType][0], errorBounds[errorType][1])) #title=u"Optimizer und neue gefunde Minima Validation RMSE"
+pSearch3.line(genIndex, valListMin, color="blue")
 pSearch3.circle(genIndex, valListMin, color="blue")
-pSearch3.xaxis.axis_label = "Runs"
+pSearch3.xaxis.axis_label = "Anzahl der Durchläufe"
 pSearch3.yaxis.axis_label = errorLabel[errorType]
 
-pSearch4 = figure(title=u"Generalisierung Test RMSE fuer gefundene Validation RMSE Minima",width=500, height=500, y_range= (errorBounds[errorType2][0], errorBounds[errorType2][1]))
+pSearch4 = figure(width=plotWidth, height=plotHeight, y_range= (errorBounds[errorType2][0], errorBounds[errorType2][1])) #title=u"Generalisierung Test RMSE fuer gefundene Validation RMSE Minima",
+pSearch4.line(genIndex, testListMin, color="red")
 pSearch4.circle(genIndex, testListMin, color="red")
-pSearch4.xaxis.axis_label = "Runs"
+pSearch4.xaxis.axis_label = "Anzahl der Durchläufe"
 pSearch4.yaxis.axis_label = errorLabel[errorType2]
-
 
 output_file('bokehPlots/'+plotWhat+'_optimizeProgress.html')
 
@@ -176,7 +187,8 @@ for paramName in toPlot:
         strQuery = paramName+ " != "+compStr
         print strQuery
         dfNewFiltered = dfNew.query(strQuery)
-
+    else:
+        dfNewFiltered = dfNew
     i += 1
     x = dfNewFiltered[paramName].tolist()
 
@@ -202,6 +214,8 @@ for paramName in toPlot:
             p1.xaxis[0].ticker = FixedTicker(ticks=[1,0])
         if paramName == 'useHoliday':
             p1.xaxis[0].ticker = FixedTicker(ticks=[0,1])
+        if paramName == 'weightInit':
+            p1.xaxis.major_label_orientation = pi / 4
         p1.yaxis.axis_label = errorLabel[errorType]
         paramNameFiltered = paramName
         #del paramNameFiltered[paramName]
@@ -211,7 +225,7 @@ for paramName in toPlot:
             r = p1.circle(x=[bestDict[paramName]],y=[bestDict[errorType]], color="blue", size=7, alpha=1)
             legend3 = Legend(legends=[
                 ("Gefundenes Optimum",   [r]),
-                ("Ergebnis aus Sensitivitaets-Analyse", [s])
+                (labelRedDots, [s])
             ], location=(70, -60))
             p1.add_layout(legend3, 'above')
         pList.append(p1)
@@ -225,7 +239,7 @@ for paramName in toPlot:
             r = p2.circle(x=[bestDict[paramName]], y=[bestDict[errorType2]], color="blue", size=7, alpha=1)
             legend3 = Legend(legends=[
                 ("Gefundenes Optimum bei", [r]),
-                ("Ergebnis aus Sensitivitaets-Analyse", [s])
+                (labelRedDots, [s])
             ], location=(40, 5))
             #p2.add_layout(legend3, 'below')
         pList.append(p2)

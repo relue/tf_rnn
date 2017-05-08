@@ -182,19 +182,23 @@ class KerasModel():
         return np.asarray(xInputShuf), np.asarray(xOutputShuf)
 
     def getLinePlot(self, pV, xOutputV, zoneID, title):
-        p = figure(width=1000, height=500, toolbar_location="left", title=title+" - Zone " + str(zoneID))
+        p = figure(width=900, height=500, toolbar_location="left", title=title+" - Zone " + str(zoneID))
 
-        p.xaxis.axis_label = "Index"
-        p.yaxis.axis_label = "Energy Load"
+        p.xaxis.axis_label = "Stunden"
+        p.yaxis.axis_label = "Energieverbrauch"
 
-        r20 = p.line(range(0, len(xOutputV)), xOutputV, color="red", line_width=0.5, line_alpha=0.8)
-        r22 = p.line(range(0, len(xOutputV)), pV, color="blue", line_width=0.5, line_alpha=0.8)
-
+        r20 = p.line(range(0, len(xOutputV)), xOutputV, color="red", line_width=0.7, line_alpha=0.9, legend="Reeller Wert ")
+        r22 = p.line(range(0, len(xOutputV)), pV, color="blue", line_width=0.7, line_alpha=0.9, legend="Vorhergesagter Wert ")
+        p.legend.orientation = "horizontal"
+        p.legend.location = "top_center"
+        '''
         legend2 = Legend(legends=[
-            ("Original Data", [r20]),
-            ("Model Prediction", [r22])
+            ("Reeller Wert", [r20]),
+            ("Vorhergesagter Wert", [r22])
         ], location=(40, 5))
-        p.add_layout(legend2, 'below')
+        
+        p.add_layout(legend2, 'above')
+        '''
         return p
 
     def getJumps(self, arr, jump):
@@ -206,7 +210,7 @@ class KerasModel():
 
         return newVec
 
-    def getTrainValPlots(self,train_pV, train_xOutputV, val_pV, val_xOutputV, test_pV, test_xOutputV, jump=24):
+    def getTrainValPlots(self,train_pV, train_xOutputV, val_pV, val_xOutputV, test_pV, test_xOutputV, jump=7):
         zonePlots = {}
 
         zoneIDs = range(1, 21)
@@ -248,17 +252,17 @@ class KerasModel():
             # xOutput = scaler.inverse_transform(xOutput)
 
 
-            zonePlots[zoneID] = figure(width=1000, height=500, toolbar_location="left", title="Zone " + str(zoneID))
+            zonePlots[zoneID] = figure(width=900, height=500, toolbar_location="left", title="Zone " + str(zoneID))
 
-            zonePlots[zoneID].xaxis.axis_label = "Index"
-            zonePlots[zoneID].yaxis.axis_label = "Energy Load "
+            zonePlots[zoneID].xaxis.axis_label = "Iteration"
+            zonePlots[zoneID].yaxis.axis_label = "Energieverbrauch"
 
             r20 = zonePlots[zoneID].line(range(0, len(xOutput)), xOutput, color="red", line_width=0.5, line_alpha=0.8)
             r22 = zonePlots[zoneID].line(range(0, len(xOutput)), p, color="blue", line_width=0.5, line_alpha=0.8)
 
             legend2 = Legend(legends=[
-                ("Original Data", [r20]),
-                ("Model Prediction", [r22])
+                ("Originale Daten", [r20]),
+                ("Modell Vorhersage", [r22])
             ], location=(40, 5))
             zonePlots[zoneID].add_layout(legend2, 'below')
         zoneList = [zonePlots[i] for i in range(1, 22)]
@@ -268,32 +272,43 @@ class KerasModel():
         testErrors, trainErrors, valErrors = customCallback.getErrors()
         epochPlots = []
         p3 = figure(width=1000, height=500, toolbar_location="left")
-        p3.xaxis.axis_label = "Epoch"
-        p3.yaxis.axis_label = "Loss"
-        r20 = p3.line(range(1, len(trainErrors['rmse'])+1), trainErrors['rmse'], color="red", line_width=1, line_alpha=0.8)
-        r22 = p3.line(range(1, len(trainErrors['rmse'])+1), valErrors['rmse'], color="blue", line_width=1, line_alpha=0.8)
-        r23 = p3.line(range(1, len(trainErrors['rmse'])+1), testErrors['rmse'], color="green", line_width=1, line_alpha=0.8)
+        p3.xaxis.axis_label = "Epoche"
+        p3.yaxis.axis_label = "RMSE"
+
+        r23 = p3.line(range(1, len(trainErrors['rmse'])+1), testErrors['rmse'], color="green", line_width=1, line_alpha=1, legend="Test Set ")
+        r22 = p3.line(range(1, len(trainErrors['rmse']) + 1), valErrors['rmse'], color="blue", line_width=1, line_alpha=1, legend="Validation Set ")
+        r20 = p3.line(range(1, len(trainErrors['rmse']) + 1), trainErrors['rmse'], color="red", line_width=1, line_alpha=1, legend="Training Set ")
+
+        #p3.legend.orientation = "horizontal"
+        p3.legend.location = "bottom_left"
+        '''
         legend2 = Legend(legends=[
-            ("RMSE Training Set", [r20]),
-            ("RMSE Validation Set", [r22]),
-            ("RMSE Test Set", [r23])
+            ("Training Set", [r20]),
+            ("Validation Set", [r22]),
+            ("Test Set", [r23])
         ], location=(40, 5))
+        legend2.orientation = "horizontal"
         p3.add_layout(legend2, 'below')
+        '''
         epochPlots.append(p3)
 
         p1 = figure(width=1000, height=500, toolbar_location="left")
-        p1.xaxis.axis_label = "Epoch"
-        p1.yaxis.axis_label = "Loss"
-        r20 = p1.line(range(1, len(trainErrors['mape'])+1), trainErrors['mape'], color="red", line_width=1, line_alpha=0.8)
-        r22 = p1.line(range(1, len(trainErrors['mape'])+1), valErrors['mape'], color="blue", line_width=1, line_alpha=0.8)
-        r23 = p1.line(range(1, len(trainErrors['mape'])+1), testErrors['mape'], color="green", line_width=1,
-                      line_alpha=0.8)
+        p1.xaxis.axis_label = "Epoche"
+        p1.yaxis.axis_label = "MAPE"
+
+        r23 = p1.line(range(1, len(trainErrors['mape']) + 1), testErrors['mape'], color="green", line_width=1, line_alpha=0.8, legend="Test Set ")
+        r22 = p1.line(range(1, len(trainErrors['mape'])+1), valErrors['mape'], color="blue", line_width=1, line_alpha=0.8, legend="Validation Set ")
+        r20 = p1.line(range(1, len(trainErrors['mape']) + 1), trainErrors['mape'], color="red", line_width=1, line_alpha=0.8, legend="Training Set ")
+
+        p1.legend.location = "bottom_left"
+        '''
         legend2 = Legend(legends=[
-            ("MAPE Training Set", [r20]),
-            ("MAPE Validation Set", [r22]),
-            ("MAPE Test Set", [r22])
+            ("Training Set", [r20]),
+            ("Validation Set", [r22]),
+            ("Test Set", [r22])
         ], location=(40, 5))
         p1.add_layout(legend2, 'below')
+        '''
         epochPlots.append(p1)
 
 
