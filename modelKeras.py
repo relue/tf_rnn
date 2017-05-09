@@ -4,8 +4,9 @@ import math
 from keras import regularizers
 from keras.models import Sequential
 from keras.layers import Dense, Dropout
+from bokeh.models import DatetimeTickFormatter
 from keras.layers import LSTM,SimpleRNN
-
+from numpy import pi
 #import dataExplore2
 import imp
 import os
@@ -181,16 +182,24 @@ class KerasModel():
             xOutputShuf.append(xOutput[i])
         return np.asarray(xInputShuf), np.asarray(xOutputShuf)
 
-    def getLinePlot(self, pV, xOutputV, zoneID, title):
+    def getLinePlot(self, pV, xOutputV, zoneID, title,dateIndex):
         p = figure(width=900, height=500, toolbar_location="left", title=title+" - Zone " + str(zoneID))
 
         p.xaxis.axis_label = "Stunden"
         p.yaxis.axis_label = "Energieverbrauch"
 
-        r20 = p.line(range(0, len(xOutputV)), xOutputV, color="red", line_width=0.7, line_alpha=0.9, legend="Reeller Wert ")
-        r22 = p.line(range(0, len(xOutputV)), pV, color="blue", line_width=0.7, line_alpha=0.9, legend="Vorhergesagter Wert ")
+        r20 = p.line(dateIndex, xOutputV, color="red", line_width=0.7, line_alpha=0.9, legend="Reeller Wert ")
+        r22 = p.line(dateIndex, pV, color="blue", line_width=0.7, line_alpha=0.9, legend="Vorhergesagter Wert ")
         p.legend.orientation = "horizontal"
         p.legend.location = "top_center"
+        p.xaxis.formatter = DatetimeTickFormatter(formats=dict(
+            hours=["%k Uhr"],
+            days=["%d.%m.%Y %a"],
+            months=["%d.%m.%Y"],
+            years=["%d.%m.%Y"],
+        ))
+        p.xaxis.major_label_orientation = pi / 4
+
         '''
         legend2 = Legend(legends=[
             ("Reeller Wert", [r20]),
@@ -210,18 +219,35 @@ class KerasModel():
 
         return newVec
 
+    def getDateIndex(self, lenDays, jump, begin):
+        import datetime
+        initialDate = datetime.datetime(2004, 1, 4, 0)
+        from dateutil.tz import *
+        local = tzlocal()
+        initialDate.replace(tzinfo=local)
+        maxHour = int(math.ceil(lenDays/float(7)) * 24 * 7)
+        dateIndex = []
+        for i in range(begin, begin+maxHour):
+            t = initialDate + datetime.timedelta(hours=i)
+            dateIndex.append(t)
+        return dateIndex
+
     def getTrainValPlots(self,train_pV, train_xOutputV, val_pV, val_xOutputV, test_pV, test_xOutputV, jump=7):
         zonePlots = {}
 
         zoneIDs = range(1, 21)
         zoneList = []
+        dateIndexTrain = self.getDateIndex(len(train_xOutputV[1]), jump, 0)
+        dateIndexVal = self.getDateIndex(len(val_xOutputV[1]), jump, len(dateIndexTrain))
+        dateIndexTest = self.getDateIndex(len(test_xOutputV[1]), jump, len(dateIndexTrain)+len(dateIndexVal))
+
         for zoneID in zoneIDs:
             jumpedP = self.getJumps(train_pV[zoneID], jump)
             jumpedO = self.getJumps(train_xOutputV[zoneID], jump)
             train_p = list(itertools.chain(*np.reshape(jumpedP, (-1, 1))))
             train_xOutput = list(itertools.chain(*np.reshape(jumpedO, (-1, 1))))
 
-            p = self.getLinePlot(train_p, train_xOutput, zoneID, "Train Dataset")
+            p = self.getLinePlot(train_p, train_xOutput, zoneID, "Training-Set",dateIndexTrain)
             zoneList.append(p)
 
             jumpedP = self.getJumps(val_pV[zoneID], jump)
@@ -229,7 +255,7 @@ class KerasModel():
             val_p = list(itertools.chain(*np.reshape(jumpedP, (-1, 1))))
             val_xOutput = list(itertools.chain(*np.reshape(jumpedO, (-1, 1))))
 
-            p = self.getLinePlot(val_p, val_xOutput, zoneID, "Validation Dataset")
+            p = self.getLinePlot(val_p, val_xOutput, zoneID, "Validation-Set",dateIndexVal)
             zoneList.append(p)
 
             jumpedP = self.getJumps(test_pV[zoneID], jump)
@@ -237,7 +263,7 @@ class KerasModel():
             test_p = list(itertools.chain(*np.reshape(jumpedP, (-1, 1))))
             test_xOutput = list(itertools.chain(*np.reshape(jumpedO, (-1, 1))))
 
-            p = self.getLinePlot(test_p, test_xOutput, zoneID, "Test Dataset")
+            p = self.getLinePlot(test_p, test_xOutput, zoneID, "Test-Set", dateIndexTest)
             zoneList.append(p)
         return zoneList
 
