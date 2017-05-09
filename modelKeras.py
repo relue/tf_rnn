@@ -188,17 +188,17 @@ class KerasModel():
         p.xaxis.axis_label = "Stunden"
         p.yaxis.axis_label = "Energieverbrauch"
 
-        r20 = p.line(dateIndex, xOutputV, color="red", line_width=0.7, line_alpha=0.9, legend="Reeller Wert ")
-        r22 = p.line(dateIndex, pV, color="blue", line_width=0.7, line_alpha=0.9, legend="Vorhergesagter Wert ")
+        r20 = p.line(dateIndex, xOutputV, color="red", line_width=0.5, line_alpha=0.6, legend="Reeller Wert ")
+        r22 = p.line(dateIndex, pV, color="blue", line_width=0.5, line_alpha=0.6, legend="Vorhergesagter Wert ")
         p.legend.orientation = "horizontal"
         p.legend.location = "top_center"
         p.xaxis.formatter = DatetimeTickFormatter(formats=dict(
-            hours=["%k Uhr"],
+            hours=["%k:00 Uhr"],
             days=["%d.%m.%Y %a"],
             months=["%d.%m.%Y"],
             years=["%d.%m.%Y"],
         ))
-        p.xaxis.major_label_orientation = pi / 4
+        #p.xaxis.major_label_orientation = pi / 4
 
         '''
         legend2 = Legend(legends=[
