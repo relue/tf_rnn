@@ -72,8 +72,8 @@ paramLabel["useWeekday"] = "Input Wochentage"
 #isSensi = True
 #plotWhat = "rand_2"
 
-optWhat = "sensi_manual2"
-plotWhat = "sensi_manual2"
+optWhat = "sensi_manual3"
+plotWhat = "sensi_manual3"
 #optWhat = "sensi_tpe_4"
 #plotWhat = "sensi_tpe_4"
 #optWhat = "sensi_test"

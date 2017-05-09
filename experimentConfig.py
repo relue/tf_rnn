@@ -91,8 +91,8 @@ class Config():
         'standardizationType': ["minmax", "zscore"],
     }
     experimentConfigManual = {
-        'epochSize': range(5, 30),
-        "learningRate": (0, 0.7),
+        'epochSize': range(5, 50),
+        "learningRate": (0, 0.05),
         "DropoutProp": (0, 0.99),
         "l1Penalty": (0, 0.01),
         "activationFunction": ["tanh", "sigmoid", "relu"],
