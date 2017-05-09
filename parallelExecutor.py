@@ -29,7 +29,7 @@ def executeConfig(setting, permIndex):
         data_str,permIndex)
     p = subprocess.Popen("sbatch batchScripts/script" + str(permIndex) + ".sh", stdout=log, stderr=log, shell=True)
 
-maxResolution = 100
+maxResolution = 300
 c = experimentConfig.Config()
 optHyperparams = c.sensiExperiment1
 usedIntervall = c.experimentConfigManual
@@ -75,10 +75,10 @@ for param in usedIntervall:
 
 print str(len(runs)) + " runs planned"
 
-permIndex = 1
+
 p = subprocess.Popen("ulimit -u 10000", stdout=log, stderr=log, shell=True)
 random.shuffle(runs)
 for run in runs:
     print run
-    executeConfig(run,permIndex)
+    executeConfig(run,run["indexID"])
     time.sleep(2)
