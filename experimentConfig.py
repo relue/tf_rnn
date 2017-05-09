@@ -146,7 +146,6 @@ class Config():
     data["noFillZero"] = True
     data["useHoliday"] = True
     data["useWeekday"] = True
-    data["earlyStopping"] = True
     data["indexID"] = 0
     data["epochSize"] = 15
     data["batchSize"] = 1
@@ -154,11 +153,11 @@ class Config():
     data["activationFunction"] = "relu"
     data["l1Penalty"] = 0.000001
     data["DropoutProp"] = 0.001
-    data["hiddenNodes"] = 100
+    data["hiddenNodes"] = 80
     data["hiddenLayers"] = 2
     data["optimizer"] = "adam"
     data["weightInit"] = "lecun_uniform"
-    data["timeWindow"] = 5*24
+    data["timeWindow"] = 7*24
 
     #data["test_rmse"] = 106159
     #data["val_rmse"] = 15725
