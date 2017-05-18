@@ -60,7 +60,7 @@ def objective(x):
 
 space_1 =  {
         'standardizationType': hp.choice('standardizationType', ["minmax", "zscore"]),
-        'epochSize' : hp.choice('epochSize', range(5,30)),
+        'epochSize' : hp.choice('epochSize', range(5,40)),
         "learningRate": hp.uniform('learningRate', 0 , 1),
         "DropoutProp": hp.uniform('DropoutProp', 0.0001, 0.99),
         "l1Penalty": hp.uniform('l1Penalty',0.0001, 0.99),

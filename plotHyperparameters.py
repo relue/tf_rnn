@@ -72,12 +72,12 @@ paramLabel["useWeekday"] = "Input Wochentage"
 #isSensi = True
 #plotWhat = "rand_2"
 
-optWhat = "sensi_manual3"
-plotWhat = "sensi_manual3"
+#optWhat = "rand_1"
+#plotWhat = "rand_1"
 #optWhat = "sensi_tpe_4"
 #plotWhat = "sensi_tpe_4"
-#optWhat = "sensi_test"
-#plotWhat = "sensi_test"
+optWhat = "sensi_manual3"
+plotWhat = "sensi_manual3"
 isSensi = True
 plotWidth = 450
 plotHeight = 450
@@ -90,6 +90,7 @@ if isSensi == True:
     rangeY2 = (errorBounds[errorType2][0], errorBounds[errorType2][1])
     #sensiObj = c.sensiExperiment1
     bestDict = c.getBestAsDict(optWhat, hypeOnly=False, orderByIndexID=True)
+    bestDict["DropoutProp"] = 0.001
     bestDictHypes = c.getBestAsDict(optWhat, hypeOnly=True, orderByIndexID=True)
     labelRedDots = "Ergebnis aus Sensitivitäts-Analyse"
 else:
