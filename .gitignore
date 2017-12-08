@@ -2,7 +2,6 @@
 bokehPlots/
 jobResults/
 rnnInputs/
-
 all.csv
 allHours.csv
 rnnInputs
@@ -13,3 +12,4 @@ rnnInput.pd
 *.html
 *.log
 batchScripts/
+logs/

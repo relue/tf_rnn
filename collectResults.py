@@ -6,8 +6,6 @@ import datetime
 now = datetime.datetime.now()
 
 dirName= "jobResults/"
-
-
 dirList = os.listdir(dirName)
 dirList.sort()
 first = True
@@ -22,7 +20,7 @@ for s in dirList:
     id = int(id)
     if name == "error":
         size = os.stat(dirName+s).st_size
-        if size > 3330:
+        if size > 32769:
             errors.append(id)
     if name == "output":
         running.append(id)
@@ -33,7 +31,7 @@ for s in dirList:
            results.append(id)
 
 result = pd.concat(dfList)
-result = result.sort_values(['val_loss'], ascending=[True])
+result = result.sort_values(['val_rmse'], ascending=[True])
 
 maxAwaiting = max(running)
 for i in range(0, int(maxAwaiting)):
@@ -46,7 +44,7 @@ print str(len(running))+' laufende Jobs'
 print str(len(results))+' abgeschlossene Jobs'
 print str(maxAwaiting)+ 'jobs geplant'
 collectName = str(len(results))+"_"+str(now.year)+"_"+str(now.month)+"_"+str(now.day)+"_"+str(now.hour)
-pd.to_pickle(results, "collectedResults/"+collectName)
+pd.to_pickle(result, "collectedResults/"+collectName)
 print "fehlende id's:"
 print missing
 print result

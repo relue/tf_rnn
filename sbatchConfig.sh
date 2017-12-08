@@ -1,6 +1,5 @@
 #!/bin/bash
-#SBATCH --cpus-per-task=1
-#SBATCH --time=00:30:00
-#SBATCH --mem=10110
-#SBATCH --output=slurmOut.log
+#SBATCH --output=logs/sensiJob.log
+#SBATCH --mem-per-cpu=5100
+#SBATCH --time=11:00:00
 source ~/pythonProjects/tf_rnn/preInit.sh && ?job?

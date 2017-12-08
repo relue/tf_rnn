@@ -32,3 +32,15 @@ def showDF(df, breakIt = False):
     if breakIt:
         exit()
 
+def main():
+    import sys
+    pickle = sys.argv[1]
+    df = pd.read_pickle(pickle)
+    if sys.argv[2] == "1":
+        showDF(df)
+    if sys.argv[2] == "0":
+        print df
+
+if __name__ == "__main__":
+    main()
+

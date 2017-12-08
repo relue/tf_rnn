@@ -6,49 +6,79 @@ import logging
 import os
 import time
 import random
-def createBatchFile(singleCommand, id):
+def createBatchFile(singleCommand,parameters, id):
      with open("sbatchConfig.sh", "rt") as fin:
         with open("batchScripts/script"+str(id)+".sh", "wt") as fout:
             for line in fin:
-                fout.write(line.replace('?job?', singleCommand))
+                line = line.replace('?job?', singleCommand)
+               # line = line.replace('?jobname?', str(id))
+                fout.write(line)
 import experimentConfig
-#createBatchFile("srun --cpus-per-task=1 --time=00:30:00 --mem=3110 ~/pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/singleExecution.py", 2)
 
-maxIters =500000
-parameters = experimentConfig.Config.parametersAddtionalInput
-permMatrix = list(itertools.product(*parameters.values()))
-#permMatrix = experimentConfig.Config.generateRandom()
-random.shuffle(permMatrix)
-iters = len(permMatrix)
-print "Anzahl der Permutationen:"+str(iters)
-log = open("parallelExecDetail.log", "w")
-permIndex = 0
-p = subprocess.Popen("scancel -u s2071275",  stdout=log, stderr=log, shell=True)
+log = open("logs/parallelSensi.log", "w")
 for filename in os.listdir("jobResults/"):
     os.remove("jobResults/"+filename)
 for filename in os.listdir("batchScripts/"):
     os.remove("batchScripts/"+filename)
-preCommand = "export PYTHONWARNINGS='ignore' && source ~/pythonProjects/tf_rnn/preInit.sh && "
-command = ""
 
-for el in permMatrix:
-    keys=parameters.keys()
-    setting = {}
-    for key in keys:
-        setting[key] = el[keys.index(key)]
+def executeConfig(setting, permIndex):
     setting["indexID"] = permIndex
-    data_str=json.dumps(setting)
-    createBatchFile("srun --cpus-per-task=1 --time=01:00:00 --mem=3110 ~/pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/singleExecution.py '"+data_str + "' 0", permIndex)
-    p = subprocess.Popen("sbatch batchScripts/script"+str(permIndex)+".sh",  stdout=log, stderr=log, shell=True)
-    #time.sleep(1)
-    permIndex += 1
-    if permIndex >= maxIters:
-        break
+    data_str = json.dumps(setting)
+    createBatchFile(
+            "srun ~/pythonProjects/env/bin/python2.7 -W ignore ~/pythonProjects/tf_rnn/singleExecution.py '" + data_str + "' 0",
+        data_str,permIndex)
+    p = subprocess.Popen("sbatch batchScripts/script" + str(permIndex) + ".sh", stdout=log, stderr=log, shell=True)
 
-    print 'permIndex:'+str(permIndex)
+maxResolution = 300
+c = experimentConfig.Config()
+#optHyperparams = c.sensiExperiment1
+#usedIntervall = c.experimentConfigManual
+optHyperparams = c.getBestAsDict("tpe_4", hypeOnly=True)
+optHyperparams['useWeekday'] = bool(optHyperparams['useWeekday'])
+optHyperparams['useHoliday'] = bool(optHyperparams['useHoliday'])
+usedIntervall = c.sensiIntervalsOptimizer
+runs = []
+optHyperparams['indexID'] = 1
+runs.append(optHyperparams)
+j = 2
+for param in usedIntervall:
+    values = usedIntervall[param]
+    if c.parameterTypeDiscrete[param] == True:
+        ''' if c.parameterNumeric[param]:
+            steps = len(values)
+            toCheck = range(1,len(values))
+        '''
+        for pValue in values:
+            newRow = optHyperparams.copy()
+            newRow[param] = pValue
+            print str(j)+'change '+param+' to '+str(pValue)+ 'Rest'
+            print newRow
+            newRow["indexID"] = j
+            runs.append(newRow)
+            j += 1
+    else:
+        upV = values[1]
+        downV = values[0]
+        stepSize = float(upV) / float(maxResolution)
+        newRow = optHyperparams.copy()
+        newRow[param] = downV
+        runs.append(newRow)
+        for i in range (1,maxResolution):
+            newRow = optHyperparams.copy()
+            pValue = stepSize*i
+            newRow[param] = pValue
+            print str(j)+' change ' + param + ' to ' + str(pValue) + 'Rest'
+            newRow["indexID"] = j
+            runs.append(newRow)
+            j += 1
 
-while 1:
-    time.sleep(10)
-    p= subprocess.Popen("cat parallelExecDetail.log", stdout=subprocess.PIPE, stderr=None, shell=True)
-    result = p.communicate()[0]
-    print result
+
+print str(len(runs)) + " runs planned"
+
+
+p = subprocess.Popen("ulimit -u 10000", stdout=log, stderr=log, shell=True)
+random.shuffle(runs)
+for run in runs:
+    print run
+    executeConfig(run,run["indexID"])
+    time.sleep(2)
