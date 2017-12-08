@@ -1,3 +1,4 @@
+import __future__
 import numpy
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -136,7 +137,7 @@ class KerasModel():
                    hiddenNodes = 40,
                    hiddenLayers = 1,
                    batchSize = 1,
-                   epochSize = 20,
+                   epochSize = 5,
                    indexID = 1,
                    optimizer = "adam",
                    isShow = False,
