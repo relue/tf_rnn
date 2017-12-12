@@ -1,6 +1,7 @@
 import numpy
 import pandas as pd
 import math
+from dateutil.tz import *
 from keras import regularizers
 from keras.models import Sequential
 from keras.layers import Dense, Dropout
@@ -222,7 +223,7 @@ class KerasModel():
     def getDateIndex(self, lenDays, jump, begin):
         import datetime
         initialDate = datetime.datetime(2004, 1, 4, 0)
-        from dateutil.tz import *
+
         local = tzlocal()
         initialDate.replace(tzinfo=local)
         maxHour = int(math.ceil(lenDays/float(7)) * 24 * 7)
