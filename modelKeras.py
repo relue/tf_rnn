@@ -127,17 +127,17 @@ class KerasModel():
         self.results["train_diff"] = errorsTrain['diff']
         self.results["val_diff"] = errorsVal['diff']
         self.results["exec_time"] = (time.time() - start_time)
-        print  self.results
+        print  (self.results)
 
         for key in errorsTrain:
-            print key+" : "+str(errorsTrain[key])+"\n"
+            print (key+" : "+str(errorsTrain[key])+"\n")
         for key in errorsVal:
-            print key+" : "+str(errorsVal[key])+"\n"
+            print (key+" : "+str(errorsVal[key])+"\n")
         for key in errorsTest:
-            print key+" : "+str(errorsTest[key])+"\n"
+            print (key+" : "+str(errorsTest[key])+"\n")
 
         #print "kaggle:"+str(finalTestError)
-        print "test 3 "+str((time.time() - start_time))
+        print ("test 3 "+str((time.time() - start_time)))
         if createHTML:
             plots = []
 
@@ -376,7 +376,7 @@ class KerasModel():
 
             errors['mape'] = np.mean(mapeList)
         except ValueError:
-            print "scaler out of bounds"
+
             pV = []
             outputV = []
             errors["rmse"] = numpy.nan
@@ -472,7 +472,7 @@ class KerasModel():
             pV[21] = np.sum(pVList, axis=0)
             finalTestError = self.calculateKaggleScore(testOutput, pV)
         except ValueError:
-            print "scaler out of bounds"
+            #print "scaler out of bounds"
             finalTestError = np.nan
             pV = []
             testOutput = []
