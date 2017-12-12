@@ -7,8 +7,8 @@ verbose=json.loads(sys.argv[2])
 if verbose != 1:
     sys.stdout = open('jobResults/output_'+str(data["indexID"]), 'w')
     sys.stderr = open('jobResults/error_'+str(data["indexID"]), 'w')
-print sys.argv[1]
-print data
+print (sys.argv[1])
+print (data)
 import warnings
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
@@ -29,4 +29,4 @@ with warnings.catch_warnings():
 
     singleResult = pd.DataFrame(data, index=[data["indexID"]])
     singleResult.to_pickle("jobResults/result_"+str(data["indexID"]))
-    print singleResult
+    print (singleResult)
