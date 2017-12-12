@@ -31,12 +31,12 @@ def executeConfig(setting, permIndex):
 
 maxResolution = 300
 c = experimentConfig.Config()
-#optHyperparams = c.sensiExperiment1
-#usedIntervall = c.experimentConfigManual
-optHyperparams = c.getBestAsDict("tpe_4", hypeOnly=True)
+optHyperparams = c.sensiExperiment1
+usedIntervall = c.experimentConfigManual
+#optHyperparams = c.getBestAsDict("tpe_4", hypeOnly=True)
 optHyperparams['useWeekday'] = bool(optHyperparams['useWeekday'])
 optHyperparams['useHoliday'] = bool(optHyperparams['useHoliday'])
-usedIntervall = c.sensiIntervalsOptimizer
+#usedIntervall = c.sensiIntervalsOptimizer
 runs = []
 optHyperparams['indexID'] = 1
 runs.append(optHyperparams)

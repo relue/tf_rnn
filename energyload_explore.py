@@ -69,9 +69,9 @@ for i in range(1, 25):
 p = figure(width=1000, height=500, x_range=(0, 24), y_range=(-10, 40),
                 toolbar_location="left")
 
-p.xaxis.axis_label = "Uhrzeit (Stunde)"
-p.yaxis.axis_label = "Temperatur"
-p.yaxis[0].formatter = PrintfTickFormatter(format="%5.1f C")
+p.xaxis.axis_label = "Hour of Daytime"
+p.yaxis.axis_label = "Temperature in Celsius"
+
 r0 = p.line(range(1, 25), tempList, color="red", line_width=2)
 r1 = p.circle(range(1, 25), tempList, color="red")
 p.extra_y_ranges = {"foo": Range1d(start=40000, end=100000)}
@@ -84,7 +84,7 @@ legend = Legend(legends=[
     ("Avg. Energy Load", [r2, r3])
 ], location=(40, 5))
 
-p.add_layout(LinearAxis(y_range_name="foo", axis_label="Energieverbrauch"), 'right')
+p.add_layout(LinearAxis(y_range_name="foo", axis_label="Energy Load"), 'right')
 p.add_layout(legend, 'below')
 
 #
@@ -125,7 +125,7 @@ legend2 = Legend(legends=[
 ], location=(40, 5))
 
 ax = LinearAxis(y_range_name="foo", axis_label="Energy Load")
-ax.formatter = PrintfTickFormatter(format="%5.0f")
+ax.formatter = PrintfTickFormatter(format="%5.0f V")
 p2.add_layout(ax, 'right')
 p2.add_layout(legend2, 'below')
 
@@ -144,21 +144,26 @@ dfAggT['weekname'] = dfAggT['weekday'].apply(lambda x: calendar.day_name[x])
 
 p3 = figure(width=1000, height=500, x_range = dfAggT['weekname'].tolist(), y_range=(dfAggT['dayTemp'].min(),dfAggT['dayTemp'].max()))
 
-p3.xaxis.axis_label = "Wochentag"
-p3.yaxis.axis_label = "Temperatur"
+p3.xaxis.axis_label = "Date"
+p3.yaxis.axis_label = "Temperature "
 p3.yaxis[0].formatter = PrintfTickFormatter(format="%5.1f C")
 
-r30 = p3.line(dfAggT['weekname'], dfAggT['dayTemp'], color="red", line_width=0.5, line_alpha = 0.8, legend="Temperatur")
-r31 = p3.circle(dfAggT['weekname'], dfAggT['dayTemp'], color="red", legend="Temperatur")
+r30 = p3.line(dfAggT['weekname'], dfAggT['dayTemp'], color="red", line_width=0.5, line_alpha = 0.8)
+r31 = p3.circle(dfAggT['weekname'], dfAggT['dayTemp'], color="red")
 
-r32 = p3.line(dfAggE['weekname'], dfAggE['dayLoad'], color="blue", line_width=0.5, y_range_name="foo", line_alpha = 0.8, legend="Energieverbrauch")
-r33 = p3.circle(dfAggE['weekname'], dfAggE['dayLoad'], color="blue", y_range_name="foo", legend="Energieverbrauch")
+r32 = p3.line(dfAggE['weekname'], dfAggE['dayLoad'], color="blue", line_width=0.5, y_range_name="foo", line_alpha = 0.8)
+r33 = p3.circle(dfAggE['weekname'], dfAggE['dayLoad'], color="blue", y_range_name="foo")
 p3.extra_y_ranges = {"foo": Range1d(start=dfAggE['dayLoad'].min(), end=dfAggE['dayLoad'].max())}
 
-ax = LinearAxis(y_range_name="foo", axis_label="Energieverbrauch")
-ax.formatter = PrintfTickFormatter(format="%5.0f")
-p3.add_layout(ax, 'right')
+legend3 = Legend(legends=[
+    ("Avg. Temperature in Celsius",   [r30, r31]),
+    ("Avg. Energy Load", [r32, r33])
+], location=(40, 5))
 
+ax = LinearAxis(y_range_name="foo", axis_label="Energy Load")
+ax.formatter = PrintfTickFormatter(format="%5.0f V")
+p3.add_layout(ax, 'right')
+p3.add_layout(legend3, 'below')
 
 #
 # Durchschnitte Temp und Load für Wochentag
@@ -173,22 +178,26 @@ dfAggT['monthname'] = dfAggT['month_x'].apply(lambda x: calendar.month_name[int(
 
 p4 = figure(width=1000, height=500, x_range = dfAggT['monthname'].tolist(), y_range=(dfAggT['dayTemp'].min(),dfAggT['dayTemp'].max()))
 
-p4.xaxis.axis_label = "Monat"
-p4.yaxis.axis_label = "Temperatur"
+p4.xaxis.axis_label = "Date"
+p4.yaxis.axis_label = "Temperature "
 p4.yaxis[0].formatter = PrintfTickFormatter(format="%5.1f C")
 
-r30 = p4.line(dfAggT['monthname'], dfAggT['dayTemp'], color="red", line_width=0.5, line_alpha = 0.8, legend="Temperatur")
-r31 = p4.circle(dfAggT['monthname'], dfAggT['dayTemp'], color="red", legend="Temperatur")
+r30 = p4.line(dfAggT['monthname'], dfAggT['dayTemp'], color="red", line_width=0.5, line_alpha = 0.8)
+r31 = p4.circle(dfAggT['monthname'], dfAggT['dayTemp'], color="red")
 
-r32 = p4.line(dfAggE['monthname'], dfAggE['dayLoad'], color="blue", line_width=0.5, y_range_name="foo", line_alpha = 0.8, legend="Energieverbrauch")
-r33 = p4.circle(dfAggE['monthname'], dfAggE['dayLoad'], color="blue", y_range_name="foo", legend="Energieverbrauch")
+r32 = p4.line(dfAggE['monthname'], dfAggE['dayLoad'], color="blue", line_width=0.5, y_range_name="foo", line_alpha = 0.8)
+r33 = p4.circle(dfAggE['monthname'], dfAggE['dayLoad'], color="blue", y_range_name="foo")
 p4.extra_y_ranges = {"foo": Range1d(start=dfAggE['dayLoad'].min(), end=dfAggE['dayLoad'].max())}
 
+legend3 = Legend(legends=[
+    ("Avg. Temperature in Celsius",   [r30, r31]),
+    ("Avg. Energy Load", [r32, r33])
+], location=(40, 5))
 
-ax = LinearAxis(y_range_name="foo", axis_label="Energieverbrauch")
-ax.formatter = PrintfTickFormatter(format="%5.0f")
+ax = LinearAxis(y_range_name="foo", axis_label="Energy Load")
+ax.formatter = PrintfTickFormatter(format="%5.0f V")
 p4.add_layout(ax, 'right')
-
+p4.add_layout(legend3, 'below')
 
 #
 # Scatterplot daily basis
@@ -202,17 +211,28 @@ p5.yaxis.axis_label = "Temperature "
 p5.yaxis[0].formatter = PrintfTickFormatter(format="%5.1f C")
 r31 = p5.circle(df1['dayLoad'], df1['dayTemp'], color="red", size=0.5)
 
+legend3 = Legend(legends=[
+    ("Avg. Temperature in Celsius",   [r31])
+], location=(40, 5))
+
+p5.add_layout(legend3, 'below')
+
 #
 # Scatterplot hourly basis
 
 
 p6 = figure(width=1000, height=500, x_range = (dfHourly['zone_avg'].min(),dfHourly['zone_avg'].max()), y_range=(dfHourly['station_avg'].min(),dfHourly['station_avg'].max()))
 
-p6.xaxis.axis_label = "Energieverbrauch"
-p6.yaxis.axis_label = "Temperatur"
+p6.xaxis.axis_label = "Date"
+p6.yaxis.axis_label = "Temperature "
 p6.yaxis[0].formatter = PrintfTickFormatter(format="%5.1f C")
 r31 = p6.circle(dfHourly['zone_avg'], dfHourly['station_avg'], color="red", size=0.5)
 
+legend3 = Legend(legends=[
+    ("Avg. Temperature in Celsius",   [r31])
+], location=(40, 5))
+
+p6.add_layout(legend3, 'below')
 
 ap = gridplot([[p],[p2], [p3], [p4], [p5], [p6]])
 
