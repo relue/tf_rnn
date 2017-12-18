@@ -3,10 +3,11 @@ import numpy as np
 from sklearn.preprocessing import MinMaxScaler,StandardScaler
 import os.path
 import os
-import cPickle as pickle
+#import cPickle as pickle
 import sklearn.decomposition as deco
 import gzip
-
+import pickle
+import pdb
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
 def convert_temp(source_temp=None):
@@ -207,6 +208,7 @@ def createInputOutputRow(dfS, i, columns, zoneColumns, stationColumns, outputSiz
             tupleList+=weekDayVector
 
         columnList.append(tupleList)
+    #pdb.set_trace()
     row=pd.Series(columnList+[outputList],columns+["output"])
     return row
 
@@ -230,12 +232,12 @@ def createXmulti(timeWindow, stationIDs, outputSize, save = False, isStandardize
     cacheExists = os.path.isfile(filename)
     scalerExists = os.path.isfile(scalerCacheFile)
     dfSCacheFileExists = os.path.isfile(dfSCacheFile)
-    print filename
+    #print filename
     #save = True
     if save or not(cacheExists) or not scalerExists or not dfSCacheFileExists:
 
-        columns = range(1, maxTimeWindow+1)
-        zoneIDs = range(1,21)
+        columns = list(range(1, maxTimeWindow+1))
+        zoneIDs = list(range(1,21))
         holidayDict = getHolidayDict()
         zoneColumns = ["zone_" + str(i) for i in zoneIDs]
         stationColumns = ["station_" + str(i) for i in stationIDs]
@@ -298,7 +300,7 @@ def createXmulti(timeWindow, stationIDs, outputSize, save = False, isStandardize
         dfNew = pd.DataFrame(columns=columns)
         for i in range(0, len(dfS), 24):#len(df.index)
             if i >= maxTimeWindow and i+outputSize < len(dfS):
-                row = createInputOutputRow(dfS, i, range(1, maxTimeWindow+1), zoneColumns, stationColumns, outputSize, holidayDict, noFillZero=noFillZero, useHoliday=useHoliday, useWeekday=useWeekday)
+                row = createInputOutputRow(dfS, i, list(range(1, maxTimeWindow+1)), zoneColumns, stationColumns, outputSize, holidayDict, noFillZero=noFillZero, useHoliday=useHoliday, useWeekday=useWeekday)
                 dfNew = dfNew.append([row],ignore_index=True)
         dfNew.to_pickle(filename)
     else:
@@ -311,7 +313,7 @@ def createXmulti(timeWindow, stationIDs, outputSize, save = False, isStandardize
     scalerInput = scalerDict["scalerInput"]
     scalerOutput= scalerDict["scalerOutput"]
 
-    finalColumns = range(1,timeWindow+1)
+    finalColumns = list(range(1,timeWindow+1))
     dfTimewindow = dfNew[finalColumns + ["output"]]
     tfOutput = np.asarray(dfTimewindow["output"].tolist())
     tfInput = []

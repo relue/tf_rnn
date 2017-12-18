@@ -22,14 +22,14 @@ np.random.seed(1337) # for reproducibility
 import keras
 from bokeh.plotting import figure, show, output_file
 from bokeh.models import Legend
-from bokeh.io import output_file, show, vplot, gridplot
+#from bokeh.io import output_file, show, vplot, gridplot
 import itertools
 import time
 
 class KerasModel():
     results = {}
 
-    def __init__(self, timeWindow = 24*7,
+    def __init__(self, timeWindow = 24*3,
                cellType = "rnn",
                outputSize = 24*7,
                noFillZero = True,
@@ -41,7 +41,7 @@ class KerasModel():
                hiddenNodes = 30,
                hiddenLayers = 2,
                batchSize = 1,
-               epochSize = 30,
+               epochSize = 10,
                earlyStopping = True,
                indexID = 1,
                optimizer = "adam",
@@ -89,7 +89,7 @@ class KerasModel():
         for hdI in range(2,hiddenLayers+1):
             if hdI == hiddenLayers:
                 returnSequence = False
-            eval('model.add('+cellObj+'(hiddenNodes, input_length=timeWindow, go_backwards = False, return_sequences=returnSequence, '\
+            eval('model.add('+cellObj+'(hiddenNodes, input_shape=(timeWindow,), go_backwards = False, return_sequences=returnSequence, '\
              'init=weightInit, activation=activationFunction))')
 
             model.add(Dropout(DropoutProp))
@@ -110,7 +110,7 @@ class KerasModel():
         if earlyStopping == False:
             epochSize = 50
             callbacks.append(early)
-        history = model.fit(inputT, outputT,  nb_epoch=epochSize, batch_size=batchSize, verbose=0, callbacks=callbacks)#callbacks=[early]
+        history = model.fit(inputT, outputT,  nb_epoch=epochSize, batch_size=batchSize, verbose=1, callbacks=callbacks)#callbacks=[early]
         #validation_data = (inputV, outputV),
         #finalTestError, test_pV, test_xOutputV = self.getTestError(model, testInput,testOutput,scalerOutput)
         errorsTrain, train_pV, train_xOutputV = self.calulateModelErrors(inputT, outputT, scalerOutput, model)
@@ -431,8 +431,8 @@ class KerasModel():
         backcastWeeks = ["2005-3-5", "2005-6-19", "2005-9-9", "2005-12-24",
                                  "2006-2-12", "2006-5-24", "2006-8-1", "2006-11-21","2008-6-30"]
         dfS = dfS.fillna(0)
-        columns = range(1, timeWindow+1)
-        zoneIDs = range(1,21)
+        columns = list(range(1, timeWindow+1))
+        zoneIDs = list(range(1,21))
         zoneColumns = ["zone_" + str(i) for i in zoneIDs]
         stationColumns = ["station_" + str(i) for i in stationIDs]
         dfNew = pd.DataFrame(columns=columns)
